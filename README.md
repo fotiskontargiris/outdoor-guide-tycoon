@@ -1,8 +1,8 @@
-# Goat Path Tycoon
+# Outdoor Guide Life or no Life
 
-> A career in mountains, money, and minor catastrophes.
+> A career in the outdoors, money, and minor catastrophes.
 
-A text-driven outdoor-guide career game set in the Peloponnese. You graduated from your guide course because nothing else worked out. Now the Peloponnese is your problem. Start as a solo hiking guide in Messinia, build a team that does the trails so you don't have to, and grow into something that, on paper, could be called an outdoor company. Eventually water and air activities open up across Navarino Bay and over Taygetos.
+A text-driven outdoor-guide career game set in the Peloponnese. You graduated from your guide course because nothing else worked out. Now the Peloponnese is your problem. Start as a solo hiking guide in Messinia, build a team that does the trips so you don't have to, and grow into something that, on paper, could be called an outdoor company. Eventually water activities (kayak, SUP, sailing, snorkel) open across Navarino Bay and air activities (paragliding) over Taygetos.
 
 ## Status
 
