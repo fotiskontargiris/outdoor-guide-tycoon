@@ -78,8 +78,8 @@ Always run both checks before handing a build back. Several bugs only surface th
 **Clients (`CLIENTS`):** family, tourist, thrill, corporate — different group sizes, pay multipliers, and event reactions.
 
 **Gear — two models:**
-- *Phase 1 (personal ownership):* you **own** items (`S.owned`); packing only offers owned gear. Buy more in the **shop** (`openShop` → `buyItem`, one-time `ITEM_COST` prices). `recommended(route, weather)` returns the items that matter; `prepScore()`/preparedness drives reputation & tips at trip end.
-- *Phase 2 (company depot):* `S.depot` of `CON` consumables (water, snacks, sunscreen, repellent — used up per trip) and `DUR` durables (firstaid, poles, map, shell, lamp — reusable, limit concurrent trips). `allocateGear(trips)` distributes kit across the day's trips; coverage modifies guide outcomes. Stock it via `openDepot`/`buyGear` (`GEAR` unit costs).
+- *Phase 1 (personal ownership) — tiered with lifetime:* you **own** items via `S.owned = { id: {tier, trips} }` where `tier` is `'basic'|'standard'|'pro'` and `trips` is how many trips it survives before breaking. Buy in the **shop** (`openShop` → `buyItem(id, tier)`); buying any tier replaces and refills with a fresh full lifetime. `ITEM_LIFETIME[id]` is the standard-tier baseline; `TIER_MULT` scales cost (×0.5/×1/×2.5) and life (×0.5/×1/×4). Helpers: `itemCost(id,tier)`, `itemLifetime(id,tier)`, `ownedTier(id)`, `ownedTrips(id)`, `ownsItem(id)`, `freshOwned(id,tier)`. `finishPlayerTrip()` decrements `trips` on every packed item; at 0 the item breaks, is removed from `S.owned`, and the player is told. Packing only offers items with `ownedTrips(id) > 0`. `recommended(route, weather)` returns the items that matter; `prepScore()`/preparedness drives reputation & tips at trip end.
+- *Phase 2 (company depot) — tier-blind for now:* `S.depot` is a flat `{itemId: count}` of `CON` consumables (water, snacks, sunscreen, repellent — used up per trip) and `DUR` durables (firstaid, poles, map, shell, lamp — reusable, limit concurrent trips). `allocateGear(trips)` distributes kit across the day's trips; coverage modifies guide outcomes. Stock via `openDepot`/`buyGear` (`GEAR` unit costs). Tiered depot is a known TODO — when added, expect `S.depot` to become `{id: {basic, standard, pro}}` and `allocateGear` to consume best-quality-first.
 
 **Certifications (`CERTS`, "HATEOA"):** Basic Hiking Guide (€120, 2 weeks) → unlocks the rest; Wilderness First Aid (€180, 3 weeks) improves injuries; Canyon & Gorge Leader (€160, 3 weeks) boosts river/forest routes; Mountain Leader (€300, 4 weeks, needs rep ≥ 60 — measured against the player's *peak* rep that year) **unlocks diff-3 routes**. Each course is a HATEOA **off-season** programme run November–March: `enrollCertSchool(id)` deducts cash + `weeks` from `WINTER_WEEKS=22` and adds the cert. Mid-summer the `openCerts()` screen is read-only — players see what's available and plan for winter. `hasCert(id)` gates routes and modifies event odds.
 
@@ -93,7 +93,7 @@ Always run both checks before handing a build back. Several bugs only surface th
 
 **Phase 2 management:** assign each person (you + guides) to a trip / rest / training; `runDay()` → `processNext()` queue. Guides auto-resolve (`autoResolve`, skill + gear coverage) or **radio in a crisis** (`RADIO` events) for your management decision. Daily **wages**, **morale** (quit at 0), **fatigue**, training, and hiring (`openHire`). The player still personally guides via the same packing/trailhead/event flow.
 
-**Save/continue:** `window.storage` (async, artifact-only; guarded by `typeof window!=='undefined' && window.storage`). Autosaves at the start of each day under `SAVE_KEY` (currently `aegean_save_v5` — bumped when the season schema landed). Title screen offers Continue / New game; `doContinue()` applies defensive defaults for the new fields (`year`, `seasonDay`, `season`, `infra`, `yearStats`, `yearLogs`, `winterWeeksUsed`).
+**Save/continue:** `window.storage` (async, artifact-only; guarded by `typeof window!=='undefined' && window.storage`). Autosaves at the start of each day under `SAVE_KEY` (currently `aegean_save_v6` — bumped when gear tiers landed; v5 bumped for the season schema). Title screen offers Continue / New game; `doContinue()` applies defensive defaults AND migrates the legacy array-form `S.owned` (v5 and earlier) to the new `{id:{tier,trips}}` object form.
 
 **Content arrays:** `EVENTS` (trail events), `TRAILHEAD` (meet-the-group), `RADIO` (delegated crises). Each entry has `when(b,w)` eligibility and `choices` with `run(b,S)` returning deltas (`rep`, `cash`, `energy`, `gear`, `payMul`, `tips`, `morale`, `line`/`lines`).
 
@@ -102,7 +102,8 @@ Always run both checks before handing a build back. Several bugs only surface th
 ## 5. Key tunable numbers (the balance surface)
 
 - Pack: 4 (start) → 6 (€250) → 8 (€600, rep ≥ 65).
-- `ITEM_COST` (own, Phase 1): water 25, snacks 20, sunscreen 25, repellent 25, firstaid 70, poles 55, map 40, shell 60, lamp 35.
+- `ITEM_COST` (own, Phase 1, standard tier): water 25, snacks 20, sunscreen 25, repellent 25, firstaid 70, poles 55, map 40, shell 60, lamp 35. **Basic ×0.5, Pro ×2.5.**
+- `ITEM_LIFETIME` (trips at standard tier before wear-out/consumption): water 4, snacks 4, sunscreen 8, repellent 8, firstaid 25, poles 50, map 80, shell 30, lamp 40. **Basic ×0.5, Pro ×4.**
 - `GEAR` (depot unit, Phase 2): water 4, snacks 4, sunscreen 6, repellent 6, firstaid 45, poles 35, map 25, shell 30, lamp 20 (with `batch` sizes).
 - Certs: 120 / 180 / 160 / 300; Mountain Leader needs rep ≥ 60.
 - Starting cash €200 (+€150 outfitter); start rep 50; goal rep 70.

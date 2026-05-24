@@ -278,7 +278,7 @@ const BACKGROUNDS=[
 ];
 
 /* ---------------- setup ---------------- */
-const SAVE_KEY='aegean_save_v5';
+const SAVE_KEY='aegean_save_v6';
 let pickedBg='medic', pendingName='', cachedSave=null, pickedKit=['water'];
 
 /* ---------------- calendar ----------------
@@ -324,7 +324,10 @@ async function doContinue(){
   if(!save||!save.S){ renderProfile(); return; }
   S=save.S; gCounter=save.g||0;
   S.depot=S.depot||{}; S.loadout=S.loadout||[]; S.packSize=S.packSize||4;
-  S.owned=S.owned||['water']; S.certs=S.certs||[]; S.infra=S.infra||[];
+  // Migrate old array-form owned (v5 and earlier) to the new tiered object form
+  if(Array.isArray(S.owned)){ const m={}; S.owned.forEach(id=>{ if(ITEM_LIFETIME[id]!=null) m[id]=freshOwned(id,'standard'); }); S.owned=m; }
+  S.owned=S.owned||{water:freshOwned('water','standard')};
+  S.certs=S.certs||[]; S.infra=S.infra||[];
   S.forecast=S.forecast||[]; ensureForecast();
   S.year=S.year||1; S.seasonDay=S.seasonDay||S.day||1; S.season=S.season||'summer';
   S.yearLogs=S.yearLogs||[]; if(S.phase3Ready==null) S.phase3Ready=false;
@@ -367,15 +370,17 @@ function beginNewGame(){
 function initGame(name, bgId, kit){
   gCounter=0;
   const bg=BACKGROUNDS.find(b=>b.id===bgId)||BACKGROUNDS[0];
+  const initialOwned={};
+  (kit||['water']).forEach(id=>{ if(ITEM_LIFETIME[id]!=null) initialOwned[id]=freshOwned(id,'standard'); });
   S={ phase:1, day:1, year:1, seasonDay:1, season:'summer',
       cash:200, rep:50, energy:100, gear:90, packSize:4, loadout:[], depot:{},
-      owned:(kit||['water']).slice(), certs:[], infra:[],
+      owned:initialOwned, certs:[], infra:[],
       weather:null, bookings:[], history:[], forecast:[WEATHER[0]],
       stats:{earned:0, fees:0, tips:0, wagesPaid:0, retainersPaid:0, tripsYou:0, tripsGuides:0, hires:0, bestRep:50, yearsCompleted:0},
       yearStats:freshYearStats(),
       you:{id:'you', name:name, isYou:true, skill:90, morale:100, wage:0, spec:bg.name, perk:bg.id, task:null},
       guides:[], queue:null, dayReports:[], trip:null, yearLogs:[] };
-  if(bg.id==='outfitter'){ S.packSize=6; S.cash+=150; ['firstaid','map'].forEach(id=>{ if(!S.owned.includes(id)) S.owned.push(id); }); }
+  if(bg.id==='outfitter'){ S.packSize=6; S.cash+=150; ['firstaid','map'].forEach(id=>{ if(!ownsItem(id)) S.owned[id]=freshOwned(id,'standard'); }); }
   ensureForecast();
   setSub('Year 1 · Phase I — '+name+', a guide making a name in Messinia.');
   startDay();
@@ -528,20 +533,40 @@ function buyPack(){
 function openShop(){
   renderHUD();
   const rows=ITEM_ORDER.map(id=>{
-    const owned=S.owned.includes(id), cost=ITEM_COST[id], can=S.cash>=cost;
-    if(owned) return `<button class="opt disabled" style="opacity:.55"><span class="mark">✓</span><span class="b-main">${ITEMS[id]}<span class="b-sub">Owned</span></span></button>`;
-    return `<button class="opt ${can?'':'disabled'}" onclick="${can?`buyItem('${id}')`:''}"><span class="mark">+</span><span class="b-main">${ITEMS[id]}<span class="b-sub">€${cost}${can?'':' — need more cash'}</span></span></button>`;
+    const curTier=ownedTier(id), curTrips=ownedTrips(id);
+    const tierBtns=ITEM_TIERS.map(tier=>{
+      const cost=itemCost(id,tier), life=itemLifetime(id,tier), can=S.cash>=cost;
+      const isCur = curTier===tier;
+      // Highlight the current tier (refill) or, if unowned, the standard tier as the default recommendation
+      const highlight = isCur || (!curTier && tier==='standard');
+      const cls = highlight ? 'primary' : (can?'':'disabled');
+      const label = isCur ? `${cap(tier)} · refill` : (curTier?`Switch to ${tier}`:cap(tier));
+      const click = can ? `buyItem('${id}','${tier}')` : '';
+      return `<button class="opt ${cls}" onclick="${click}" style="flex:1;padding:9px 8px;font-size:13px">
+        <span class="b-main" style="font-size:13px">${label}<span class="b-sub" style="font-size:11px">€${cost} · ${life} trip${life===1?'':'s'}</span></span></button>`;
+    }).join('');
+    const head = curTier
+      ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${curTrips<=1?'var(--danger)':'var(--ink-faint)'}">owned ${curTier} · ${curTrips} trip${curTrips===1?'':'s'} left</span></div>`
+      : `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint)">not owned</span></div>`;
+    return `<div style="background:var(--panel2);border:1px solid var(--edge);border-radius:11px;padding:10px 11px;margin-bottom:8px">
+      ${head}<div style="display:flex;gap:6px">${tierBtns}</div></div>`;
   }).join('');
   setScene(`<div class="day-tag">${dayTag()} · Equipment shop</div>
     <h2>The outdoor store</h2>
-    <p>Build your kit piece by piece — owned gear is what you can pack. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
-    <div class="choices">${rows}
+    <p>Three qualities for everything. <b>Pro</b> kit is dearer but lasts far longer — your boots, your bottles, all of it. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
+    ${rows}
+    <div class="choices" style="margin-top:6px">
       ${packUpgradeOpt()}
       ${simpleOpt('⚒','Service your equipment', S.gear>=100?'Kit is in top shape':S.cash<40?'Need €40':'€40 · +35% gear condition', (S.gear>=100||S.cash<40), 'serviceGear()')}
     </div>
     <div class="actionbar"><button class="go" onclick="renderMorning()">Done — back to the day</button></div>`);
 }
-function buyItem(id){ const c=ITEM_COST[id]; if(S.cash<c||S.owned.includes(id)) return; S.cash-=c; S.owned.push(id); note(`Bought ${ITEMS[id].replace('&amp;','&')} (−€${c}).`); saveGame(); openShop(); }
+function buyItem(id, tier){
+  tier=tier||'standard'; const c=itemCost(id,tier);
+  if(S.cash<c) return;
+  S.cash-=c; S.owned[id]=freshOwned(id,tier);
+  note(`Bought ${ITEMS[id].replace('&amp;','&')} (${tier}, −€${c}).`); saveGame(); openShop();
+}
 function serviceGear(){ if(S.cash<40||S.gear>=100) return; S.cash-=40; S.gear=clamp(S.gear+35,0,100); note('Serviced your equipment (−€40).'); saveGame(); openShop(); }
 function openCerts(){
   renderHUD();
@@ -667,14 +692,20 @@ function showDepartBrief(b){
 }
 function renderPacking(){
   const b=S.trip.b, w=S.weather, full=S.loadout.length>=S.packSize;
-  const ownedItems=ITEM_ORDER.filter(id=>S.owned.includes(id));
+  const ownedItems=ITEM_ORDER.filter(id=>ownsItem(id));
   const chips=ownedItems.map(id=>{
     const on=S.loadout.includes(id), dis=!on&&full;
+    const trips=ownedTrips(id), tier=ownedTier(id);
+    const tripCol = trips<=1 ? 'var(--danger)' : (trips<=3 ? 'var(--gold)' : 'var(--ink-faint)');
     return `<button class="opt ${on?'primary':''} ${dis?'disabled':''}" onclick="${dis?'':`toggleItem('${id}')`}">
-      <span class="mark">${on?'✓':'+'}</span><span class="b-main">${ITEMS[id]}</span></button>`;
+      <span class="mark">${on?'✓':'+'}</span>
+      <span class="b-main" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+        <span>${ITEMS[id]}</span>
+        <span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${tripCol}">${tier} · ${trips} trip${trips===1?'':'s'}</span>
+      </span></button>`;
   }).join('');
-  const locked=ITEM_ORDER.filter(id=>!S.owned.includes(id));
-  const lockedHTML = locked.length?`<div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:10px">Not yet owned: ${locked.map(id=>ITEMS[id]).join(', ')} — buy at the shop.</div>`:'';
+  const locked=ITEM_ORDER.filter(id=>!ownsItem(id));
+  const lockedHTML = locked.length?`<div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:10px">Not in your kit: ${locked.map(id=>ITEMS[id]).join(', ')} — buy at the shop.</div>`:'';
   const emptyHTML = ownedItems.length?'':`<div style="font-style:italic;color:var(--ink-dim)">You own no kit yet — you'll head out with empty hands. Visit the shop to change that.</div>`;
   const spare=S.packSize-S.loadout.length;
   setScene(`<div class="day-tag">${dayTag()} · Pack your bag</div>
@@ -771,6 +802,18 @@ function finishPlayerTrip(){
   note(`${b.route}: fee €${fee}${tip?` + €${tip} tips`:''}.`);
   if(S.stats){ S.stats.earned+=earned; S.stats.fees+=fee; S.stats.tips+=tip; S.stats.tripsYou++; }
   if(S.yearStats){ S.yearStats.fees+=fee; S.yearStats.tips+=tip; S.yearStats.tripsYou++; }
+  // Wear down each packed item by one trip; anything that hits zero breaks
+  const broken=[];
+  (S.loadout||[]).forEach(id=>{
+    if(!S.owned[id]) return;
+    S.owned[id].trips--;
+    if(S.owned[id].trips<=0){ broken.push({id, tier:S.owned[id].tier}); delete S.owned[id]; }
+  });
+  if(broken.length){
+    const names=broken.map(x=>`${ITEMS[x.id].replace('&amp;','&')} (${x.tier})`).join(', ');
+    note(`Gear gave out on the trail: ${names}. Re-buy at the shop.`);
+    prepLine += ` ${broken.length===1?'Your '+ITEMS[broken[0].id].toLowerCase().replace('&amp;','&')+' finally gave up on this trip':'Several pieces of kit gave up on this trip'} — time for a shop run.`;
+  }
   S.dayReports.push({line:`You guided the ${b.route}.`, earned});
   const reviews=makeReviews(t.repDelta||0, tip, 2);
   renderHUD();
@@ -915,7 +958,7 @@ function enterPhase2(){
   const g={id:'g'+(++gCounter), name:'Maria', isYou:false, skill:55, fatigue:0, morale:80, wage:35, spec:rnd(SPECS), task:null};
   S.guides=[g];
   S.depot={water:Math.max(4,0)};
-  (S.owned||[]).forEach(id=>{ S.depot[id]=(S.depot[id]||0)+(CON.includes(id)?4:1); });
+  Object.keys(S.owned||{}).forEach(id=>{ S.depot[id]=(S.depot[id]||0)+(CON.includes(id)?4:1); });
   ['water'].forEach(id=>{ S.depot[id]=Math.max(S.depot[id]||0,4); });
   setScene(`<div class="end">
       <div class="day-tag" style="color:var(--sage)">A turning point · ${dayTag()}</div>
@@ -1221,7 +1264,7 @@ function renderSummary(){
     : '<div class="row"><span class="l">No guides yet — just you on the trail.</span><span class="v"></span></div>';
   const net = st.earned - st.wagesPaid;
   const certList = (S.certs&&S.certs.length) ? S.certs.map(certName).join(', ') : 'None yet';
-  const ownCount = (S.owned||[]).length;
+  const ownCount = Object.keys(S.owned||{}).length;
   setScene(`<div class="day-tag">${dayTag()} · Season summary</div>
     <h2>${S.you?S.you.name:'Your'} season</h2>
     <p style="font-style:italic;color:var(--ink-dim);margin-bottom:14px">${S.you?S.you.spec:''} · ${S.phase===2?'running a Messinia outfit':'building a name in Messinia'}</p>
@@ -1254,6 +1297,31 @@ const GEAR=[
   {id:'map', cost:25, batch:1}, {id:'shell', cost:30, batch:1}, {id:'lamp', cost:20, batch:1},
 ];
 const ITEM_COST={water:25, snacks:20, sunscreen:25, repellent:25, firstaid:70, poles:55, map:40, shell:60, lamp:35};
+
+/* ---------------- equipment quality tiers ----------------
+   Every item comes in three qualities. Higher tiers cost more upfront but
+   last many more trips before they break (durables) or are used up
+   (consumables). S.owned tracks ONE instance per id at a time:
+     S.owned = { water: {tier:'standard', trips:2}, firstaid: {...} }
+   Each packed item decrements its trips counter when the trip completes;
+   at 0 it breaks and is removed from S.owned. Re-buying any tier replaces
+   and refills with a fresh full lifetime at that tier. */
+const ITEM_TIERS=['basic','standard','pro'];
+const TIER_MULT={
+  basic:    {cost:0.5, life:0.5, label:'basic',    note:'cheap, short life'},
+  standard: {cost:1.0, life:1.0, label:'standard', note:'reliable'},
+  pro:      {cost:2.5, life:4.0, label:'pro',      note:'lasts and lasts'},
+};
+const ITEM_LIFETIME={  // trips at standard quality before wear-out / consumption
+  water:4, snacks:4, sunscreen:8, repellent:8,
+  firstaid:25, poles:50, map:80, shell:30, lamp:40,
+};
+function itemCost(id, tier){ return Math.round(ITEM_COST[id] * TIER_MULT[tier].cost); }
+function itemLifetime(id, tier){ return Math.max(1, Math.round(ITEM_LIFETIME[id] * TIER_MULT[tier].life)); }
+function ownedTier(id){ return S.owned && S.owned[id] ? S.owned[id].tier : null; }
+function ownedTrips(id){ return S.owned && S.owned[id] ? S.owned[id].trips : 0; }
+function ownsItem(id){ return ownedTrips(id) > 0; }
+function freshOwned(id, tier){ return {tier, trips:itemLifetime(id, tier)}; }
 
 const CERTS=[
   {id:'basic',    name:'Basic Hiking Guide',   org:'HATEOA', cost:120, weeks:2, repReq:0,  prereq:null,    effect:'Official accreditation — clients trust you more.'},
