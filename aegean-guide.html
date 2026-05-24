@@ -310,7 +310,7 @@ async function doContinue(){
   S.owned=S.owned||['water']; S.certs=S.certs||[]; S.infra=S.infra||[];
   S.forecast=S.forecast||[]; ensureForecast();
   S.year=S.year||1; S.seasonDay=S.seasonDay||S.day||1; S.season=S.season||'summer';
-  S.yearLogs=S.yearLogs||[];
+  S.yearLogs=S.yearLogs||[]; if(S.phase3Ready==null) S.phase3Ready=false;
   S.stats=S.stats||{earned:0,fees:0,tips:0,wagesPaid:0,retainersPaid:0,tripsYou:0,tripsGuides:0,hires:0,bestRep:S.rep,yearsCompleted:0};
   ['fees','tips','retainersPaid','yearsCompleted'].forEach(k=>{ if(S.stats[k]==null) S.stats[k]=0; });
   S.yearStats=S.yearStats||freshYearStats();
@@ -410,12 +410,14 @@ function renderHUD(){
     $('hud').innerHTML =
       stat(dayLabel,dayValue)+stat('Cash','€'+S.cash, S.cash>=0?'var(--gold)':'var(--danger)')+
       stat('Repute',S.rep,repC,[S.rep,repC])+stat('Energy',S.energy,enC,[S.energy,enC]);
-    $('goal').innerHTML='Year '+S.year+' · Goal — reach <b>€1500</b> &amp; <b>70 reputation</b> to grow into a team · gear '+gearGlyph()+' · pack <b>'+S.packSize+'</b> slots';
+    $('goal').innerHTML='Year '+S.year+' · Milestone — <b>€1500</b> &amp; <b>70 reputation</b> to take on guides · gear '+gearGlyph()+' · pack <b>'+S.packSize+'</b> slots';
   } else {
     $('hud').innerHTML =
       stat(dayLabel,dayValue)+stat('Cash','€'+S.cash, S.cash>=0?'var(--gold)':'var(--danger)')+
       stat('Repute',S.rep,repC,[S.rep,repC])+stat('Team',1+S.guides.length);
-    $('goal').innerHTML='Year '+S.year+' · Goal — <b>€5000</b>, hold <b>70 reputation</b> &amp; a <b>team of 3</b> to ready Phase III · gear '+gearGlyph();
+    $('goal').innerHTML = S.phase3Ready
+      ? 'Year '+S.year+' · <b style="color:var(--sage)">Phase III ready</b> — water &amp; air will open in a future season. Build the legacy · gear '+gearGlyph()
+      : 'Year '+S.year+' · Milestone — <b>€5000</b>, hold <b>70 reputation</b> &amp; a <b>team of 3</b> to be ready for Phase III · gear '+gearGlyph();
   }
 }
 function stat(l,v,c,bar){return `<div class="stat"><span class="lab">${l}</span><span class="val" style="color:${c||'var(--ink)'}">${v}</span>${bar?`<div class="bar"><i style="width:${clamp(bar[0],0,100)}%;background:${bar[1]}"></i></div>`:''}</div>`;}
@@ -682,8 +684,8 @@ function startTrailhead(){
 }
 function resolveMeet(ci){
   const c=S.trip.meetChoices[ci], r=charm(c.run(S.trip.b,S));
-  if(r.rep) S.rep=clamp(S.rep+r.rep,0,100);
-  S.trip.repDelta=(S.trip.repDelta||0)+(r.rep||0);
+  const repApplied=applyRep(r.rep);
+  S.trip.repDelta=(S.trip.repDelta||0)+repApplied;
   if(r.energy) S.energy=clamp(S.energy+r.energy,0,100);
   if(r.payMul!=null) S.trip.payMul*=r.payMul;
   if(r.risk) S.trip.prepRisk+=r.risk;
@@ -705,8 +707,8 @@ function charm(r){ if(S.you&&S.you.perk==='charmer'){ if(r.rep&&r.rep>0) r.rep+=
 function resolveP(ci){
   const r=charm(S.trip.cur.choices[ci].run(S.trip.b,S));
   if(r.cash) S.cash+=r.cash;
-  if(r.rep) S.rep=clamp(S.rep+r.rep,0,100);
-  S.trip.repDelta=(S.trip.repDelta||0)+(r.rep||0);
+  const repApplied=applyRep(r.rep);
+  S.trip.repDelta=(S.trip.repDelta||0)+repApplied;
   if(r.energy) S.energy=clamp(S.energy+r.energy,0,100);
   if(r.gear) S.gear=clamp(S.gear+r.gear,0,100);
   if(r.payMul!=null) S.trip.payMul*=r.payMul;
@@ -793,10 +795,14 @@ function renderSeasonReport(){
   const roster = S.guides.length
     ? S.guides.map(g=>`<div class="row"><span class="l">${g.name} · ${g.spec}</span><span class="v">retainer −€250</span></div>`).join('')
     : '<div class="row"><span class="l">No guides on the books.</span><span class="v"></span></div>';
+  const milestone = (S.phase3UnlockedYear===S.year)
+    ? `<p style="background:rgba(174,189,126,0.12);border:1px solid rgba(174,189,126,0.4);border-radius:11px;padding:11px 13px;margin:4px 0 14px;color:var(--sage);font-style:italic">★ Milestone this year — your outfit is ready for <b>Phase III</b>. Water and air will open in a future season.</p>`
+    : '';
   setScene(`<div class="end">
     <div class="day-tag" style="color:var(--gold)">Year ${S.year} · Season closed</div>
     <h2>The books for the year</h2>
     <p class="verdict">October has run out. The Mediterranean cools, the cruise ships move on, and your office turns to planning for spring.</p>
+    ${milestone}
     <div class="ledger">
       <div class="row"><span class="l">Fees</span><span class="v pos">+€${ys.fees}</span></div>
       <div class="row"><span class="l">Tips</span><span class="v" style="color:var(--gold)">+€${ys.tips}</span></div>
@@ -1079,7 +1085,7 @@ function autoResolve(g,b,cov){
 function finalizeGuide(g,b,r){
   const fee=Math.round(b.pay*(r.payMul!=null?r.payMul:1)), tip=(r.tips||0), earned=fee+tip;
   S.cash+=earned+(r.cash||0);
-  if(r.rep) S.rep=clamp(S.rep+r.rep,0,100);
+  applyRep(r.rep);
   if(r.gear) S.gear=clamp(S.gear+r.gear,0,100);
   g.morale=clamp(g.morale+(r.morale||0),0,100);
   g.fatigue=clamp(g.fatigue+(22+b.diff*5),0,100);
@@ -1135,11 +1141,23 @@ function showDailyReport(w, quit){
 /* ---------------- endings ---------------- */
 function checkEnd(){
   if(S.cash<0) return endGame('Bankrupt','The books would not balance. One refund — or one wage bill — too many, and the company folds. Every great operator has a first failed season. Begin again, wiser.',false);
-  if(S.rep<=10) return endGame('A ruined name','Word travels fast on small islands. With trust this low, the bookings simply stop. Reputation is the only currency that compounds — guard it next time.',false);
+  if(S.rep<=5) return endGame('A ruined name','Word travels fast on small islands. With trust this low, the bookings simply stop. Reputation is the only currency that compounds — guard it next time.',false);
   if(S.phase===1 && S.cash>=1500 && S.rep>=70){ enterPhase2(); return true; }
-  if(S.phase===2 && S.cash>=5000 && S.rep>=70 && S.guides.length>=3)
-    return endGame('Phase II complete','A trusted name, a bank that holds, and a team that runs without you on every trail. You are ready to move beyond hiking — into the waters of Navarino Bay and the air over Taygetos. The Peloponnese is yours to claim.',true);
+  if(S.phase===2 && !S.phase3Ready && S.cash>=5000 && S.rep>=70 && S.guides.length>=3){
+    S.phase3Ready=true; S.phase3UnlockedYear=S.year;
+    note('Milestone — your outfit is ready for Phase III: water and air. The expansion will open in a future season.');
+    return false;
+  }
   return false;
+}
+/* Cap a single rep-loss event so one bad day cannot insta-ruin a season.
+   Apply this everywhere a runtime-computed rep delta is added — keeps the
+   event content honest while bounding the worst case. */
+function applyRep(delta){
+  if(delta==null||delta===0) return 0;
+  const capped = delta<0 ? Math.max(delta,-8) : delta;
+  S.rep=clamp(S.rep+capped,0,100);
+  return capped;
 }
 function endGame(title,verdict,win){
   clearSave();
