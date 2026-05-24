@@ -158,7 +158,7 @@
 <div class="wrap">
   <header class="appbar">
     <div class="brand">
-      <div class="kicker">A career in mountains, money, and minor catastrophes</div>
+      <div class="kicker">A career in the outdoors, money, and minor catastrophes</div>
       <h1>Goat Path <em>Tycoon</em></h1>
       <div class="sub" id="sub"></div>
     </div>
@@ -311,7 +311,7 @@ async function clearSave(){ try{ if(hasStorage()) await window.storage.delete(SA
 
 async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
 function renderTitle(save, loading){
-  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in mountains and minor catastrophes');
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in the outdoors and minor catastrophes');
   const canCont=!!save && !loading;
   const sub = loading?'Checking for a saved season…' : save?`Resume — Year ${save.S.year||1} · ${save.S.season==='winter'?'Winter planning':(save.S.seasonDay?summerDate(save.S.seasonDay):'Day '+save.S.day)}, ${save.S.phase===2?'a team to run':'building your name'}` : 'No saved season yet';
   setScene(`<div class="end" style="padding-top:4px">
@@ -320,7 +320,7 @@ function renderTitle(save, loading){
     <p class="verdict">You graduated from your guide course because nothing else worked out. The Peloponnese is now your problem.</p>
     <div class="choices">
       ${simpleOpt('▸','Continue', sub, !canCont, 'doContinue()')}
-      ${simpleOpt('✦','New game','Roll a new idiot to send into the mountains', false, 'renderProfile()')}
+      ${simpleOpt('✦','New game','Roll a new idiot to send into the wild', false, 'renderProfile()')}
     </div>
     ${hasStorage()?'':'<p style="font-size:12px;color:var(--ink-faint);font-style:italic;margin-top:14px">Saving isn\u2019t available in this viewer, so progress won\u2019t survive a reload — but the game plays in full.</p>'}
   </div>`);
@@ -344,7 +344,7 @@ async function doContinue(){
   renderHUD(); renderCurrent();
 }
 function renderProfile(){
-  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in mountains and minor catastrophes');
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in the outdoors and minor catastrophes');
   const kitChips=ITEM_ORDER.map(id=>{
     const on=pickedKit.includes(id), full=pickedKit.length>=3 && !on;
     return `<button class="opt ${on?'primary':''} ${full?'disabled':''}" onclick="${full?'':`toggleKit('${id}')`}">
@@ -983,7 +983,7 @@ function enterPhase2(){
   setScene(`<div class="end">
       <div class="day-tag" style="color:var(--sage)">A turning point · ${dayTag()}</div>
       <h2>Apparently you have a business now</h2>
-      <p class="verdict">Your name carries some weight now, which means people will pay you to send other people up mountains. You take on your first guide — <b>Maria</b> — and hand her a radio. She is, on paper, your responsibility now.</p>
+      <p class="verdict">Your name carries some weight now, which means people will pay you to send other people on adventures they barely understand. You take on your first guide — <b>Maria</b> — and hand her a radio. She is, on paper, your responsibility now.</p>
       <p style="font-size:15px">From here you plan each day for a team. Assign people to trips, to rest, or to training, and keep a <b>gear depot</b> stocked so nobody heads out short. When a guide hits trouble, they will radio in for your call. Wages fall due every day — so keep good people working, and try very hard not to lose anyone.</p>
       <div class="choices"><button class="opt primary" onclick="advanceDay();"><span class="mark">▸</span><span class="b-main">Open the office. God help you.</span></button></div>
     </div>`);
