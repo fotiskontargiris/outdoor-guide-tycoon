@@ -2,6 +2,8 @@
 
 > A career in the outdoors, money, and minor catastrophes.
 
+**Play it:** https://fotiskontargiris.github.io/outdoor-guide-tycoon/
+
 A text-driven outdoor-guide career game set in the Peloponnese. You graduated from your guide course because nothing else worked out. Now the Peloponnese is your problem. Start as a solo hiking guide in Messinia, build a team that does the trips so you don't have to, and grow into something that, on paper, could be called an outdoor company. Eventually water activities (kayak, SUP, sailing, snorkel) open across Navarino Bay and air activities (paragliding) over Taygetos.
 
 ## Status
@@ -22,7 +24,9 @@ See [CLAUDE.md](./CLAUDE.md) for the working notes and project bible.
 
 ## Run
 
-Open `index.html` in any modern browser. No build step. Save/continue uses `window.storage` when available (Claude.ai artifact context) and falls back to in‑memory otherwise.
+**Hosted:** https://fotiskontargiris.github.io/outdoor-guide-tycoon/ — works on phone or desktop, saves persist via `localStorage`.
+
+**Locally:** open `index.html` in any modern browser. No build step. Saves go to `localStorage` (or `window.storage` if running inside a Claude.ai artifact).
 
 ## Test (headless harness)
 
