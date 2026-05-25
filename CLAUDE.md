@@ -126,7 +126,7 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
 
 ## 7. Gotchas that have already bitten (do not regress)
 
-1. **No `localStorage`/`sessionStorage`** — they fail in Claude.ai artifacts. Use `window.storage` (async) with the `typeof window` guard.
+1. **Two‑backend storage.** Claude.ai artifacts only expose `window.storage` (async; throws on missing key); `localStorage`/`sessionStorage` can fail there. Plain phone/desktop browsers don't have `window.storage` but do have `localStorage`. The save layer (`saveGame`/`loadSave`/`clearSave`/`hasStorage`) uses `hasArtifactStorage()` → `window.storage` first, falling back to `hasLocalStorage()` → `localStorage`. Same `SAVE_KEY`, same JSON payload; only the backend differs. When you change the save layer, keep both paths working and keep them guarded so a throwing backend doesn't crash the page.
 2. **Lazy evaluation of dynamic text.** Any string in a data array that interpolates a *runtime* value (e.g. a guide's name) **must be a function**, not a bare template literal — bare ones evaluate at script load and throw `ReferenceError`. Example: `RADIO` choice labels are `(g) => \`Trust ${g.name}...\``, rendered via `typeof c.label === 'function' ? c.label(g,b) : c.label`.
 3. **Never put `</script>` inside a JS string** — the HTML parser would truncate the script. (`node --check` on the extracted file won't catch this; grep for it.)
 4. **HUD must refresh after stat changes** on sub-screens (shop/depot/certs) or values look stale ("my money didn't go down").

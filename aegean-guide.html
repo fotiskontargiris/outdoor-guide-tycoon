@@ -304,10 +304,37 @@ function seasonPhase(d){ if(d<=30) return 'early';        // April: shoulder, lo
                           if(d<=183) return 'late';        // September: still busy, shoulder begins
                           return 'closing'; }              // October: tail of the season
 
-function hasStorage(){ return typeof window!=='undefined' && !!window.storage; }
-async function saveGame(){ try{ if(hasStorage()) await window.storage.set(SAVE_KEY, JSON.stringify({S, g:gCounter}), false); }catch(e){} }
-async function loadSave(){ try{ if(hasStorage()){ const r=await window.storage.get(SAVE_KEY); if(r&&r.value) return JSON.parse(r.value); } }catch(e){} return null; }
-async function clearSave(){ try{ if(hasStorage()) await window.storage.delete(SAVE_KEY,false); }catch(e){} }
+/* Storage with two backends: window.storage when running as a Claude.ai
+   artifact, otherwise plain localStorage so the game saves when you open
+   the HTML on your phone or download it to a desktop browser. */
+function hasArtifactStorage(){ return typeof window!=='undefined' && !!window.storage; }
+function hasLocalStorage(){ try{ return typeof window!=='undefined' && !!window.localStorage; }catch(e){ return false; } }
+function hasStorage(){ return hasArtifactStorage() || hasLocalStorage(); }
+async function saveGame(){
+  const data = JSON.stringify({S, g:gCounter});
+  try{
+    if(hasArtifactStorage()) await window.storage.set(SAVE_KEY, data, false);
+    else if(hasLocalStorage()) window.localStorage.setItem(SAVE_KEY, data);
+  }catch(e){}
+}
+async function loadSave(){
+  try{
+    if(hasArtifactStorage()){
+      const r=await window.storage.get(SAVE_KEY);
+      if(r&&r.value) return JSON.parse(r.value);
+    } else if(hasLocalStorage()){
+      const v=window.localStorage.getItem(SAVE_KEY);
+      if(v) return JSON.parse(v);
+    }
+  }catch(e){}
+  return null;
+}
+async function clearSave(){
+  try{
+    if(hasArtifactStorage()) await window.storage.delete(SAVE_KEY,false);
+    else if(hasLocalStorage()) window.localStorage.removeItem(SAVE_KEY);
+  }catch(e){}
+}
 
 async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
 function renderTitle(save, loading){
