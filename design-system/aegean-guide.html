@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Outdoor Guide Life or no Life</title>
+<title>Messinia Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
   .appbar{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin:2px 0 14px; animation:rise .7s ease both;}
   .brand{text-align:left;}
   .kicker{font-family:'Spline Sans Mono',monospace; font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--terra); margin-bottom:3px;}
-  h1{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(26px,7vw,38px); margin:0; line-height:1.05; letter-spacing:-.01em;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(26px,7vw,38px); margin:0; line-height:1; letter-spacing:-.01em;}
   h1 em{font-style:italic; color:var(--gold);}
   .sub{font-style:italic; color:var(--ink-dim); font-size:12.5px; margin-top:5px;}
   .iconbtn{flex:none; width:44px; height:44px; border-radius:12px; border:1px solid var(--edge); background:var(--panel); color:var(--ink); font-size:22px; line-height:1; cursor:pointer; backdrop-filter:blur(4px); transition:border-color .2s, background .2s;}
@@ -158,8 +158,8 @@
 <div class="wrap">
   <header class="appbar">
     <div class="brand">
-      <div class="kicker">A career in the outdoors, money, and minor catastrophes</div>
-      <h1>Outdoor Guide Life<br><em>or no Life</em></h1>
+      <div class="kicker">Outdoor Activities Tycoon</div>
+      <h1>Messinia <em>Guide</em></h1>
       <div class="sub" id="sub"></div>
     </div>
     <button class="iconbtn" id="menuBtn" onclick="toggleMenu()" aria-label="Menu" style="display:none">≡</button>
@@ -209,11 +209,7 @@ function weatherChip(w, label, big){
 function paintForecast(){
   if(!S || !$('fcast')) return;
   ensureForecast();
-  const chips=S.forecast.slice(0,FORECAST_DAYS).map((w,i)=>{
-    const sd=S.seasonDay+i;
-    const label = i===0 ? 'Today' : (sd<=SUMMER_DAYS ? 'D'+sd : 'Off');
-    return weatherChip(w, label);
-  }).join('');
+  const chips=S.forecast.slice(0,FORECAST_DAYS).map((w,i)=>weatherChip(w, i===0?'Today':'D'+(S.day+i))).join('');
   $('fcast').innerHTML=`<div class="fcard" onclick="renderForecast()">
     <div class="fh"><span>Forecast · <b>${S.weather.short}</b> today</span><span>5-day ▸</span></div>
     <div class="frow">${chips}</div></div>`;
@@ -225,12 +221,12 @@ function renderForecast(){
     <div class="mate" style="align-items:flex-start">
       <div style="width:34px;height:34px;border-radius:50%;background:${w.col};box-shadow:0 0 12px ${w.col};flex:none;margin-top:2px"></div>
       <div class="who" style="margin-left:12px">
-        <div class="nm">${i===0?'Today':(S.seasonDay+i<=SUMMER_DAYS?summerDate(S.seasonDay+i):'After the season closes')} — <span style="color:${w.col}">${w.name}</span></div>
+        <div class="nm">${i===0?'Today':'Day '+(S.day+i)} — <span style="color:${w.col}">${w.name}</span></div>
         <div class="spec" style="margin:2px 0 4px">${w.note}</div>
         <div class="task">${weatherAdvice(w)}</div>
       </div>
     </div>`).join('');
-  setScene(`<div class="day-tag">${dayTag()} · Forecast</div>
+  setScene(`<div class="day-tag">Day ${S.day} · Forecast</div>
     <h2>The week ahead</h2>
     <p>This is how your guides read the days and plan their routes. Save the high, exposed lines for clear weather.</p>
     <div class="team">${cards}</div>
@@ -238,118 +234,49 @@ function renderForecast(){
 }
 
 const ROUTES=[
-  // Messinia — the home patch
   {name:'Polylimnio waterfalls', diff:1, base:60, tags:['river','forest']},
   {name:'Voidokilia & Navarino dunes', diff:1, base:58, tags:['coast','exposed']},
-  {name:'Ancient Messene & Mavromati', diff:2, base:95, tags:['exposed','long','historical']},
-  {name:'Neda Gorge & waterfalls', diff:2, base:110, tags:['river','gorge','remote']},
-  // Mani — the next peninsula east, immediate neighbour
-  {name:'Kardamyli & the old mule paths', diff:1, base:70, tags:['coast','forest']},
-  {name:'Vyros Gorge & stone bridges', diff:2, base:115, tags:['river','gorge','remote']},
-  {name:'Cape Tenaro lighthouse', diff:2, base:135, tags:['coast','exposed','long','remote']},
-  // Taygetos — the great range above
-  {name:'Mystras Byzantine path', diff:1, base:80, tags:['historical','forest']},
-  {name:'Saidona to the Taygetos refuge', diff:2, base:140, tags:['alpine','long']},
+  {name:'Ancient Messene & Mavromati', diff:2, base:95, tags:['exposed','long']},
+  {name:'Neda Gorge & waterfalls', diff:2, base:110, tags:['river','remote']},
+  {name:'Menalon Trail — Lousios Gorge', diff:3, base:170, tags:['forest','remote','long']},
   {name:'Taygetos summit (Profitis Ilias)', diff:3, base:205, tags:['alpine','exposed','hard']},
-  // Arcadia
-  {name:'Lousios monasteries loop', diff:2, base:125, tags:['historical','river','forest']},
-  {name:'Menalon Trail — Lousios Gorge', diff:3, base:170, tags:['forest','remote','long','gorge']},
-  {name:'Mount Lykaion (Zeus altar)', diff:3, base:175, tags:['alpine','exposed','historical']},
-  // Lakonia — Parnon range
-  {name:'Parnon black-fir forest', diff:2, base:120, tags:['forest','remote']},
-  {name:'Mount Parnon summit (Megali Tourla)', diff:3, base:195, tags:['alpine','exposed','hard','remote']},
-  // Achaia — the far north
-  {name:'Vouraikos Gorge from Kalavrita', diff:2, base:130, tags:['river','gorge','long']},
-  {name:'Mount Chelmos & the Styx waterfall', diff:3, base:220, tags:['alpine','remote','hard','river']},
 ];
 const CLIENTS=[
   {label:'a family with two young children', type:'family', g:4, pm:1.0},
   {label:'a coachload of cruise tourists', type:'tourist', g:6, pm:1.05},
   {label:'two thrill-seeking climbers', type:'thrill', g:2, pm:1.15},
   {label:'a corporate team-building group', type:'corporate', g:5, pm:1.55},
-  {label:'a school group on an excursion', type:'school', g:8, pm:0.85},
-  {label:'three photographers chasing the light', type:'photo', g:3, pm:1.20},
 ];
 const NAMES=['Maria','Nikos','Eleni','Yannis','Sofia','Dimitris','Katerina','Petros','Alexios','Thalia','Kostas','Ariadne'];
 const SPECS=['sure-footed on scree','calm in foul weather','wonderful with families','a born navigator','tireless on long days'];
 const BACKGROUNDS=[
-  {id:'medic',     name:'Mountain-rescue medic',  perk:'Injuries on the trail almost always end well.'},
-  {id:'charmer',   name:'Village charmer',         perk:'You earn extra reputation and bigger tips.'},
-  {id:'outfitter', name:'Seasoned outfitter',     perk:'Start with a 6-slot pack and €150 extra.'},
-  {id:'navigator', name:'Born of the mountains',   perk:'You read weather and lost paths far better.'},
-  {id:'shepherd',  name:'Old shepherd',            perk:'Forty years on these slopes. You read weather and ground like an old book.'},
-  {id:'captain',   name:'Retired ferry captain',   perk:'Tourists trust the uniform. Coastal trips pay sweeter. Start with €200 extra.'},
-  {id:'goatherd',  name:'Goat-tracker turned guide', perk:'Thirty years finding stray goats in the mist. You do not get lost.'},
-  {id:'animator',  name:'Ex-cruise-ship animator', perk:'Two thousand Zorba routines for Royal Caribbean. Tourist groups tip you double.'},
-  {id:'chef',      name:'Disgraced TV chef',       perk:'Your show ended after the incident with the goat. You can stretch snacks like nobody else.'},
-  {id:'busker',    name:'Bouzouki busker',         perk:'The tavernas kept calling the cops. Tips love you — but the instrument takes a slot in your pack.'},
+  {id:'medic',     name:'Mountain-rescue medic', perk:'Injuries on the trail almost always end well.'},
+  {id:'charmer',   name:'Village charmer',        perk:'You earn extra reputation and bigger tips.'},
+  {id:'outfitter', name:'Seasoned outfitter',    perk:'Start with a 6-slot pack and €150 extra.'},
+  {id:'navigator', name:'Born of the mountains',  perk:'You read weather and lost paths far better.'},
 ];
 
 /* ---------------- setup ---------------- */
-const SAVE_KEY='aegean_save_v6';
+const SAVE_KEY='aegean_save_v4';
 let pickedBg='medic', pendingName='', cachedSave=null, pickedKit=['water'];
 
-/* ---------------- calendar ----------------
-   A season is the Greek outdoor-tourism summer: April 1 → October 31, 214
-   days played day-by-day. Winter (Nov–March, 22 weeks) is one planning
-   screen — trainings and infra projects burn weeks; spring arrives when
-   the player commits. */
-const SUMMER_DAYS=214;
-const WINTER_WEEKS=22;
-const MONTHS=[['April',30],['May',31],['June',30],['July',31],['August',31],['September',30],['October',31]];
-function summerDate(d){ let r=d; for(const [n,k] of MONTHS){ if(r<=k) return `${n} ${r}`; r-=k; } return `October ${r}`; }
-function summerWeek(d){ return Math.floor((d-1)/7)+1; }
-function dayTag(){ return S.season==='winter' ? `Year ${S.year} · Winter` : `Year ${S.year} · ${summerDate(S.seasonDay)}`; }
-function seasonPhase(d){ if(d<=30) return 'early';        // April: shoulder, locals
-                          if(d<=92) return 'building';     // May-June: warming up
-                          if(d<=153) return 'peak';        // July-August: tourists everywhere
-                          if(d<=183) return 'late';        // September: still busy, shoulder begins
-                          return 'closing'; }              // October: tail of the season
-
-/* Storage with two backends: window.storage when running as a Claude.ai
-   artifact, otherwise plain localStorage so the game saves when you open
-   the HTML on your phone or download it to a desktop browser. */
-function hasArtifactStorage(){ return typeof window!=='undefined' && !!window.storage; }
-function hasLocalStorage(){ try{ return typeof window!=='undefined' && !!window.localStorage; }catch(e){ return false; } }
-function hasStorage(){ return hasArtifactStorage() || hasLocalStorage(); }
-async function saveGame(){
-  const data = JSON.stringify({S, g:gCounter});
-  try{
-    if(hasArtifactStorage()) await window.storage.set(SAVE_KEY, data, false);
-    else if(hasLocalStorage()) window.localStorage.setItem(SAVE_KEY, data);
-  }catch(e){}
-}
-async function loadSave(){
-  try{
-    if(hasArtifactStorage()){
-      const r=await window.storage.get(SAVE_KEY);
-      if(r&&r.value) return JSON.parse(r.value);
-    } else if(hasLocalStorage()){
-      const v=window.localStorage.getItem(SAVE_KEY);
-      if(v) return JSON.parse(v);
-    }
-  }catch(e){}
-  return null;
-}
-async function clearSave(){
-  try{
-    if(hasArtifactStorage()) await window.storage.delete(SAVE_KEY,false);
-    else if(hasLocalStorage()) window.localStorage.removeItem(SAVE_KEY);
-  }catch(e){}
-}
+function hasStorage(){ return typeof window!=='undefined' && !!window.storage; }
+async function saveGame(){ try{ if(hasStorage()) await window.storage.set(SAVE_KEY, JSON.stringify({S, g:gCounter}), false); }catch(e){} }
+async function loadSave(){ try{ if(hasStorage()){ const r=await window.storage.get(SAVE_KEY); if(r&&r.value) return JSON.parse(r.value); } }catch(e){} return null; }
+async function clearSave(){ try{ if(hasStorage()) await window.storage.delete(SAVE_KEY,false); }catch(e){} }
 
 async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
 function renderTitle(save, loading){
-  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in the outdoors and minor catastrophes');
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('Outdoor Activities Tycoon');
   const canCont=!!save && !loading;
-  const sub = loading?'Checking for a saved season…' : save?`Resume — Year ${save.S.year||1} · ${save.S.season==='winter'?'Winter planning':(save.S.seasonDay?summerDate(save.S.seasonDay):'Day '+save.S.day)}, ${save.S.phase===2?'a team to run':'building your name'}` : 'No saved season yet';
+  const sub = loading?'Checking for a saved season…' : save?`Resume — Day ${save.S.day}, ${save.S.phase===2?'a team to run':'building your name'}` : 'No saved season yet';
   setScene(`<div class="end" style="padding-top:4px">
-    <div class="day-tag" style="color:var(--gold)">Right then</div>
-    <h2>Start a season</h2>
-    <p class="verdict">You graduated from your guide course because nothing else worked out. The Peloponnese is now your problem.</p>
+    <div class="day-tag" style="color:var(--gold)">A guiding life</div>
+    <h2>Begin a season</h2>
+    <p class="verdict">Begin as one guide on the trails of Messinia and build the finest outdoor company in the Peloponnese.</p>
     <div class="choices">
       ${simpleOpt('▸','Continue', sub, !canCont, 'doContinue()')}
-      ${simpleOpt('✦','New game','Roll a new idiot to send into the wild', false, 'renderProfile()')}
+      ${simpleOpt('✦','New game','Build a new guide and start fresh', false, 'renderProfile()')}
     </div>
     ${hasStorage()?'':'<p style="font-size:12px;color:var(--ink-faint);font-style:italic;margin-top:14px">Saving isn\u2019t available in this viewer, so progress won\u2019t survive a reload — but the game plays in full.</p>'}
   </div>`);
@@ -359,29 +286,23 @@ async function doContinue(){
   if(!save||!save.S){ renderProfile(); return; }
   S=save.S; gCounter=save.g||0;
   S.depot=S.depot||{}; S.loadout=S.loadout||[]; S.packSize=S.packSize||4;
-  // Migrate old array-form owned (v5 and earlier) to the new tiered object form
-  if(Array.isArray(S.owned)){ const m={}; S.owned.forEach(id=>{ if(ITEM_LIFETIME[id]!=null) m[id]=freshOwned(id,'standard'); }); S.owned=m; }
-  S.owned=S.owned||{water:freshOwned('water','standard')};
-  S.certs=S.certs||[]; S.infra=S.infra||[];
+  S.owned=S.owned||['water']; S.certs=S.certs||[];
   S.forecast=S.forecast||[]; ensureForecast();
-  S.year=S.year||1; S.seasonDay=S.seasonDay||S.day||1; S.season=S.season||'summer';
-  S.yearLogs=S.yearLogs||[]; if(S.phase3Ready==null) S.phase3Ready=false;
-  S.stats=S.stats||{earned:0,fees:0,tips:0,wagesPaid:0,retainersPaid:0,tripsYou:0,tripsGuides:0,hires:0,bestRep:S.rep,yearsCompleted:0};
-  ['fees','tips','retainersPaid','yearsCompleted'].forEach(k=>{ if(S.stats[k]==null) S.stats[k]=0; });
-  S.yearStats=S.yearStats||freshYearStats();
-  setSub('Year '+S.year+' · '+(S.phase===2?'Phase II — you lead a team now.':'Phase I — '+((S.you&&S.you.name)||'your')+'\u2019s season continues.'));
+  S.stats=S.stats||{earned:0,fees:0,tips:0,wagesPaid:0,tripsYou:0,tripsGuides:0,hires:0,bestRep:S.rep};
+  if(S.stats.fees==null) S.stats.fees=0; if(S.stats.tips==null) S.stats.tips=0;
+  setSub(S.phase===2?'Phase II — you lead a team now.':'Phase I — '+((S.you&&S.you.name)||'your')+'\u2019s season continues.');
   renderHUD(); renderCurrent();
 }
 function renderProfile(){
-  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in the outdoors and minor catastrophes');
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('Outdoor Activities Tycoon');
   const kitChips=ITEM_ORDER.map(id=>{
     const on=pickedKit.includes(id), full=pickedKit.length>=3 && !on;
     return `<button class="opt ${on?'primary':''} ${full?'disabled':''}" onclick="${full?'':`toggleKit('${id}')`}">
       <span class="mark">${on?'✓':'+'}</span><span class="b-main">${ITEMS[id]}</span></button>`;
   }).join('');
-  setScene(`<div class="day-tag">First the paperwork</div>
-    <h2>Who is this idiot, exactly?</h2>
-    <p>Pick a name, a backstory, and whatever kit you managed to scrape together. You start with very little — some grit, some questionable life choices, and a head full of routes.</p>
+  setScene(`<div class="day-tag">Before you begin</div>
+    <h2>Build your guide</h2>
+    <p>Who are you, and what do you set out with? You begin with little — just grit and the kit you can afford.</p>
     <label style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Your name</label>
     <input id="gname" type="text" maxlength="18" value="${(pendingName||'').replace(/[<>"]/g,'')}" placeholder="e.g. Alexios"
       style="width:100%;margin:6px 0 16px;padding:12px 14px;border-radius:11px;border:1px solid var(--edge);background:rgba(0,0,0,.18);color:var(--ink);font-family:'Fraunces',serif;font-size:18px;outline:none">
@@ -392,7 +313,7 @@ function renderProfile(){
     </div>
     <label style="display:block;margin-top:18px;font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Starting kit — pick up to 3 (${pickedKit.length}/3)</label>
     <div class="choices" style="margin-top:8px">${kitChips}</div>
-    <div class="actionbar"><button class="go ${pickedKit.length?'':'disabled'}" onclick="${pickedKit.length?'beginNewGame()':''}" ${pickedKit.length?'':'style="opacity:.45;pointer-events:none"'}>Right, off you go</button></div>`);
+    <div class="actionbar"><button class="go ${pickedKit.length?'':'disabled'}" onclick="${pickedKit.length?'beginNewGame()':''}" ${pickedKit.length?'':'style="opacity:.45;pointer-events:none"'}>Begin your first season</button></div>`);
 }
 function toggleKit(id){ const el=$('gname'); if(el&&typeof el.value==='string') pendingName=el.value; const i=pickedKit.indexOf(id); if(i>=0)pickedKit.splice(i,1); else if(pickedKit.length<3)pickedKit.push(id); renderProfile(); }
 function pickBg(id){ const el=$('gname'); if(el && typeof el.value==='string') pendingName=el.value; pickedBg=id; renderProfile(); }
@@ -405,36 +326,25 @@ function beginNewGame(){
 function initGame(name, bgId, kit){
   gCounter=0;
   const bg=BACKGROUNDS.find(b=>b.id===bgId)||BACKGROUNDS[0];
-  const initialOwned={};
-  (kit||['water']).forEach(id=>{ if(ITEM_LIFETIME[id]!=null) initialOwned[id]=freshOwned(id,'standard'); });
-  S={ phase:1, day:1, year:1, seasonDay:1, season:'summer',
-      cash:200, rep:50, energy:100, gear:90, packSize:4, loadout:[], depot:{},
-      owned:initialOwned, certs:[], infra:[],
+  S={ phase:1, day:1, cash:200, rep:50, energy:100, gear:90, packSize:4, loadout:[], depot:{},
+      owned:(kit||['water']).slice(), certs:[],
       weather:null, bookings:[], history:[], forecast:[WEATHER[0]],
-      stats:{earned:0, fees:0, tips:0, wagesPaid:0, retainersPaid:0, tripsYou:0, tripsGuides:0, hires:0, bestRep:50, yearsCompleted:0},
-      yearStats:freshYearStats(),
+      stats:{earned:0, fees:0, tips:0, wagesPaid:0, tripsYou:0, tripsGuides:0, hires:0, bestRep:50},
       you:{id:'you', name:name, isYou:true, skill:90, morale:100, wage:0, spec:bg.name, perk:bg.id, task:null},
-      guides:[], queue:null, dayReports:[], trip:null, yearLogs:[] };
-  if(bg.id==='outfitter'){ S.packSize=6; S.cash+=150; ['firstaid','map'].forEach(id=>{ if(!ownsItem(id)) S.owned[id]=freshOwned(id,'standard'); }); }
-  if(bg.id==='captain'){ S.cash+=200; }
-  if(bg.id==='busker'){ S.packSize=3; }
+      guides:[], queue:null, dayReports:[], trip:null };
+  if(bg.id==='outfitter'){ S.packSize=6; S.cash+=150; ['firstaid','map'].forEach(id=>{ if(!S.owned.includes(id)) S.owned.push(id); }); }
   ensureForecast();
-  setSub('Year 1 · Phase I — '+name+', a guide making a name in Messinia.');
+  setSub('Phase I — '+name+', a guide making a name in Messinia.');
   startDay();
 }
-function freshYearStats(){ return {fees:0, tips:0, wages:0, retainers:0, certs:0, infra:0, tripsYou:0, tripsGuides:0, bestRep:0, worstRep:100, startCash:0, openingRep:0}; }
 async function goMenu(){ const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
 function people(){ return [S.you, ...S.guides]; }
 function personById(id){ return id==='you'?S.you:S.guides.find(g=>g.id===id); }
 function mkBookings(n){
-  // Website infra: one extra booking choice each morning, and a slight
-  // bias toward better-paying clients (re-roll the lowest-pm pick once).
-  if(hasInfra('website')) n += 1;
   const pool=[...ROUTES], out=[];
   for(let i=0;i<n;i++){
     const r=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
-    let c=rnd(CLIENTS);
-    if(hasInfra('website') && c.pm < 1.0 && chance(0.5)) c=rnd(CLIENTS);
+    const c=rnd(CLIENTS);
     const pay=Math.round(r.base*c.pm*(0.85+Math.random()*0.4));
     out.push({route:r.name, diff:r.diff, client:c.label, ctype:c.type, group:c.g, pay, tags:r.tags,
               cancelled:(S.weather.storm && r.diff===3)});
@@ -449,49 +359,25 @@ function startDay(){
   S.bookings = mkBookings(S.phase===1?3:4);
   renderHUD(); renderCurrent(); saveGame();
 }
-function advanceDay(){
-  S.day++; S.seasonDay++;
-  if(S.forecast&&S.forecast.length) S.forecast.shift(); ensureForecast();
-  if(S.season==='summer' && S.seasonDay>SUMMER_DAYS){ enterOffSeason(); return; }
-  startDay();
-}
-function renderCurrent(){
-  if(S.season==='winter'){ renderOffSeason(); return; }
-  if(S.phase===1) renderMorning(); else renderAssign();
-}
+function advanceDay(){ S.day++; if(S.forecast&&S.forecast.length) S.forecast.shift(); ensureForecast(); startDay(); }
+function renderCurrent(){ if(S.phase===1) renderMorning(); else renderAssign(); }
 
 /* ---------------- HUD ---------------- */
-function repTier(rep){
-  if(rep>=85) return {name:'an institution',          col:'var(--gold)'};
-  if(rep>=70) return {name:'a region-wide name',      col:'var(--sage)'};
-  if(rep>=55) return {name:'locally known',           col:'var(--sage)'};
-  if(rep>=40) return {name:'word is getting around',  col:'var(--olive)'};
-  if(rep>=20) return {name:'a few good reviews',      col:'var(--ink-dim)'};
-  if(rep>=10) return {name:'a nobody, mostly',        col:'var(--ink-faint)'};
-  return       {name:'a name to avoid',                col:'var(--danger)'};
-}
 function renderHUD(){
   showMenuBtn(true);
   if(S.stats) S.stats.bestRep=Math.max(S.stats.bestRep||0,S.rep);
-  if(S.yearStats){ S.yearStats.bestRep=Math.max(S.yearStats.bestRep||0,S.rep); S.yearStats.worstRep=Math.min(S.yearStats.worstRep||100,S.rep); }
   const repC = S.rep>=70?'var(--sage)':S.rep>=35?'var(--gold)':'var(--danger)';
-  const dayLabel = S.season==='winter' ? 'Winter' : ('Y'+S.year);
-  const dayValue = S.season==='winter' ? 'plan' : summerDate(S.seasonDay);
-  const tier = repTier(S.rep);
-  const tierLine = `<div style="font-style:italic;color:var(--ink-faint);font-size:11.5px;margin:-4px 0 8px;text-align:center">You are <span style="color:${tier.col};font-style:normal">${tier.name}</span>.</div>`;
   if(S.phase===1){
     const enC=S.energy>=45?'var(--sea)':S.energy>=20?'var(--gold)':'var(--danger)';
     $('hud').innerHTML =
-      stat(dayLabel,dayValue)+stat('Cash','€'+S.cash, S.cash>=0?'var(--gold)':'var(--danger)')+
+      stat('Day',S.day)+stat('Cash','€'+S.cash, S.cash>=0?'var(--gold)':'var(--danger)')+
       stat('Repute',S.rep,repC,[S.rep,repC])+stat('Energy',S.energy,enC,[S.energy,enC]);
-    $('goal').innerHTML = tierLine + 'Year '+S.year+' · Milestone — <b>€1500</b> &amp; <b>70 reputation</b> to take on guides · gear '+gearGlyph()+' · pack <b>'+S.packSize+'</b> slots';
+    $('goal').innerHTML='Goal — reach <b>€1500</b> &amp; <b>70 reputation</b> · gear '+gearGlyph()+' · pack <b>'+S.packSize+'</b> slots';
   } else {
     $('hud').innerHTML =
-      stat(dayLabel,dayValue)+stat('Cash','€'+S.cash, S.cash>=0?'var(--gold)':'var(--danger)')+
+      stat('Day',S.day)+stat('Cash','€'+S.cash, S.cash>=0?'var(--gold)':'var(--danger)')+
       stat('Repute',S.rep,repC,[S.rep,repC])+stat('Team',1+S.guides.length);
-    $('goal').innerHTML = tierLine + (S.phase3Ready
-      ? 'Year '+S.year+' · <b style="color:var(--sage)">Phase III ready</b> — water &amp; air will open in a future season. Build the legacy · gear '+gearGlyph()
-      : 'Year '+S.year+' · Milestone — <b>€5000</b>, hold <b>70 reputation</b> &amp; a <b>team of 3</b> to be ready for Phase III · gear '+gearGlyph());
+    $('goal').innerHTML='Goal — <b>€5000</b>, hold <b>70 reputation</b> &amp; a <b>team of 3</b> to expand into new activities (Phase III) · gear '+gearGlyph();
   }
 }
 function stat(l,v,c,bar){return `<div class="stat"><span class="lab">${l}</span><span class="val" style="color:${c||'var(--ink)'}">${v}</span>${bar?`<div class="bar"><i style="width:${clamp(bar[0],0,100)}%;background:${bar[1]}"></i></div>`:''}</div>`;}
@@ -503,10 +389,10 @@ function closeMenu(){ $('drawer').classList.remove('open'); }
 function openMenu(){
   $('sheet').innerHTML=`<div class="grip"></div><div class="sh">Menu</div>
     <div class="choices">
-      ${simpleOpt('▦','Season summary','How rich, how famous, how doomed', false, 'closeMenu(); renderSummary()')}
-      ${simpleOpt('☼','5-day forecast','What the sky has lined up for you', false, 'closeMenu(); renderForecast()')}
-      ${simpleOpt('❧','Logbook','Every decision, lovingly recorded', false, 'closeMenu(); renderLog()')}
-      ${simpleOpt('⌂','Main menu','Save and slink back to the title', false, 'closeMenu(); goMenu()')}
+      ${simpleOpt('▦','Season summary','Earnings, record and standing', false, 'closeMenu(); renderSummary()')}
+      ${simpleOpt('☼','5-day forecast','How the week ahead looks', false, 'closeMenu(); renderForecast()')}
+      ${simpleOpt('❧','Logbook','Everything that has happened so far', false, 'closeMenu(); renderLog()')}
+      ${simpleOpt('⌂','Main menu','Save and return to the title', false, 'closeMenu(); goMenu()')}
       ${simpleOpt('✕','Close', '', false, 'closeMenu()')}
     </div>`;
   $('drawer').classList.add('open');
@@ -534,7 +420,7 @@ function renderLog(){
   } else {
     items='<div class="row"><span class="l">Nothing logged yet.</span><span class="v"></span></div>';
   }
-  setScene(`<div class="day-tag">${dayTag()} · Logbook</div><h2>The logbook</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · Logbook</div><h2>The logbook</h2>
     <p>Every day's doings, most recent first.${total?` <span style="color:var(--ink-faint);font-style:italic">${total} ${total===1?'entry':'entries'}</span>`:''}</p>
     <div class="ledger" style="max-height:none">${items}</div>
     <div class="actionbar"><button class="go" onclick="${back}">Back to the day</button></div>`);
@@ -554,10 +440,10 @@ function renderMorning(){
     return optBooking(b, dis, reason, `pickBooking(${i})`);
   }).join('');
   setScene(`
-    <div class="day-tag">${dayTag()} · Dawn</div>
+    <div class="day-tag">Day ${S.day} · Dawn</div>
     <p class="weather">${w.name}<small>${w.note}</small></p>
-    <h2>Right, who is paying you today?</h2>
-    <p>Pick a trip — or, below, sort yourself out instead.</p>
+    <h2>Who will you take out today?</h2>
+    <p>Pick a trip to guide — or, below, build yourself up.</p>
     <div class="choices">${cards}</div>
     <div class="actionbar"><div class="lab">Between trips</div>
       <div class="choices">
@@ -585,87 +471,46 @@ function buyPack(){
 function openShop(){
   renderHUD();
   const rows=ITEM_ORDER.map(id=>{
-    const curTier=ownedTier(id), curTrips=ownedTrips(id);
-    const tierBtns=ITEM_TIERS.map(tier=>{
-      const cost=itemCost(id,tier), life=itemLifetime(id,tier), can=S.cash>=cost;
-      const isCur = curTier===tier;
-      // Highlight the current tier (refill) or, if unowned, the standard tier as the default recommendation
-      const highlight = isCur || (!curTier && tier==='standard');
-      const cls = highlight ? 'primary' : (can?'':'disabled');
-      const label = isCur ? `${cap(tier)} · refill` : (curTier?`Switch to ${tier}`:cap(tier));
-      const click = can ? `buyItem('${id}','${tier}')` : '';
-      return `<button class="opt ${cls}" onclick="${click}" style="flex:1;padding:9px 8px;font-size:13px">
-        <span class="b-main" style="font-size:13px">${label}<span class="b-sub" style="font-size:11px">€${cost} · ${life} trip${life===1?'':'s'}</span></span></button>`;
-    }).join('');
-    const head = curTier
-      ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${curTrips<=1?'var(--danger)':'var(--ink-faint)'}">owned ${curTier} · ${curTrips} trip${curTrips===1?'':'s'} left</span></div>`
-      : `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint)">not owned</span></div>`;
-    return `<div style="background:var(--panel2);border:1px solid var(--edge);border-radius:11px;padding:10px 11px;margin-bottom:8px">
-      ${head}<div style="display:flex;gap:6px">${tierBtns}</div></div>`;
+    const owned=S.owned.includes(id), cost=ITEM_COST[id], can=S.cash>=cost;
+    if(owned) return `<button class="opt disabled" style="opacity:.55"><span class="mark">✓</span><span class="b-main">${ITEMS[id]}<span class="b-sub">Owned</span></span></button>`;
+    return `<button class="opt ${can?'':'disabled'}" onclick="${can?`buyItem('${id}')`:''}"><span class="mark">+</span><span class="b-main">${ITEMS[id]}<span class="b-sub">€${cost}${can?'':' — need more cash'}</span></span></button>`;
   }).join('');
-  setScene(`<div class="day-tag">${dayTag()} · Equipment shop</div>
-    <h2>Geo's outdoor emporium</h2>
-    <p>Three qualities for everything. <b>Pro</b> kit is dearer but lasts far longer — your boots, your bottles, all of it. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
-    ${rows}
-    <div class="choices" style="margin-top:6px">
+  setScene(`<div class="day-tag">Day ${S.day} · Equipment shop</div>
+    <h2>The outdoor store</h2>
+    <p>Build your kit piece by piece — owned gear is what you can pack. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
+    <div class="choices">${rows}
       ${packUpgradeOpt()}
       ${simpleOpt('⚒','Service your equipment', S.gear>=100?'Kit is in top shape':S.cash<40?'Need €40':'€40 · +35% gear condition', (S.gear>=100||S.cash<40), 'serviceGear()')}
     </div>
     <div class="actionbar"><button class="go" onclick="renderMorning()">Done — back to the day</button></div>`);
 }
-function buyItem(id, tier){
-  tier=tier||'standard'; const c=itemCost(id,tier);
-  if(S.cash<c) return;
-  S.cash-=c; S.owned[id]=freshOwned(id,tier);
-  note(`Bought ${ITEMS[id].replace('&amp;','&')} (${tier}, −€${c}).`); saveGame(); openShop();
-}
+function buyItem(id){ const c=ITEM_COST[id]; if(S.cash<c||S.owned.includes(id)) return; S.cash-=c; S.owned.push(id); note(`Bought ${ITEMS[id].replace('&amp;','&')} (−€${c}).`); saveGame(); openShop(); }
 function serviceGear(){ if(S.cash<40||S.gear>=100) return; S.cash-=40; S.gear=clamp(S.gear+35,0,100); note('Serviced your equipment (−€40).'); saveGame(); openShop(); }
 function openCerts(){
   renderHUD();
   const rows=CERTS.map(c=>{
-    const have=hasCert(c.id), prereqOk=!c.prereq||hasCert(c.prereq), repOk=S.rep>=c.repReq;
+    const have=hasCert(c.id), prereqOk=!c.prereq||hasCert(c.prereq), repOk=S.rep>=c.repReq, cashOk=S.cash>=c.cost;
+    const can=!have&&prereqOk&&repOk&&cashOk;
     let sub;
     if(have) sub='Certified';
     else if(!prereqOk) sub='First earn: '+certName(c.prereq);
-    else if(!repOk) sub=`Needs reputation ${c.repReq} to qualify`;
-    else sub=`€${c.cost} · ${c.weeks||1} winter week${(c.weeks||1)===1?'':'s'}`;
-    return `<div class="opt ${have?'':'disabled'}" style="cursor:default">
-      <span class="mark">${have?'✓':'·'}</span><span class="b-main">${c.name} <span style="color:var(--ink-faint);font-size:11px">· ${c.org}</span><span class="b-sub">${c.effect} — ${sub}</span></span></div>`;
+    else if(!repOk) sub=`Needs reputation ${c.repReq}`;
+    else if(!cashOk) sub=`Need €${c.cost}`;
+    else sub=`€${c.cost} · a one-day course`;
+    return `<button class="opt ${have?'':can?'primary':'disabled'}" onclick="${can?`enrollCert('${c.id}')`:''}" ${have?'style="opacity:.6"':''}>
+      <span class="mark">${have?'✓':'+'}</span><span class="b-main">${c.name} <span style="color:var(--ink-faint);font-size:11px">· ${c.org}</span><span class="b-sub">${c.effect} — ${sub}</span></span></button>`;
   }).join('');
-  setScene(`<div class="day-tag">${dayTag()} · Certifications</div>
+  setScene(`<div class="day-tag">Day ${S.day} · Certifications</div>
     <h2>HATEOA courses</h2>
-    <p>The Hellenic hiking federation runs its courses through the winter months. The season is upon you — make a name now, sign up for school come November. Cash <b style="color:var(--gold)">€${S.cash}</b> · reputation ${S.rep}.</p>
+    <p>The Hellenic hiking federation. Each course costs a fee and a full day, and earns a permanent qualification. Cash <b style="color:var(--gold)">€${S.cash}</b> · reputation ${S.rep}.</p>
     <div class="choices">${rows}</div>
     <div class="actionbar"><button class="go" onclick="renderMorning()">Back to the day</button></div>`);
 }
-function enrollCertSchool(id){
+function enrollCert(id){
   const c=CERTS.find(x=>x.id===id); if(!c||hasCert(id)) return;
-  if(c.prereq&&!hasCert(c.prereq)) return;
-  if(S.bestRepEverThisYear==null) S.bestRepEverThisYear = S.yearStats?.bestRep||S.rep;
-  if(S.bestRepEverThisYear<c.repReq) return;
-  const weeksLeft=WINTER_WEEKS-(S.winterWeeksUsed||0);
-  if(S.cash<c.cost || c.weeks>weeksLeft) return;
-  S.cash-=c.cost; S.certs.push(id);
-  S.winterWeeksUsed=(S.winterWeeksUsed||0)+c.weeks;
-  if(S.yearStats) S.yearStats.certs++;
-  note(`Certified — ${c.name} (HATEOA, −€${c.cost}, ${c.weeks} weeks).`);
-  renderOffSeason();
-}
-function enrollInfra(id){
-  const it=INFRA.find(x=>x.id===id); if(!it||hasInfra(id)) return;
-  const weeksLeft=WINTER_WEEKS-(S.winterWeeksUsed||0);
-  if(S.cash<it.cost || it.weeks>weeksLeft) return;
-  S.cash-=it.cost; S.infra.push(id);
-  S.winterWeeksUsed=(S.winterWeeksUsed||0)+it.weeks;
-  if(S.yearStats) S.yearStats.infra++;
-  note(`Set up — ${it.name} (−€${it.cost}, ${it.weeks} weeks).`);
-  renderOffSeason();
-}
-function releaseGuide(id){
-  const g=S.guides.find(x=>x.id===id); if(!g) return;
-  S.guides=S.guides.filter(x=>x.id!==id);
-  note(`Let ${g.name} go for the winter — they will need to find work elsewhere.`);
-  renderOffSeason();
+  if(S.cash<c.cost || (c.prereq&&!hasCert(c.prereq)) || S.rep<c.repReq) return;
+  S.cash-=c.cost; S.certs.push(id); note(`Certified — ${c.name} (HATEOA, −€${c.cost}).`);
+  advanceDay();
 }
 function optBooking(b, dis, reason, onclick){
   return `<button class="opt ${dis?'disabled':''}" onclick="${dis?'':onclick}">
@@ -697,31 +542,27 @@ function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 function recommended(b,w){
   const r=new Set(['water']); const t=b.tags||[];
   if(w.heat||t.includes('exposed')) r.add('sunscreen');
-  if(t.includes('river')||t.includes('forest')||t.includes('gorge')) r.add('repellent');
-  if(b.diff>=2||t.includes('rock')||t.includes('alpine')||t.includes('gorge')) r.add('poles');
+  if(t.includes('river')||t.includes('forest')) r.add('repellent');
+  if(b.diff>=2||t.includes('rock')||t.includes('alpine')) r.add('poles');
   if(w.mist||w.storm||t.includes('remote')) r.add('map');
   if(w.mist||w.storm||w.wind||t.includes('alpine')) r.add('shell');
   if(b.diff>=2||t.includes('long')) r.add('snacks');
   if(b.diff>=3||t.includes('remote')) r.add('firstaid');
-  if(t.includes('long')&&t.includes('alpine')) r.add('lamp');
   return r;
 }
 function conditionsLine(b,w){
   const t=b.tags||[], bits=[];
-  if(t.includes('gorge')) bits.push('a deep gorge with cool air and slippery rock');
-  else if(t.includes('river')) bits.push('a river path where the bugs swarm');
+  if(t.includes('river')) bits.push('a river gorge where the bugs swarm');
   else if(t.includes('forest')) bits.push('shaded forest');
   else if(t.includes('coast')) bits.push('open coast and dunes');
   else if(t.includes('rock')) bits.push('exposed rock');
   else if(t.includes('alpine')) bits.push('high alpine ground');
-  if(t.includes('historical')) bits.push('ancient stones underfoot');
   if(w.heat) bits.push('a fierce sun');
   if(w.mist) bits.push('low cloud and damp footing');
   if(w.wind) bits.push('a snapping wind');
   if(w.storm) bits.push('a storm threatening');
   if(t.includes('long')||b.diff>=3) bits.push('a long day out');
   if(b.diff>=2 && !t.includes('rock')) bits.push('steep, rough ground');
-  if(t.includes('remote')) bits.push('miles from the nearest road');
   return bits.length ? cap(bits.join(', '))+'.' : 'A gentle outing in fair weather.';
 }
 function prepScore(){
@@ -736,7 +577,7 @@ function beginTrip(b){
 }
 function showDepartBrief(b){
   const need=[...recommended(b,S.weather)], miss=need.filter(id=>!S.loadout.includes(id));
-  setScene(`<div class="day-tag">${dayTag()} · ${b.route} · kit from the depot</div>
+  setScene(`<div class="day-tag">Day ${S.day} · ${b.route} · kit from the depot</div>
     <h2>You load your pack</h2>
     <p>From the depot you take: <b>${S.loadout.length?S.loadout.map(id=>ITEMS[id]).join(', '):'nothing — the depot was bare'}</b>.</p>
     ${miss.length?`<p style="color:var(--danger);font-style:italic">Short for the conditions: ${miss.map(id=>ITEMS[id]).join(', ')}.</p>`:'<p style="color:var(--sage);font-style:italic">Well equipped for the day ahead.</p>'}
@@ -744,23 +585,17 @@ function showDepartBrief(b){
 }
 function renderPacking(){
   const b=S.trip.b, w=S.weather, full=S.loadout.length>=S.packSize;
-  const ownedItems=ITEM_ORDER.filter(id=>ownsItem(id));
+  const ownedItems=ITEM_ORDER.filter(id=>S.owned.includes(id));
   const chips=ownedItems.map(id=>{
     const on=S.loadout.includes(id), dis=!on&&full;
-    const trips=ownedTrips(id), tier=ownedTier(id);
-    const tripCol = trips<=1 ? 'var(--danger)' : (trips<=3 ? 'var(--gold)' : 'var(--ink-faint)');
     return `<button class="opt ${on?'primary':''} ${dis?'disabled':''}" onclick="${dis?'':`toggleItem('${id}')`}">
-      <span class="mark">${on?'✓':'+'}</span>
-      <span class="b-main" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-        <span>${ITEMS[id]}</span>
-        <span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${tripCol}">${tier} · ${trips} trip${trips===1?'':'s'}</span>
-      </span></button>`;
+      <span class="mark">${on?'✓':'+'}</span><span class="b-main">${ITEMS[id]}</span></button>`;
   }).join('');
-  const locked=ITEM_ORDER.filter(id=>!ownsItem(id));
-  const lockedHTML = locked.length?`<div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:10px">Not in your kit: ${locked.map(id=>ITEMS[id]).join(', ')} — buy at the shop.</div>`:'';
+  const locked=ITEM_ORDER.filter(id=>!S.owned.includes(id));
+  const lockedHTML = locked.length?`<div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:10px">Not yet owned: ${locked.map(id=>ITEMS[id]).join(', ')} — buy at the shop.</div>`:'';
   const emptyHTML = ownedItems.length?'':`<div style="font-style:italic;color:var(--ink-dim)">You own no kit yet — you'll head out with empty hands. Visit the shop to change that.</div>`;
   const spare=S.packSize-S.loadout.length;
-  setScene(`<div class="day-tag">${dayTag()} · Pack your bag</div>
+  setScene(`<div class="day-tag">Day ${S.day} · Pack your bag</div>
     <h2>${b.route}</h2>
     <p>Word of the trail: <i>${conditionsLine(b,w)}</i></p>
     <p style="font-family:'Spline Sans Mono',monospace;font-size:13px;color:var(--sea)">Backpack — ${S.loadout.length}/${S.packSize} slots filled</p>
@@ -781,20 +616,20 @@ function startTrailhead(){
   const ev=wpick(pool); S.trip.meet=ev;
   const choices=ev.choices.filter(c=>!c.need || S.loadout.includes(c.need));
   S.trip.meetChoices=choices;
-  setScene(`<div class="day-tag">${dayTag()} · ${b.route} · the trailhead</div>
+  setScene(`<div class="day-tag">Day ${S.day} · ${b.route} · the trailhead</div>
     <h2>${ev.title}</h2><p>${ev.text(b,S)}</p>
     <div class="choices">${choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveMeet(${i})">
       <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`);
 }
 function resolveMeet(ci){
   const c=S.trip.meetChoices[ci], r=charm(c.run(S.trip.b,S));
-  const repApplied=applyRep(r.rep);
-  S.trip.repDelta=(S.trip.repDelta||0)+repApplied;
+  if(r.rep) S.rep=clamp(S.rep+r.rep,0,100);
+  S.trip.repDelta=(S.trip.repDelta||0)+(r.rep||0);
   if(r.energy) S.energy=clamp(S.energy+r.energy,0,100);
   if(r.payMul!=null) S.trip.payMul*=r.payMul;
   if(r.risk) S.trip.prepRisk+=r.risk;
   S.trip.logs.push(r.line);
-  setScene(`<div class="day-tag">${dayTag()} · ${S.trip.b.route}</div><h2>On the trail at last</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · ${S.trip.b.route}</div><h2>On the trail at last</h2>
     <div class="res"><p class="line">${r.line}</p><div>${deltaHTML(r)}</div></div>
     <div class="choices"><button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Walk on</span></button></div>`);
 }
@@ -802,22 +637,17 @@ function eligible(){ const b=S.trip.b,w=S.weather; return EVENTS.filter(e=>e.whe
 function wpick(list){ let t=list.reduce((s,e)=>s+e.w,0),r=Math.random()*t; for(const e of list){ if((r-=e.w)<=0) return e; } return list[0]; }
 function runEvent(){
   const ev=wpick(eligible()); S.trip.cur=ev; const b=S.trip.b;
-  setScene(`<div class="day-tag">${dayTag()} · ${b.route}</div>
+  setScene(`<div class="day-tag">Day ${S.day} · ${b.route}</div>
     <h2>${ev.title}</h2><p>${ev.text(b,S)}</p>
     <div class="choices">${ev.choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveP(${i})">
       <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`);
 }
-function perkIs(...types){ return S.you && types.includes(S.you.perk); }
-function charm(r){
-  if(perkIs('charmer')){ if(r.rep&&r.rep>0) r.rep+=2; if(r.tips) r.tips=Math.round(r.tips*1.25); }
-  if(perkIs('busker') && r.tips) r.tips=Math.round(r.tips*1.3);
-  return r;
-}
+function charm(r){ if(S.you&&S.you.perk==='charmer'){ if(r.rep&&r.rep>0) r.rep+=2; if(r.tips) r.tips=Math.round(r.tips*1.25); } return r; }
 function resolveP(ci){
   const r=charm(S.trip.cur.choices[ci].run(S.trip.b,S));
   if(r.cash) S.cash+=r.cash;
-  const repApplied=applyRep(r.rep);
-  S.trip.repDelta=(S.trip.repDelta||0)+repApplied;
+  if(r.rep) S.rep=clamp(S.rep+r.rep,0,100);
+  S.trip.repDelta=(S.trip.repDelta||0)+(r.rep||0);
   if(r.energy) S.energy=clamp(S.energy+r.energy,0,100);
   if(r.gear) S.gear=clamp(S.gear+r.gear,0,100);
   if(r.payMul!=null) S.trip.payMul*=r.payMul;
@@ -825,7 +655,7 @@ function resolveP(ci){
   S.trip.logs.push(...r.lines); S.trip.done++;
   if(S.trip.done<S.trip.total){
     renderHUD();
-    setScene(`<div class="day-tag">${dayTag()} · ${S.trip.b.route}</div><h2>The trail goes on…</h2>
+    setScene(`<div class="day-tag">Day ${S.day} · ${S.trip.b.route}</div><h2>The trail goes on…</h2>
       <div class="res">${S.trip.logs.map(l=>`<p class="line">${l}</p>`).join('')}<div>${deltaHTML(r)}</div></div>
       <div class="choices"><button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Press on</span></button></div>`);
   } else finishPlayerTrip();
@@ -852,39 +682,17 @@ function finishPlayerTrip(){
     else { S.rep=clamp(S.rep-4,0,100); t.repDelta=(t.repDelta||0)-4; prepLine=`You were caught under-equipped${ps.miss.length?` — no ${ITEMS[ps.miss[0]].toLowerCase().replace('&amp;','&')}`:''}, and it showed.`; }
   }
   if(t.prepRisk && chance(Math.min(t.prepRisk,0.8))){ S.rep=clamp(S.rep-5,0,100); t.repDelta=(t.repDelta||0)-5; S.cash-=20; prepLine+=' A problem you waved off at the trailhead came back to bite (−€20).'; }
-  // Background perks at trip completion:
-  //   animator — tourist groups tip double (cruise-show charm)
-  //   captain  — coastal routes pay a touch more, locals respect the uniform
-  if(perkIs('animator') && b.ctype==='tourist') t.tips=Math.round(t.tips*1.5);
-  let coastBonus=0;
-  if(perkIs('captain') && (b.tags||[]).includes('coast')){ coastBonus=12; applyRep(2); t.repDelta=(t.repDelta||0)+2; }
-  let hotelBonus=0;
-  if(hasInfra('hotelDeal') && (b.ctype==='tourist' || b.ctype==='family')) hotelBonus=20;
-  const fee=Math.round(b.pay*t.payMul)+(hasInfra('pickup')?10:0)+coastBonus+hotelBonus, tip=t.tips, earned=fee+tip;
+  const fee=Math.round(b.pay*t.payMul), tip=t.tips, earned=fee+tip;
   S.cash+=earned;
   S.energy=clamp(S.energy-(b.diff===3?36:b.diff===2?28:20)-(S.weather.drain||0),0,100);
   S.gear=clamp(S.gear-(6+b.diff*3),0,100);
   note(`${b.route}: fee €${fee}${tip?` + €${tip} tips`:''}.`);
   if(S.stats){ S.stats.earned+=earned; S.stats.fees+=fee; S.stats.tips+=tip; S.stats.tripsYou++; }
-  if(S.yearStats){ S.yearStats.fees+=fee; S.yearStats.tips+=tip; S.yearStats.tripsYou++; }
-  // Wear down each packed item by one trip; chef makes snacks last half-rate.
-  const broken=[];
-  (S.loadout||[]).forEach(id=>{
-    if(!S.owned[id]) return;
-    const skipWear = perkIs('chef') && id==='snacks' && chance(0.5);
-    if(!skipWear) S.owned[id].trips--;
-    if(S.owned[id].trips<=0){ broken.push({id, tier:S.owned[id].tier}); delete S.owned[id]; }
-  });
-  if(broken.length){
-    const names=broken.map(x=>`${ITEMS[x.id].replace('&amp;','&')} (${x.tier})`).join(', ');
-    note(`Gear gave out on the trail: ${names}. Re-buy at the shop.`);
-    prepLine += ` ${broken.length===1?'Your '+ITEMS[broken[0].id].toLowerCase().replace('&amp;','&')+' finally gave up on this trip':'Several pieces of kit gave up on this trip'} — time for a shop run.`;
-  }
   S.dayReports.push({line:`You guided the ${b.route}.`, earned});
   const reviews=makeReviews(t.repDelta||0, tip, 2);
   renderHUD();
   if(checkEnd()) return;
-  setScene(`<div class="day-tag">${dayTag()} · Trip complete</div><h2>Back at the trailhead</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · Trip complete</div><h2>Back at the trailhead</h2>
     <div class="res">${t.logs.map(l=>`<p class="line">${l}</p>`).join('')}</div>
     ${prepLine?`<p style="font-style:italic;color:var(--ink-dim)">${prepLine}</p>`:''}
     ${reviewsHTML(reviews)}
@@ -897,141 +705,20 @@ function finishPlayerTrip(){
 function afterPlayerTrip(){ if(S.phase===2) processNext(); else nextDay(); }
 function nextDay(){ advanceDay(); }
 
-/* ---------------- season transitions ----------------
-   At the end of October (seasonDay=214) advanceDay fires enterOffSeason()
-   which shows the Season Report, then drops into renderOffSeason() where
-   the player spends winter weeks on cert school, infra, and roster moves
-   before pressing through to spring (Year N+1). */
-function enterOffSeason(){
-  S.season='winter';
-  if(S.yearStats) S.yearStats.endingCash = S.cash;
-  S.winterWeeksUsed=0;
-  S.bestRepEverThisYear = S.yearStats?.bestRep || S.rep;
-  // Retainers: keeping guides costs money over winter
-  const retainerPerGuide = 250;
-  const retainer = S.guides.length * retainerPerGuide;
-  S.cash -= retainer;
-  if(S.stats) S.stats.retainersPaid = (S.stats.retainersPaid||0)+retainer;
-  if(S.yearStats) S.yearStats.retainers = retainer;
-  // Consumables decay over storage
-  CON.forEach(id => { if(S.depot[id]) S.depot[id] = Math.floor(S.depot[id]/2); });
-  note(`The season closed. Retainers paid (−€${retainer}). Consumable stock halved over winter.`);
-  if(S.stats) S.stats.yearsCompleted = (S.stats.yearsCompleted||0)+1;
-  renderSeasonReport();
-}
-function renderSeasonReport(){
-  const ys=S.yearStats||freshYearStats();
-  const net = (ys.fees+ys.tips) - (ys.wages+ys.retainers);
-  const roster = S.guides.length
-    ? S.guides.map(g=>`<div class="row"><span class="l">${g.name} · ${g.spec}</span><span class="v">retainer −€250</span></div>`).join('')
-    : '<div class="row"><span class="l">No guides on the books.</span><span class="v"></span></div>';
-  const milestone = (S.phase3UnlockedYear===S.year)
-    ? `<p style="background:rgba(174,189,126,0.12);border:1px solid rgba(174,189,126,0.4);border-radius:11px;padding:11px 13px;margin:4px 0 14px;color:var(--sage);font-style:italic">★ Milestone this year — your outfit is ready for <b>Phase III</b>. Water and air will open in a future season.</p>`
-    : '';
-  setScene(`<div class="end">
-    <div class="day-tag" style="color:var(--gold)">Year ${S.year} · Season closed</div>
-    <h2>The books for the year</h2>
-    <p class="verdict">October has run out. The cruise ships move on, the tavernas pull in their patios, and you stare at the books trying to remember what you did with all that money.</p>
-    ${milestone}
-    <div class="ledger">
-      <div class="row"><span class="l">Fees</span><span class="v pos">+€${ys.fees}</span></div>
-      <div class="row"><span class="l">Tips</span><span class="v" style="color:var(--gold)">+€${ys.tips}</span></div>
-      ${ys.wages?`<div class="row"><span class="l">Wages</span><span class="v neg">−€${ys.wages}</span></div>`:''}
-      ${ys.retainers?`<div class="row"><span class="l">Winter retainers</span><span class="v neg">−€${ys.retainers}</span></div>`:''}
-      <div class="row"><span class="l"><b>Net for the year</b></span><span class="v ${net>=0?'pos':'neg'}"><b>${net>=0?'+':'−'}€${Math.abs(net)}</b></span></div>
-      <div class="row"><span class="l">Trips you led · guide-led</span><span class="v">${ys.tripsYou} · ${ys.tripsGuides}</span></div>
-      <div class="row"><span class="l">Reputation arc · best</span><span class="v">${S.rep} now · ${ys.bestRep} peak</span></div>
-      <div class="row"><span class="l">In the bank, end of season</span><span class="v ${S.cash>=0?'pos':'neg'}">€${S.cash}</span></div>
-    </div>
-    ${S.guides.length?`<div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin:14px 0 7px">Your team on retainer</div><div class="ledger">${roster}</div>`:''}
-    <div class="actionbar"><button class="go" onclick="renderOffSeason()">Begin winter planning <span class="gs">${WINTER_WEEKS} weeks ahead</span></button></div>
-  </div>`);
-}
-function renderOffSeason(){
-  renderHUD();
-  const used=S.winterWeeksUsed||0, left=WINTER_WEEKS-used;
-  const bestRep = S.bestRepEverThisYear || S.yearStats?.bestRep || S.rep;
-  // certs
-  const certRows = CERTS.map(c => {
-    const have = hasCert(c.id);
-    const prereqOk = !c.prereq || hasCert(c.prereq);
-    const repOk = bestRep >= c.repReq;
-    const cashOk = S.cash >= c.cost;
-    const weeksOk = c.weeks <= left;
-    const can = !have && prereqOk && repOk && cashOk && weeksOk;
-    let sub;
-    if(have) sub = 'Certified — done.';
-    else if(!prereqOk) sub = 'First earn ' + certName(c.prereq);
-    else if(!repOk) sub = `Needs reputation ${c.repReq} (your peak this year was ${bestRep})`;
-    else if(!cashOk) sub = `Need €${c.cost}`;
-    else if(!weeksOk) sub = `Needs ${c.weeks} weeks, only ${left} left`;
-    else sub = `€${c.cost} · ${c.weeks} weeks · ${c.effect}`;
-    return `<button class="opt ${have?'':can?'primary':'disabled'}" onclick="${can?`enrollCertSchool('${c.id}')`:''}" ${have?'style="opacity:.55"':''}>
-      <span class="mark">${have?'✓':c.weeks+'w'}</span><span class="b-main">${c.name}<span class="b-sub">${sub}</span></span></button>`;
-  }).join('');
-  // infra
-  const infraRows = INFRA.map(it => {
-    const have = hasInfra(it.id);
-    const cashOk = S.cash >= it.cost;
-    const weeksOk = it.weeks <= left;
-    const can = !have && cashOk && weeksOk;
-    let sub;
-    if(have) sub = 'Already in your yard.';
-    else if(!cashOk) sub = `Need €${it.cost}`;
-    else if(!weeksOk) sub = `Needs ${it.weeks} weeks, only ${left} left`;
-    else sub = `€${it.cost} · ${it.weeks} weeks · ${it.effect}`;
-    return `<button class="opt ${have?'':can?'primary':'disabled'}" onclick="${can?`enrollInfra('${it.id}')`:''}" ${have?'style="opacity:.55"':''}>
-      <span class="mark">${have?'✓':it.weeks+'w'}</span><span class="b-main">${it.name}<span class="b-sub">${sub}</span></span></button>`;
-  }).join('');
-  // roster
-  const rosterRows = S.guides.length
-    ? S.guides.map(g => `<div class="mate"><div class="who">
-        <div class="nm">${g.name} <span class="spec">· ${g.spec}</span></div>
-        <div class="task">skill ${g.skill} · wage €${g.wage}/day · retainer paid</div>
-      </div><button class="assign" onclick="releaseGuide('${g.id}')">Release</button></div>`).join('')
-    : '<div style="font-style:italic;color:var(--ink-faint);padding:8px 0">No guides on the books — hire after spring opens.</div>';
-  setScene(`<div class="day-tag">Year ${S.year} · Winter</div>
-    <h2>The winter office</h2>
-    <p>Five quiet months. Long enough to take a course, fix the truck, or develop a serious drinking problem. You have <b>${left}</b> week${left===1?'':'s'} before April pretends to be warm again. Cash <b style="color:var(--gold)">€${S.cash}</b>${S.cash<0?' — and you are in the red':''}.</p>
-    <div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:8px 0 6px">HATEOA cert school</div>
-    <div class="choices">${certRows}</div>
-    <div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:18px 0 6px">Infrastructure projects</div>
-    <div class="choices">${infraRows}</div>
-    <div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:18px 0 6px">Your team</div>
-    <div class="team">${rosterRows}</div>
-    <div class="actionbar"><button class="go" onclick="enterSpring()">Open spring — Year ${S.year+1} <span class="gs">${left} unused week${left===1?'':'s'}</span></button></div>`);
-  paintForecast();
-}
-function enterSpring(){
-  S.year++; S.season='summer'; S.seasonDay=1;
-  S.yearStats = freshYearStats();
-  S.yearStats.startCash = S.cash; S.yearStats.openingRep = S.rep;
-  S.winterWeeksUsed=0; S.bestRepEverThisYear=null;
-  // Fresh weather and a new day
-  S.forecast=[]; ensureForecast();
-  S.weather = S.forecast[0];
-  S.trip=null; S.queue=null; S.dayReports=[];
-  S.you.task=null; S.guides.forEach(g=>{ g.task=null; g.fatigue=0; g.morale=Math.max(g.morale, 70); });
-  S.energy=100;
-  note(`Spring · Year ${S.year} opens. April is here.`);
-  setSub('Year '+S.year+' · '+(S.phase===2?'Phase II — a fresh season begins.':'Phase I — a fresh season begins.'));
-  startDay();
-}
-
 /* ---------------- transition to Phase 2 ---------------- */
 function enterPhase2(){
-  S.phase=2; setSub('Year '+S.year+' · Phase II — You lead a team now. Keep them sharp, keep them safe.');
+  S.phase=2; setSub('Phase II — You lead a team now. Keep them sharp, keep them safe.');
   const g={id:'g'+(++gCounter), name:'Maria', isYou:false, skill:55, fatigue:0, morale:80, wage:35, spec:rnd(SPECS), task:null};
   S.guides=[g];
   S.depot={water:Math.max(4,0)};
-  Object.keys(S.owned||{}).forEach(id=>{ S.depot[id]=(S.depot[id]||0)+(CON.includes(id)?4:1); });
+  (S.owned||[]).forEach(id=>{ S.depot[id]=(S.depot[id]||0)+(CON.includes(id)?4:1); });
   ['water'].forEach(id=>{ S.depot[id]=Math.max(S.depot[id]||0,4); });
   setScene(`<div class="end">
-      <div class="day-tag" style="color:var(--sage)">A turning point · ${dayTag()}</div>
-      <h2>Apparently you have a business now</h2>
-      <p class="verdict">Your name carries some weight now, which means people will pay you to send other people on adventures they barely understand. You take on your first guide — <b>Maria</b> — and hand her a radio. She is, on paper, your responsibility now.</p>
-      <p style="font-size:15px">From here you plan each day for a team. Assign people to trips, to rest, or to training, and keep a <b>gear depot</b> stocked so nobody heads out short. When a guide hits trouble, they will radio in for your call. Wages fall due every day — so keep good people working, and try very hard not to lose anyone.</p>
-      <div class="choices"><button class="opt primary" onclick="advanceDay();"><span class="mark">▸</span><span class="b-main">Open the office. God help you.</span></button></div>
+      <div class="day-tag" style="color:var(--sage)">A turning point · Day ${S.day}</div>
+      <h2>From guide to operator</h2>
+      <p class="verdict">Your name carries weight now, and your savings can finally buy you something precious: time off the trail. You take on your first guide — <b>Maria</b> — and hand her a radio.</p>
+      <p style="font-size:15px">From here you plan each day for a team. Assign people to trips, to rest, or to training, and keep a <b>gear depot</b> stocked so everyone heads out equipped for the conditions. When a guide hits trouble, they'll radio you for the call. Wages fall due every day — so keep good people working and keep your name spotless.</p>
+      <div class="choices"><button class="opt primary" onclick="advanceDay();"><span class="mark">▸</span><span class="b-main">Open the office</span></button></div>
     </div>`);
 }
 
@@ -1043,10 +730,10 @@ function renderAssign(){
   const w=S.weather;
   const cards=people().map(p=>mateCard(p)).join('');
   const tripsPlanned=people().filter(p=>p.task&&p.task.kind==='trip').length;
-  setScene(`<div class="day-tag">${dayTag()} · Dawn</div>
+  setScene(`<div class="day-tag">Day ${S.day} · Dawn</div>
     <p class="weather">${w.name}<small>${w.note}</small></p>
-    <h2>Right, where is everyone going?</h2>
-    <p>Park a person on each job, then push the button and let the day happen to them. Daily wages: <b style="color:var(--gold)">€${wages()}</b>.</p>
+    <h2>Plan your team's day</h2>
+    <p>Assign each person to a job, then run the day. Daily wages: <b style="color:var(--gold)">€${wages()}</b>.</p>
     <div class="team">${cards}</div>
     <div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin:0 0 12px;line-height:1.7">${gearSummary()}</div>
     <div class="choices">
@@ -1091,8 +778,8 @@ function openDepot(){
     return `<button class="opt ${can?'':'disabled'}" onclick="${can?`buyGear('${it.id}')`:''}">
       <span class="mark">${have}</span><span class="b-main">${ITEMS[it.id]} <span style="color:var(--ink-faint);font-size:12px">· ${type}</span><span class="b-sub">In stock ${have} · buy ${it.batch} for €${total}${can?'':' — need more cash'}</span></span></button>`;
   }).join('');
-  setScene(`<div class="day-tag">${dayTag()} · Gear depot</div>
-    <h2>Stock the depot, again</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · Gear depot</div>
+    <h2>Stock the depot</h2>
     <p>Consumables are used up each trip; reusable kits stay, but only so many guides can carry them at once. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
     <div class="choices">${rows}
       ${packUpgradeOptP2()}
@@ -1147,7 +834,7 @@ function openChooser(pid){
     return optBooking(b,dis,reason,`assignTrip('${pid}',${i})`);
   }).join('');
   const trainSub = p.isYou?'Spend the day sharpening the whole team (free)':'Costs €60 · raises skill &amp; morale';
-  setScene(`<div class="day-tag">${dayTag()} · Assigning</div>
+  setScene(`<div class="day-tag">Day ${S.day} · Assigning</div>
     <h2>What should ${p.name} do today?</h2>
     <p>Pick a trip, or set ${p.isYou?'yourself':'them'} to rest or training.</p>
     <div class="choices">${opts}
@@ -1195,7 +882,7 @@ function runGuideTrip(g,b,job){
   const pool = RADIO.filter(e=>e.when(b,S.weather));
   if(pool.length && chance(pRadio)){
     const ev=wpick(pool); S.radio={g,b,ev};
-    setScene(`<div class="day-tag">${dayTag()} · ${b.route} · radio call</div>
+    setScene(`<div class="day-tag">Day ${S.day} · ${b.route} · radio call</div>
       <h2>${ev.title(g,b)}</h2><p>${ev.text(g,b,S)}</p>
       <div class="choices">${ev.choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveRadio(${i})">
         <span class="mark">${i+1}</span><span class="b-main">${typeof c.label==='function'?c.label(g,b):c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`);
@@ -1215,17 +902,16 @@ function autoResolve(g,b,cov){
 function finalizeGuide(g,b,r){
   const fee=Math.round(b.pay*(r.payMul!=null?r.payMul:1)), tip=(r.tips||0), earned=fee+tip;
   S.cash+=earned+(r.cash||0);
-  applyRep(r.rep);
+  if(r.rep) S.rep=clamp(S.rep+r.rep,0,100);
   if(r.gear) S.gear=clamp(S.gear+r.gear,0,100);
   g.morale=clamp(g.morale+(r.morale||0),0,100);
   g.fatigue=clamp(g.fatigue+(22+b.diff*5),0,100);
   if(S.stats){ S.stats.earned+=earned; S.stats.fees+=fee; S.stats.tips+=tip; S.stats.tripsGuides++; }
-  if(S.yearStats){ S.yearStats.fees+=fee; S.yearStats.tips+=tip; S.yearStats.tripsGuides++; }
   S.dayReports.push({line:r.line, earned, rep:r.rep, tips:tip, cash:r.cash});
   const reviews=makeReviews((r.rep||0)+(r.morale||0)/2, tip, 1);
   renderHUD();
   if(checkEnd()) return;
-  setScene(`<div class="day-tag">${dayTag()} · ${b.route}</div><h2>${g.name} checks in</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · ${b.route}</div><h2>${g.name} checks in</h2>
     <div class="res"><p class="line">${r.line}</p><div><span class="delta up">+€${fee}</span>${tip?`<span class="delta gold">tip +€${tip}</span>`:''}${deltaHTML({rep:r.rep,gear:r.gear,cash:r.cash&&r.cash<0?r.cash:0})}${r.morale?`<span class="delta ${r.morale>0?'up':'down'}">morale ${r.morale>0?'+':''}${r.morale}</span>`:''}</div></div>
     ${reviewsHTML(reviews)}
     <div class="actionbar"><button class="go" onclick="processNext()">Next</button></div>`);
@@ -1246,7 +932,7 @@ function endOfDay(){
       if(p.isYou) S.energy=clamp(S.energy+25,0,100); else {p.fatigue=clamp(p.fatigue-25,0,100); p.morale=clamp(p.morale+3,0,100);}
     }
   });
-  const w=wages(); S.cash-=w; if(S.stats) S.stats.wagesPaid+=w; if(S.yearStats) S.yearStats.wages+=w;
+  const w=wages(); S.cash-=w; if(S.stats) S.stats.wagesPaid+=w;
   // quitting
   const quit=S.guides.filter(g=>g.morale<=0);
   quit.forEach(g=>note(`${g.name} resigned — morale gave out.`));
@@ -1259,40 +945,28 @@ function showDailyReport(w, quit){
   const rows=S.dayReports.map(r=>`<div class="row"><span class="l">${r.line}</span>${r.earned!=null?`<span class="v pos">+€${r.earned}</span>`:''}</div>`).join('')
     || '<div class="row"><span class="l">A quiet day — no trips ran.</span><span class="v"></span></div>';
   const quitTxt = quit.length?`<div class="row"><span class="l" style="color:var(--danger)">${quit.map(g=>g.name).join(', ')} resigned.</span><span class="v"></span></div>`:'';
-  setScene(`<div class="day-tag">${dayTag()} · Day's end</div><h2>The books</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · Day's end</div><h2>The books</h2>
     <div class="ledger">${rows}${quitTxt}
       <div class="row"><span class="l">Wages paid</span><span class="v neg">−€${w}</span></div>
       <div class="row"><span class="l">In the bank</span><span class="v ${S.cash>=0?'pos':'neg'}">€${S.cash}</span></div>
       <div class="row"><span class="l">Reputation</span><span class="v">${S.rep}</span></div>
     </div>
-    <div class="choices"><button class="opt primary" onclick="nextDay()"><span class="mark">☾</span><span class="b-main">On to tomorrow</span></button></div>`);
+    <div class="choices"><button class="opt primary" onclick="nextDay()"><span class="mark">☾</span><span class="b-main">Begin the next day</span></button></div>`);
 }
 
 /* ---------------- endings ---------------- */
 function checkEnd(){
-  if(S.cash<0) return endGame('Bankrupt','The books are dust. One refund, one wage bill, one terrible decision — take your pick. The company has folded. Take a moment. Then roll a new idiot, slightly wiser.',false);
-  if(S.rep<=5) return endGame('A ruined name','Word travels fast in small towns. The TripAdvisor reviews have become a genre of their own. The phone has stopped ringing. Reputation is the only currency that actually matters — try to remember that next time.',false);
+  if(S.cash<0) return endGame('Bankrupt','The books would not balance. One refund — or one wage bill — too many, and the company folds. Every great operator has a first failed season. Begin again, wiser.',false);
+  if(S.rep<=10) return endGame('A ruined name','Word travels fast on small islands. With trust this low, the bookings simply stop. Reputation is the only currency that compounds — guard it next time.',false);
   if(S.phase===1 && S.cash>=1500 && S.rep>=70){ enterPhase2(); return true; }
-  if(S.phase===2 && !S.phase3Ready && S.cash>=5000 && S.rep>=70 && S.guides.length>=3){
-    S.phase3Ready=true; S.phase3UnlockedYear=S.year;
-    note('Milestone — your outfit is ready for Phase III: water and air. The expansion will open in a future season.');
-    return false;
-  }
+  if(S.phase===2 && S.cash>=5000 && S.rep>=70 && S.guides.length>=3)
+    return endGame('Phase II complete','A trusted name, a bank that holds, and a team that runs without you on every trail. You are ready to move beyond hiking — into the waters of Navarino Bay and the air over Taygetos. The Peloponnese is yours to claim.',true);
   return false;
-}
-/* Cap a single rep-loss event so one bad day cannot insta-ruin a season.
-   Apply this everywhere a runtime-computed rep delta is added — keeps the
-   event content honest while bounding the worst case. */
-function applyRep(delta){
-  if(delta==null||delta===0) return 0;
-  const capped = delta<0 ? Math.max(delta,-8) : delta;
-  S.rep=clamp(S.rep+capped,0,100);
-  return capped;
 }
 function endGame(title,verdict,win){
   clearSave();
   setScene(`<div class="end">
-    <div class="day-tag" style="color:${win?'var(--sage)':'var(--danger)'}">${win?'Victory':'Game over'} · ${dayTag()}</div>
+    <div class="day-tag" style="color:${win?'var(--sage)':'var(--danger)'}">${win?'Victory':'Game over'} · Day ${S.day}</div>
     <h2>${title}</h2><p class="verdict">${verdict}</p>
     <p style="font-family:'Spline Sans Mono',monospace;font-size:13px;color:var(--ink-dim)">€${S.cash} · ${S.rep} reputation · ${1+S.guides.length} on the team · ${S.day} days</p>
     <div class="choices"><button class="opt primary" onclick="renderProfile()"><span class="mark">↻</span><span class="b-main">${win?'Play again':'Try another season'}</span></button></div></div>`);
@@ -1304,7 +978,7 @@ function openHire(){
   const cands=[0,1].map(()=>{ const skill=ri(40,70), wage=ri(28,52), fee=skill*3+ri(0,60);
     return {name:rnd(NAMES), skill, wage, fee, spec:rnd(SPECS)}; });
   S.cands=cands;
-  setScene(`<div class="day-tag">${dayTag()} · Hiring</div><h2>Today's hopefuls</h2>
+  setScene(`<div class="day-tag">Day ${S.day} · Hiring</div><h2>Today's candidates</h2>
     <p>A signing fee now, then daily wages. Pick well — a cheap guide who botches a trip costs more than they save.</p>
     <div class="choices">
       ${cands.map((c,i)=>`<button class="opt ${S.cash<c.fee?'disabled':''}" onclick="${S.cash<c.fee?'':`hire(${i})`}">
@@ -1330,8 +1004,8 @@ function renderSummary(){
     : '<div class="row"><span class="l">No guides yet — just you on the trail.</span><span class="v"></span></div>';
   const net = st.earned - st.wagesPaid;
   const certList = (S.certs&&S.certs.length) ? S.certs.map(certName).join(', ') : 'None yet';
-  const ownCount = Object.keys(S.owned||{}).length;
-  setScene(`<div class="day-tag">${dayTag()} · Season summary</div>
+  const ownCount = (S.owned||[]).length;
+  setScene(`<div class="day-tag">Day ${S.day} · Season summary</div>
     <h2>${S.you?S.you.name:'Your'} season</h2>
     <p style="font-style:italic;color:var(--ink-dim);margin-bottom:14px">${S.you?S.you.spec:''} · ${S.phase===2?'running a Messinia outfit':'building a name in Messinia'}</p>
     <div class="ledger">
@@ -1364,53 +1038,14 @@ const GEAR=[
 ];
 const ITEM_COST={water:25, snacks:20, sunscreen:25, repellent:25, firstaid:70, poles:55, map:40, shell:60, lamp:35};
 
-/* ---------------- equipment quality tiers ----------------
-   Every item comes in three qualities. Higher tiers cost more upfront but
-   last many more trips before they break (durables) or are used up
-   (consumables). S.owned tracks ONE instance per id at a time:
-     S.owned = { water: {tier:'standard', trips:2}, firstaid: {...} }
-   Each packed item decrements its trips counter when the trip completes;
-   at 0 it breaks and is removed from S.owned. Re-buying any tier replaces
-   and refills with a fresh full lifetime at that tier. */
-const ITEM_TIERS=['basic','standard','pro'];
-const TIER_MULT={
-  basic:    {cost:0.5, life:0.5, label:'basic',    note:'cheap, short life'},
-  standard: {cost:1.0, life:1.0, label:'standard', note:'reliable'},
-  pro:      {cost:2.5, life:4.0, label:'pro',      note:'lasts and lasts'},
-};
-const ITEM_LIFETIME={  // trips at standard quality before wear-out / consumption
-  water:4, snacks:4, sunscreen:8, repellent:8,
-  firstaid:25, poles:50, map:80, shell:30, lamp:40,
-};
-function itemCost(id, tier){ return Math.round(ITEM_COST[id] * TIER_MULT[tier].cost); }
-function itemLifetime(id, tier){ return Math.max(1, Math.round(ITEM_LIFETIME[id] * TIER_MULT[tier].life)); }
-function ownedTier(id){ return S.owned && S.owned[id] ? S.owned[id].tier : null; }
-function ownedTrips(id){ return S.owned && S.owned[id] ? S.owned[id].trips : 0; }
-function ownsItem(id){ return ownedTrips(id) > 0; }
-function freshOwned(id, tier){ return {tier, trips:itemLifetime(id, tier)}; }
-
 const CERTS=[
-  {id:'basic',    name:'Basic Hiking Guide',   org:'HATEOA', cost:120, weeks:2, repReq:0,  prereq:null,    effect:'Official accreditation — clients trust you more.'},
-  {id:'firstaid', name:'Wilderness First Aid', org:'HATEOA', cost:180, weeks:3, repReq:0,  prereq:'basic', effect:'Injuries on the trail go far better.'},
-  {id:'gorge',    name:'Canyon & Gorge Leader',org:'HATEOA', cost:160, weeks:3, repReq:0,  prereq:'basic', effect:'You shine on river and gorge routes.'},
-  {id:'mountain', name:'Mountain Leader',      org:'HATEOA', cost:300, weeks:4, repReq:60, prereq:'basic', effect:'Unlocks the hardest summit routes.'},
+  {id:'basic',    name:'Basic Hiking Guide',   org:'HATEOA', cost:120, repReq:0,  prereq:null,    effect:'Official accreditation — clients trust you more.'},
+  {id:'firstaid', name:'Wilderness First Aid', org:'HATEOA', cost:180, repReq:0,  prereq:'basic', effect:'Injuries on the trail go far better.'},
+  {id:'gorge',    name:'Canyon & Gorge Leader',org:'HATEOA', cost:160, repReq:0,  prereq:'basic', effect:'You shine on river and gorge routes.'},
+  {id:'mountain', name:'Mountain Leader',      org:'HATEOA', cost:300, repReq:60, prereq:'basic', effect:'Unlocks the hardest summit routes.'},
 ];
 function hasCert(id){ return S.certs && S.certs.includes(id); }
 function certName(id){ const c=CERTS.find(x=>x.id===id); return c?c.name:id; }
-function certWeeks(id){ const c=CERTS.find(x=>x.id===id); return c?(c.weeks||1):1; }
-
-/* Off-season infrastructure projects. Each is a winter-built thing that
-   changes how the next summer plays. Effects are wired by id elsewhere
-   (finishPlayerTrip for pickup/hotelDeal; mkBookings for website). */
-const INFRA=[
-  {id:'pickup', name:'Battered pickup truck', cost:1800, weeks:3,
-   effect:'+€10 to fees on every trip you guide.'},
-  {id:'website', name:'A proper booking website', cost:2200, weeks:6,
-   effect:'+1 booking choice every morning. Bookings skew slightly toward better-paying clients.'},
-  {id:'hotelDeal', name:'Hotel partnership (Costa Navarino)', cost:1500, weeks:4,
-   effect:'+€20 on every tourist or family trip. They send you steady work.'},
-];
-function hasInfra(id){ return S.infra && S.infra.includes(id); }
 
 const REVIEWERS=['Eleni K.','Marco R.','Sophie L.','Andreas P.','Yuki T.','James W.','Giulia F.','Petros M.','Hannah B.','Lars N.','Chiara V.','Dimitra S.','Tom H.','Ana R.'];
 const SOURCES=['Google','TripAdvisor','GetYourGuide','Booking.com'];
@@ -1499,39 +1134,6 @@ const TRAILHEAD=[
      {label:'Give a calm, thorough safety talk', hint:'Reassuring', run:()=>({line:'You talk them through every step. Their confidence steadies.', rep:3, energy:-3})},
      {label:'Brush it off and set the pace', hint:'Cold', run:()=>({line:'You tell them they will be fine and start walking. They stay tense all day.', rep:-3})},
    ]},
-  {id:'gearhead', w:0.9, when:()=>true, title:'The over-equipped client',
-   text:()=>`One of them has rocked up for a half-day stroll dressed for the north face of K2. Crampons. Ice axe. A look of grim purpose.`,
-   choices:[
-     {label:'Gently talk them out of the heavy kit', hint:'Saves them a tough day', run:()=>({line:'You convince them to leave the axe in the car. They are slightly disappointed and quietly relieved.', rep:3, energy:2})},
-     {label:'Let them carry it all', hint:'They will learn', run:()=>({line:'They sweat their way up looking like a Himalayan expedition lost in olive country. The rest of the group cannot stop laughing.', rep:2, tips:10, energy:-3})},
-   ]},
-  {id:'dog', w:1.0, when:(b)=>!(b.tags||[]).includes('alpine'), title:'They brought a dog',
-   text:(b)=>`A small, optimistic dog is straining at the lead. The owner assumes this is fine. ${b.ctype==='family'?'The kids are already in love.':''}`,
-   choices:[
-     {label:'Welcome the dog along', hint:'A small risk, a warm crowd', run:()=>({line:'You add a water bowl to the kit and the dog becomes the unofficial mascot. Everyone is charmed.', rep:5, tips:10})},
-     {label:'Refuse politely — too much for the route', hint:'A firm professional call', run:(b)=>({line: b.ctype==='family'?'You explain why, kindly. They sulk a bit, but appreciate the honesty.':'You hold the line. The owner takes it well.', rep:1, payMul:0.92})},
-   ]},
-  {id:'schooltrip', w:1.2, when:(b)=>b.ctype==='school', title:'Thirty teenagers and one tired teacher',
-   text:()=>`The teacher looks like they have not slept since Tuesday. The kids are loud, the kids are hungry, and the kids have phones.`,
-   choices:[
-     {label:'Take charge with a game plan', hint:'You set the rhythm', run:()=>({line:'You split them into pairs, give them a thing to spot, and watch them transform into a half-decent walking group. The teacher silently mouths "thank you".', rep:6, tips:5})},
-     {label:'Let the teacher lead, you support', hint:'Light touch', run:()=>({line:'You walk at the back with the slowest kid and the teacher gradually finds their feet. Decent day, quietly run.', rep:3, energy:-3})},
-     {need:'snacks', label:'Hand out snacks first', hint:'Calm the chaos', run:()=>({line:'A snack each and the noise drops by half. You are a hero. The teacher considers nominating you for sainthood.', rep:7, tips:15})},
-   ]},
-  {id:'photogear', w:1.2, when:(b)=>b.ctype==='photo', title:'Tripods, lenses, and a lot of bags',
-   text:()=>`Three photographers, six bags, two tripods, and an opinion each about the light. They want golden hour at the summit. The summit is three hours away. Golden hour is in two.`,
-   choices:[
-     {label:'Pick a closer viewpoint that catches the same light', hint:'Save the day with local knowledge', run:()=>({line:'You divert to a ridge you know. They get the shot, you get the rep. Everyone wins.', rep:7, tips:25})},
-     {label:'March them hard for the original summit', hint:'It will be tight', run:(b,S)=>chance(0.55+(S.energy>60?0.15:0))?{line:'You crest the summit with three minutes to spare. The light is unreal. They will remember you forever.', rep:9, tips:40, energy:-12}:{line:'You arrive late. The light is gone. They are polite about it. They are not happy.', rep:-5, energy:-12}},
-     {label:'Tell them the truth and pick a calmer plan', hint:'Professional honesty', run:()=>({line:'You explain the maths. They sigh, then nod. You take a more reasonable route and they find shots they did not expect.', rep:4})},
-   ]},
-  {id:'journalist', w:0.7, when:()=>true, title:'A journalist, allegedly',
-   text:()=>`One of the group corners you at the trailhead. "Just to be transparent — I write for a travel site. I am here to review you. Hope that is okay?" They are smiling like it is okay.`,
-   choices:[
-     {label:'Greet it warmly and run a textbook day', hint:'No pressure', run:(b,S)=>chance(0.6+S.rep/200)?{line:'You give them an honest, well-run day. The piece, when it appears, is the best advertising you have ever had.', rep:10, tips:30}:{line:'You try too hard and something feels off all day. The piece is lukewarm.', rep:-2}},
-     {label:'Treat them exactly like everyone else', hint:'Quietly confident', run:()=>({line:'You shrug, smile, and run your normal day. The piece, when it appears, calls you "refreshingly unbothered".', rep:7, tips:15})},
-     {label:'Get nervous and overpromise', hint:'A bad start', run:()=>({line:'You promise things you cannot quite deliver. They are too polite to mention it. The piece never appears.', rep:-4, energy:-3})},
-   ]},
 ];
 
 /* ---------------- personal-trip events ---------------- */
@@ -1546,7 +1148,7 @@ const EVENTS=[
    text:()=>`On a patch of loose scree, one of the party slips and goes down hard. The ankle is swelling fast — they cannot carry on unaided.`,
    choices:[
      {label:'Splint it and walk them down yourself', hint:'Costs energy · a first-aid kit helps',
-      run:(b,S)=>chance(0.62+S.gear/400+(S.energy>50?0.08:0)+(hasItem('firstaid')?0.18:0)+(perkIs('medic')?0.25:0)+(hasCert('firstaid')?0.2:0))
+      run:(b,S)=>chance(0.62+S.gear/400+(S.energy>50?0.08:0)+(hasItem('firstaid')?0.18:0)+(S.you&&S.you.perk==='medic'?0.25:0)+(hasCert('firstaid')?0.2:0))
         ?{lines:[hasItem('firstaid')?'You clean and strap the ankle properly from your first-aid kit, then walk them down with quiet competence.':'You strap the ankle and take their weight the whole way. Slow, but safe — they are full of thanks.'],rep:hasItem('firstaid')?7:6,energy:-22}
         :{lines:['The descent is harder than you judged. You get them down, but it costs time and a few scrapes of your own.'],rep:-3,energy:-26,cash:-25}},
      {label:'Radio the mountain rescue team', hint:'Safe but expensive',
@@ -1559,7 +1161,7 @@ const EVENTS=[
      {label:'Turn the group back early', hint:'Lower pay, but no one is hurt',
       run:(b)=>({lines:[b.ctype==='thrill'?'The climbers are let down, but you hold the line. Better that than a stretcher.':'You shepherd everyone down ahead of the weather. They trust your judgement.'], payMul:0.6, rep:b.ctype==='thrill'?2:5})},
      {label:'Push for the viewpoint before it hits', hint:'Big reward if you beat it',
-      run:(b,S)=>chance(0.78-S.weather.risk-b.diff*0.05+(perkIs('navigator','shepherd','goatherd')?0.15:0))
+      run:(b,S)=>chance(0.78-S.weather.risk-b.diff*0.05+(S.you&&S.you.perk==='navigator'?0.15:0))
         ?{lines:['You make the viewpoint with minutes to spare — a wild, dramatic moment they will retell for years.'], rep:9, tips:30}
         :{lines:['The weather catches you exposed on the ridge. Everyone gets back, soaked and shaken, but the day is a scramble.'], rep:-11, cash:-50, energy:-12}},
    ]},
@@ -1586,7 +1188,7 @@ const EVENTS=[
    text:()=>`The trail markers dissolve into the murk. The party looks to you — do you know the way from here, or not?`,
    choices:[
      {label:'Trust your knowledge of the mountain', hint:'A map &amp; compass makes this near-certain',
-      run:()=>chance(0.66+(hasItem('map')?0.28:0)+(perkIs('navigator','shepherd','goatherd')?0.2:0))?{lines:[hasItem('map')?'You take a careful bearing with map and compass and bring them out exactly where you meant to.':'You read the land like a page and bring them out exactly where you meant to. Quietly impressive.'], rep:6}:{lines:['A wrong fork costs you a long, tiring backtrack. You get there — eventually.'], rep:-4, energy:-15}},
+      run:()=>chance(0.66+(hasItem('map')?0.28:0)+(S.you&&S.you.perk==='navigator'?0.2:0))?{lines:[hasItem('map')?'You take a careful bearing with map and compass and bring them out exactly where you meant to.':'You read the land like a page and bring them out exactly where you meant to. Quietly impressive.'], rep:6}:{lines:['A wrong fork costs you a long, tiring backtrack. You get there — eventually.'], rep:-4, energy:-15}},
      {label:'Backtrack to the last sure marker', hint:'Safe, costs time', run:()=>({lines:['You retrace your steps to certainty before continuing. Cautious and correct.'], payMul:0.85, energy:-6})},
    ]},
   {id:'client', w:1.5, when:(b)=>b.ctype==='corporate', title:'The boss wants a shortcut',
@@ -1596,39 +1198,6 @@ const EVENTS=[
       run:()=>chance(0.5)?{lines:['You explain, kindly but without budging. By the end, the lead is telling everyone how professional you were.'], rep:6}:{lines:['You refuse the shortcut. The lead sulks a little, but you sleep fine.'], rep:-2}},
      {label:'Take the shortcut to please the client', hint:'Tempting tip — real risk',
       run:(b)=>chance(0.55-b.diff*0.05)?{lines:['It works out, and the grateful lead slips you a generous tip for the bespoke route.'], rep:4, tips:45}:{lines:['The scramble turns sketchy fast. Nobody is hurt, but the spooked group blames you for indulging it.'], rep:-10, cash:-40, energy:-8}},
-   ]},
-  {id:'horses', w:1.1, when:(b)=>(b.tags||[]).includes('forest')||(b.tags||[]).includes('remote'), title:'Wild horses cross the path',
-   text:()=>`A small herd of half-wild horses appears at the edge of the trees, snorts, and starts crossing the trail in front of you. Nobody moves.`,
-   choices:[
-     {label:'Hold the group quietly and let them pass', hint:'A free piece of magic', run:(b)=>({lines:['You whisper for stillness. The horses cross in their own time. Nobody breathes. It is exactly why people come on these trips.'], rep:6, tips:b.ctype==='photo'?40:20, energy:2})},
-     {label:'Ease around them carefully', hint:'Stay on schedule', run:()=>({lines:['You loop the group wide around the herd, lose ten minutes, gain a story.'], rep:3, energy:-2})},
-   ]},
-  {id:'colleague', w:1.0, when:()=>true, title:'A fellow guide in trouble',
-   text:()=>`You round a bend and find another guide kneeling beside a client with a clearly bad ankle, three hours from the road. They look up, exhausted, and ask if you can help.`,
-   choices:[
-     {label:'Stop and help — your group can wait', hint:'Doing right costs you time',
-      run:(b,S)=>chance(0.7+(hasItem('firstaid')?0.15:0)+(perkIs('medic')?0.2:0))?{lines:['Between you, you splint and walk the casualty out. Your group is patient and your name goes around the local guides as someone who shows up.'], rep:8, energy:-15}:{lines:['It is a hard, slow rescue. You get them out, but your own day is ruined and your group is fed up.'], rep:2, cash:-30, energy:-22}},
-     {label:'Lend gear and carry on', hint:'A pragmatic compromise', run:()=>({lines:['You hand over your first-aid kit and a pole, promise to call it in at the trailhead, and keep moving. They thank you. You feel a little odd about it all day.'], rep:1, gear:-4})},
-     {label:'Wave and walk past', hint:'You are on the clock', run:()=>({lines:['You nod sympathetically and keep walking. Word gets around. Word always gets around.'], rep:-8})},
-   ]},
-  {id:'photoframe', w:1.4, when:(b)=>b.ctype==='photo', title:'The shot they came for',
-   text:()=>`The photographers have stopped dead. The light has gone perfect. They are setting up tripods on the trail and asking, gently, for thirty minutes.`,
-   choices:[
-     {label:'Give them their thirty minutes', hint:'The whole reason they booked', run:()=>({lines:['You sit in the shade and let them work. They get the shot. You get a tip the size of half a fee.'], rep:5, tips:50, energy:5})},
-     {label:'Give them ten, then push on', hint:'Compromise', run:()=>({lines:['You compromise. The shot is fine, not magic. They are politely disappointed.'], rep:1, tips:10})},
-   ]},
-  {id:'shrine', w:1.0, when:(b)=>(b.tags||[]).includes('historical')||(b.tags||[]).includes('forest'), title:'A roadside shrine',
-   text:()=>`You pass one of the little blue-domed iron shrines that dot the country roads — a candle inside, a faded photo. The group slows and looks at you.`,
-   choices:[
-     {label:'Tell the story behind it', hint:'A small gift of context', run:(b)=>({lines:['You explain the custom. They listen with the patient attention people only ever give in the middle of nowhere. Lovely moment.'], rep:5, tips:b.ctype==='tourist'?20:10, energy:2})},
-     {label:'Nod respectfully and walk on', hint:'Keep moving', run:()=>({lines:['You give it a respectful glance and keep going. The moment passes unmarked.'], rep:1})},
-   ]},
-  {id:'lostpair', w:0.9, when:(b)=>(b.tags||[]).includes('remote')||b.diff>=2, title:'A lost couple',
-   text:()=>`Two hikers stagger up to you on the trail, no map, no water, no idea where they are. They were "trying to find Polylimnio" three hours ago. They are nowhere near Polylimnio.`,
-   choices:[
-     {need:'water', label:'Water, directions, and a clear plan', hint:'You are equipped for this', run:()=>({lines:['You hand over water, draw them a map on a napkin, and point them home. Their relief is comic.'], rep:6})},
-     {label:'Walk them to the next junction yourself', hint:'A detour, but the right thing', run:()=>({lines:['You loop the group on a small detour and deliver the strays back to a path they know. Everyone feels good. You burn an hour.'], rep:5, energy:-8, payMul:0.92})},
-     {label:'Point them at the path and carry on', hint:'Cold but quick', run:()=>({lines:['You give them a bearing and keep going. You think about them for the next mile.'], rep:-2})},
    ]},
 ];
 

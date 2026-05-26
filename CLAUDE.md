@@ -146,7 +146,34 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
 
 ## 9. Files
 
-- `index.html` — the entire game.
-- `CLAUDE.md` — this document.
+**The game & engine**
+- `index.html` — the entire game (the live, ground-truth build).
+- `CLAUDE.md` — this document (engine, conventions, gotchas).
+- `scripts/` — the test harness (`harness.mjs`, `trace.mjs`, `winter-test.mjs`).
+- `PIXEL-ART.md` — locked art direction for future sprites.
 
-Run `claude` in this folder; it will read both. When you make changes, re-run the extract + `node --check` and the headless simulation before considering them done.
+**The design (read before building Phase 1 — written 2026-05)**
+- `OUTLINE.md` — the six-phase map (the skeleton).
+- `PHASE-ARCHITECTURE.md` — the master theory: thesis ("or no Life"), tone, the four
+  through-lines, the seductive-not-punishing cost model, endings, the six phases, the
+  four-movement year, and the reusable systems — financing/debt (§15) and client comfort (§16).
+- `PHASE-1.md` — the complete, buildable Phase 1 (solo guide) spec: character creation, the
+  deepened day loop, the discipline system, the cert ladder, season-to-season growth, economy
+  & balance, and the demand-based hire trigger.
+- `DISCIPLINES.md` — the full gear/shop catalogue + worked content for all 7 disciplines
+  (hiking, sea kayak, canyon, raft, cycle, SUP, climb): gear lines, routes, weather rules,
+  in-voice events, certs; plus the outdoor-shop system and the extended weather palette.
+- `CATASTROPHES.md` — the catastrophe-heartbeat seedbank (tiered, in-voice).
+- `BUILD-PHASE-1.md` — the implementation brief: read order, first vertical slice, guardrails.
+
+**The look**
+- `design-system/` — the Messinia Guide design system handoff. `design-system/README.md` is the
+  art-direction bible; `design-system/colors_and_type.css` is the drop-in token sheet (it
+  matches the palette already in `index.html`); `design-system/ui_kits/game/` is a React
+  recreation of the in-game screens; `design-system/preview/` has per-token/component cards.
+  Note: `design-system/aegean-guide.html` is a *reference snapshot* — the root `index.html` is
+  the live game.
+
+Run `claude` in this folder; it will read this file. When you make changes, re-run the extract +
+`node --check` and the headless simulation (`scripts/harness.mjs`, `scripts/winter-test.mjs`)
+before considering them done. For Phase 1 work, start from `BUILD-PHASE-1.md`.
