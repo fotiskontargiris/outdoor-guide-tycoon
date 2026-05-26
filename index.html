@@ -557,14 +557,29 @@ function setSub(t){ $('sub').textContent=t; }
 function note(t){ S.history.push({d:S.day,t}); }
 
 /* ---------------- PHASE 1: solo morning ---------------- */
+// Why can this booking not be taken right now? Returns a reason string or null.
+// Activity-aware: hiking diff-3 needs Mountain Leader; sea-kayak diff-3 needs the
+// Advanced Sea Kayak Leader Award (lands in the M1.cert chunk; not yet earnable);
+// any sea-kayak booking requires a non-empty fleet.
+function bookingLock(b){
+  if(b.cancelled) return 'Cancelled — too dangerous today';
+  const act = b.activity||'hike';
+  if(act==='hike' && b.diff===3 && !hasCert('mountain')) return 'Locked — needs the Mountain Leader cert';
+  if(act==='seakayak' && b.diff===3 && !hasCert('kayakAdvanced')) return 'Locked — needs the Advanced Sea Kayak Leader Award';
+  if(act==='seakayak'){
+    const cap = fleetCapacity('seakayak');
+    if(cap < 1) return 'Locked — you have no kayaks (or no PFD sets) yet';
+  }
+  return null;
+}
 function renderMorning(){
   renderHUD();
   const w=S.weather;
   const cards=S.bookings.map((b,i)=>{
     const need=b.diff===3?45:b.diff===2?30:0, tired=S.energy<need;
-    const noCert = b.diff===3 && !hasCert('mountain');
-    const dis=b.cancelled||tired||noCert;
-    const reason=b.cancelled?'Cancelled — too dangerous today':noCert?'Locked — needs the Mountain Leader cert':tired?`Too exhausted — needs ${need} energy`:'';
+    const lock = bookingLock(b);
+    const dis = lock || tired;
+    const reason = lock || (tired?`Too exhausted — needs ${need} energy`:'');
     return optBooking(b, dis, reason, `pickBooking(${i})`);
   }).join('');
   setScene(`
@@ -596,32 +611,63 @@ function buyPack(){
   if(S.cash<cost||S.rep<repGate) return;
   S.cash-=cost; S.packSize=next; note(`Bought a ${next}-slot backpack (−€${cost}).`); saveGame(); openShop();
 }
+function shopItemCard(id){
+  const curTier=ownedTier(id), curTrips=ownedTrips(id);
+  const tierBtns=ITEM_TIERS.map(tier=>{
+    const cost=itemCost(id,tier), life=itemLifetime(id,tier), can=S.cash>=cost;
+    const isCur = curTier===tier;
+    const highlight = isCur || (!curTier && tier==='standard');
+    const cls = highlight ? 'primary' : (can?'':'disabled');
+    const label = isCur ? `${cap(tier)} · refill` : (curTier?`Switch to ${tier}`:cap(tier));
+    const click = can ? `buyItem('${id}','${tier}')` : '';
+    return `<button class="opt ${cls}" onclick="${click}" style="flex:1;padding:9px 8px;font-size:13px">
+      <span class="b-main" style="font-size:13px">${label}<span class="b-sub" style="font-size:11px">€${cost} · ${life} trip${life===1?'':'s'}</span></span></button>`;
+  }).join('');
+  const head = curTier
+    ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${curTrips<=1?'var(--danger)':'var(--ink-faint)'}">owned ${curTier} · ${curTrips} trip${curTrips===1?'':'s'} left</span></div>`
+    : `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint)">not owned</span></div>`;
+  return `<div style="background:var(--panel2);border:1px solid var(--edge);border-radius:11px;padding:10px 11px;margin-bottom:8px">
+    ${head}<div style="display:flex;gap:6px">${tierBtns}</div></div>`;
+}
+function shopSection(title, ids){
+  if(!ids.length) return '';
+  return `<div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:14px 0 7px">${title}</div>${ids.map(shopItemCard).join('')}`;
+}
+function fleetSection(act){
+  const items=fleetItemsFor(act);
+  if(!items.length) return '';
+  const cards=items.map(it=>{
+    const owned=fleetCount(it.id), can=S.cash>=it.cost;
+    return `<div style="background:var(--panel2);border:1px solid var(--edge);border-radius:11px;padding:10px 11px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <b style="font-family:'Fraunces',serif;font-size:15px">${it.name}</b>
+        <span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint)">you own ${owned}</span>
+      </div>
+      <button class="opt ${can?'primary':'disabled'}" onclick="${can?`buyFleet('${it.id}','${act}')`:''}" style="padding:9px 8px;font-size:13px">
+        <span class="b-main" style="font-size:13px">Buy one<span class="b-sub" style="font-size:11px">€${it.cost} · durable, no wear</span></span></button>
+    </div>`;
+  }).join('');
+  const cap=fleetCapacity(act);
+  const capLine = cap===Infinity?'' : `<div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin:0 0 8px;font-style:italic">Current capacity: <b style="color:${cap>0?'var(--sage)':'var(--danger)'}">${cap}</b> client${cap===1?'':'s'} per trip.</div>`;
+  return `<div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:14px 0 7px">Sea-kayak fleet</div>${capLine}${cards}`;
+}
 function openShop(){
   renderHUD();
-  const rows=ITEM_ORDER.map(id=>{
-    const curTier=ownedTier(id), curTrips=ownedTrips(id);
-    const tierBtns=ITEM_TIERS.map(tier=>{
-      const cost=itemCost(id,tier), life=itemLifetime(id,tier), can=S.cash>=cost;
-      const isCur = curTier===tier;
-      // Highlight the current tier (refill) or, if unowned, the standard tier as the default recommendation
-      const highlight = isCur || (!curTier && tier==='standard');
-      const cls = highlight ? 'primary' : (can?'':'disabled');
-      const label = isCur ? `${cap(tier)} · refill` : (curTier?`Switch to ${tier}`:cap(tier));
-      const click = can ? `buyItem('${id}','${tier}')` : '';
-      return `<button class="opt ${cls}" onclick="${click}" style="flex:1;padding:9px 8px;font-size:13px">
-        <span class="b-main" style="font-size:13px">${label}<span class="b-sub" style="font-size:11px">€${cost} · ${life} trip${life===1?'':'s'}</span></span></button>`;
-    }).join('');
-    const head = curTier
-      ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${curTrips<=1?'var(--danger)':'var(--ink-faint)'}">owned ${curTier} · ${curTrips} trip${curTrips===1?'':'s'} left</span></div>`
-      : `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><b style="font-family:'Fraunces',serif;font-size:15px">${ITEMS[id]}</b><span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint)">not owned</span></div>`;
-    return `<div style="background:var(--panel2);border:1px solid var(--edge);border-radius:11px;padding:10px 11px;margin-bottom:8px">
-      ${head}<div style="display:flex;gap:6px">${tierBtns}</div></div>`;
-  }).join('');
+  const offered = S.offeredDisciplines || ['hike'];
+  // Section the shop by discipline so it doesn't bloat as more land.
+  const shared = ITEM_ORDER.filter(id => !ITEM_ACTIVITY[id]);
+  const hikingKit = offered.includes('hike') ? ITEM_ORDER.filter(id => ITEM_ACTIVITY[id]==='hike') : [];
+  const kayakKit  = offered.includes('seakayak') ? ITEM_ORDER.filter(id => ITEM_ACTIVITY[id]==='seakayak') : [];
+  const sections =
+      shopSection('Essentials',         shared)
+    + shopSection('Hiking kit',         hikingKit)
+    + shopSection('Sea-kayak safety',   kayakKit)
+    + (offered.includes('seakayak') ? fleetSection('seakayak') : '');
   setScene(`<div class="day-tag">${dayTag()} · Equipment shop</div>
     <h2>Geo's outdoor emporium</h2>
-    <p>Three qualities for everything. <b>Pro</b> kit is dearer but lasts far longer — your boots, your bottles, all of it. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
-    ${rows}
-    <div class="choices" style="margin-top:6px">
+    <p>Three qualities for safety kit; fleet items just come in ones. <b>Pro</b> gear costs more but lasts. Cash: <b style="color:var(--gold)">€${S.cash}</b>.</p>
+    ${sections}
+    <div class="choices" style="margin-top:14px">
       ${packUpgradeOpt()}
       ${simpleOpt('⚒','Service your equipment', S.gear>=100?'Kit is in top shape':S.cash<40?'Need €40':'€40 · +35% gear condition', (S.gear>=100||S.cash<40), 'serviceGear()')}
     </div>
@@ -1366,17 +1412,58 @@ function renderSummary(){
 
 /* ---------------- gear & trailhead ---------------- */
 const ITEMS={ water:'Water', firstaid:'First-aid kit', snacks:'Snacks', sunscreen:'Sunscreen',
-  repellent:'Insect repellent', poles:'Walking poles', map:'Map &amp; compass', shell:'Rain shells', lamp:'Headlamp' };
-const ITEM_ORDER=['water','firstaid','snacks','sunscreen','repellent','poles','map','shell','lamp'];
+  repellent:'Insect repellent', poles:'Walking poles', map:'Map &amp; compass', shell:'Rain shells', lamp:'Headlamp',
+  // Sea-kayak safety kit (DISCIPLINES.md → SEA KAYAKING → Gear line)
+  pfd:'PFD (lifejacket)', paddle:'Paddle', sprayskirt:'Spray-skirt', drybag:'Dry bag',
+  bilgepump:'Bilge pump', towline:'Tow-line', vhf:'VHF radio', sparepaddle:'Spare split paddle',
+  paddleleash:'Paddle leash', cag:'Cag / wetsuit', compass:'Compass &amp; chart' };
+const ITEM_ORDER=['water','firstaid','snacks','sunscreen','repellent','poles','map','shell','lamp',
+  'pfd','paddle','sprayskirt','drybag','bilgepump','towline','vhf','sparepaddle','paddleleash','cag','compass'];
+// activity scope: items absent from this map are shared across disciplines (water, snacks, sunscreen, firstaid).
+const ITEM_ACTIVITY={
+  repellent:'hike', poles:'hike', map:'hike', shell:'hike', lamp:'hike',
+  pfd:'seakayak', paddle:'seakayak', sprayskirt:'seakayak', drybag:'seakayak',
+  bilgepump:'seakayak', towline:'seakayak', vhf:'seakayak', sparepaddle:'seakayak',
+  paddleleash:'seakayak', cag:'seakayak', compass:'seakayak',
+};
+function itemForActivity(id, act){ const a=ITEM_ACTIVITY[id]; return !a || a===act; }
 const CON=['water','snacks','sunscreen','repellent'];   // consumed each trip
-const DUR=['firstaid','poles','map','shell','lamp'];     // reusable, limits concurrent trips
+const DUR=['firstaid','poles','map','shell','lamp','pfd','paddle','sprayskirt','drybag','bilgepump','towline','vhf','sparepaddle','paddleleash','cag','compass']; // reusable, limits concurrent trips
+
+/* ---------------- fleet (count-based capacity per discipline) ----------------
+   Some disciplines (seakayak, raft, cycle, SUP, canyon) cap group size by
+   equipment owned. S.fleet is a flat { id: count } map. fleetCapacity(act)
+   returns how many clients you can serve for a given activity. */
+const FLEET_ITEMS={
+  seakayak:[
+    {id:'clientkayak', name:'Client kayak (sit-on-top)',   cost:220},
+    {id:'clientpfd',   name:'Client paddle + PFD set',     cost:70},
+  ],
+};
+function fleetItemsFor(act){ return FLEET_ITEMS[act]||[]; }
+function fleetCount(id){ return (S.fleet&&S.fleet[id])||0; }
+function fleetCapacity(act){
+  const items = fleetItemsFor(act);
+  if(!items.length) return Infinity; // hiking and other non-fleet disciplines have no cap
+  return items.reduce((cap, it) => Math.min(cap, fleetCount(it.id)), Infinity);
+}
+function buyFleet(id, act){
+  const it = (FLEET_ITEMS[act]||[]).find(x=>x.id===id);
+  if(!it || S.cash<it.cost) return;
+  S.cash -= it.cost; S.fleet[id] = fleetCount(id)+1;
+  note(`Bought a ${it.name.toLowerCase()} (−€${it.cost}).`);
+  saveGame(); openShop();
+}
 const GEAR=[
   {id:'water', cost:4, batch:5}, {id:'snacks', cost:4, batch:5},
   {id:'sunscreen', cost:6, batch:3}, {id:'repellent', cost:6, batch:3},
   {id:'firstaid', cost:45, batch:1}, {id:'poles', cost:35, batch:1},
   {id:'map', cost:25, batch:1}, {id:'shell', cost:30, batch:1}, {id:'lamp', cost:20, batch:1},
 ];
-const ITEM_COST={water:25, snacks:20, sunscreen:25, repellent:25, firstaid:70, poles:55, map:40, shell:60, lamp:35};
+const ITEM_COST={water:25, snacks:20, sunscreen:25, repellent:25, firstaid:70, poles:55, map:40, shell:60, lamp:35,
+  // Sea-kayak safety kit (standard tier costs per DISCIPLINES.md)
+  pfd:35, paddle:40, sprayskirt:30, drybag:20, bilgepump:15, towline:25, vhf:40,
+  sparepaddle:40, paddleleash:12, cag:60, compass:25};
 
 /* ---------------- equipment quality tiers ----------------
    Every item comes in three qualities. Higher tiers cost more upfront but
@@ -1395,6 +1482,9 @@ const TIER_MULT={
 const ITEM_LIFETIME={  // trips at standard quality before wear-out / consumption
   water:4, snacks:4, sunscreen:8, repellent:8,
   firstaid:25, poles:50, map:80, shell:30, lamp:40,
+  // Sea-kayak safety kit — durable; cag/sprayskirt take immersion+sun, vhf eats batteries.
+  pfd:35, paddle:40, sprayskirt:25, drybag:50, bilgepump:60, towline:60, vhf:30,
+  sparepaddle:60, paddleleash:20, cag:25, compass:80,
 };
 function itemCost(id, tier){ return Math.round(ITEM_COST[id] * TIER_MULT[tier].cost); }
 function itemLifetime(id, tier){ return Math.max(1, Math.round(ITEM_LIFETIME[id] * TIER_MULT[tier].life)); }
