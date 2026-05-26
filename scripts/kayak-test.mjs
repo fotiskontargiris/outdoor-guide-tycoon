@@ -12,6 +12,7 @@ const els={}; globalThis.document={getElementById:id=>els[id]||(els[id]=fakeEl()
 globalThis.initGame('Kayak-Test', 'captain', ['water']);
 globalThis.S.cash = 2000;
 globalThis.S.offeredDisciplines = ['seakayak'];
+globalThis.S.certs = ['kayakBasic']; // M2 will grant this at creation for kayak-starter
 globalThis.buyFleet('clientkayak','seakayak');
 globalThis.buyFleet('clientpfd','seakayak');
 // Stock some kayak safety kit so packing has options

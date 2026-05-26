@@ -13,6 +13,7 @@ const els={}; globalThis.document={getElementById:id=>els[id]||(els[id]=fakeEl()
 globalThis.initGame('Fleet-Test','medic',['water']);
 globalThis.S.cash = 1000;
 globalThis.S.offeredDisciplines = ['seakayak'];
+globalThis.S.certs = ['kayakBasic']; // M2 will grant this at creation
 globalThis.startDay();
 
 console.log('=== Step 1: seakayak offered, no fleet ===');

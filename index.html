@@ -450,8 +450,20 @@ function mkBookings(n){
     let c=rnd(CLIENTS);
     if(hasInfra('website') && c.pm < 1.0 && chance(0.5)) c=rnd(CLIENTS);
     const pay=Math.round(r.base*c.pm*(0.85+Math.random()*0.4));
-    out.push({route:r.name, activity:r.activity||'hike', diff:r.diff, client:c.label, ctype:c.type, group:c.g, pay, tags:r.tags,
-              cancelled:(S.weather.storm && r.diff===3)});
+    // Activity-aware weather cancellation. Hiking: storms cancel hard (diff-3).
+    // Sea kayak: storms cancel everything from diff-2 up; the meltemi (wind)
+    // shuts down open-water crossings, and exposed seas at diff-3.
+    const act = r.activity||'hike';
+    let cancelled=false, cancelReason='';
+    const tags = r.tags||[];
+    if(act==='hike' && S.weather.storm && r.diff===3){ cancelled=true; cancelReason='Cancelled — storm on the high routes'; }
+    if(act==='seakayak'){
+      if(S.weather.storm && r.diff>=2){ cancelled=true; cancelReason='Cancelled — storm at sea'; }
+      else if(S.weather.wind && tags.includes('open-water')){ cancelled=true; cancelReason='Cancelled — the meltemi is up, no open crossings today'; }
+      else if(S.weather.wind && tags.includes('exposed') && r.diff===3){ cancelled=true; cancelReason='Cancelled — too much wind for exposed water at this grade'; }
+    }
+    out.push({route:r.name, activity:act, diff:r.diff, client:c.label, ctype:c.type, group:c.g, pay, tags,
+              cancelled, cancelReason});
   }
   return out;
 }
@@ -562,11 +574,14 @@ function note(t){ S.history.push({d:S.day,t}); }
 // Advanced Sea Kayak Leader Award (lands in the M1.cert chunk; not yet earnable);
 // any sea-kayak booking requires a non-empty fleet.
 function bookingLock(b){
-  if(b.cancelled) return 'Cancelled — too dangerous today';
+  if(b.cancelled) return b.cancelReason || 'Cancelled — too dangerous today';
   const act = b.activity||'hike';
   if(act==='hike' && b.diff===3 && !hasCert('mountain')) return 'Locked — needs the Mountain Leader cert';
-  if(act==='seakayak' && b.diff===3 && !hasCert('kayakAdvanced')) return 'Locked — needs the Advanced Sea Kayak Leader Award';
   if(act==='seakayak'){
+    if(!hasCert('kayakBasic')) return 'Locked — needs the Sea Kayak Award (the gate to guiding kayak)';
+    const exposed = (b.tags||[]).includes('exposed') || (b.tags||[]).includes('open-water');
+    if(exposed && b.diff>=2 && !hasCert('kayakLeader')) return 'Locked — needs the Sea Kayak Leader Award for exposed water';
+    if(b.diff===3 && !hasCert('kayakAdvanced')) return 'Locked — needs the Advanced Sea Kayak Leader Award';
     const cap = fleetCapacity('seakayak');
     if(cap < 1) return 'Locked — you have no kayaks (or no PFD sets) yet';
   }
@@ -956,6 +971,19 @@ function finishPlayerTrip(){
   if(perkIs('animator') && b.ctype==='tourist') t.tips=Math.round(t.tips*1.5);
   let coastBonus=0;
   if(perkIs('captain') && (b.tags||[]).includes('coast')){ coastBonus=12; applyRep(2); t.repDelta=(t.repDelta||0)+2; }
+  // Sea-kayak comfort read (DISCIPLINES.md § SEA KAYAKING → Choppy). Wind on
+  // open water is uncomfortable for families/tourists (queasy, dipped reviews)
+  // and a delight for thrill-seekers. Not dangerous, just felt.
+  if((b.activity||'hike')==='seakayak' && (S.weather.wind || S.weather.storm)){
+    if(b.ctype==='family' || b.ctype==='tourist'){
+      t.tips = Math.round(t.tips * 0.5);
+      const r = applyRep(-2); t.repDelta = (t.repDelta||0) + r;
+      t.logs && t.logs.push('The chop took the joy out of it for them — reviews will reflect that.');
+    } else if(b.ctype==='thrill'){
+      t.tips = Math.round((t.tips||0) * 1.3) + 10;
+      t.logs && t.logs.push('The climbers loved the chop; the reviews will be exuberant.');
+    }
+  }
   let hotelBonus=0;
   if(hasInfra('hotelDeal') && (b.ctype==='tourist' || b.ctype==='family')) hotelBonus=20;
   const fee=Math.round(b.pay*t.payMul)+(hasInfra('pickup')?10:0)+coastBonus+hotelBonus, tip=t.tips, earned=fee+tip;
@@ -1532,10 +1560,15 @@ function ownsItem(id){ return ownedTrips(id) > 0; }
 function freshOwned(id, tier){ return {tier, trips:itemLifetime(id, tier)}; }
 
 const CERTS=[
-  {id:'basic',    name:'Basic Hiking Guide',   org:'HATEOA', cost:120, weeks:2, repReq:0,  prereq:null,    effect:'Official accreditation — clients trust you more.'},
-  {id:'firstaid', name:'Wilderness First Aid', org:'HATEOA', cost:180, weeks:3, repReq:0,  prereq:'basic', effect:'Injuries on the trail go far better.'},
-  {id:'gorge',    name:'Canyon & Gorge Leader',org:'HATEOA', cost:160, weeks:3, repReq:0,  prereq:'basic', effect:'You shine on river and gorge routes.'},
-  {id:'mountain', name:'Mountain Leader',      org:'HATEOA', cost:300, weeks:4, repReq:60, prereq:'basic', effect:'Unlocks the hardest summit routes.'},
+  // HATEOA — hiking scheme
+  {id:'basic',          name:'Basic Hiking Guide',            org:'HATEOA',    cost:120, weeks:2, repReq:0,  prereq:null,          effect:'Official accreditation — clients trust you more.'},
+  {id:'firstaid',       name:'Wilderness First Aid',          org:'HATEOA',    cost:180, weeks:3, repReq:0,  prereq:'basic',       effect:'Injuries on the trail go far better.'},
+  {id:'gorge',          name:'Canyon &amp; Gorge Leader',     org:'HATEOA',    cost:160, weeks:3, repReq:0,  prereq:'basic',       effect:'You shine on river and gorge routes.'},
+  {id:'mountain',       name:'Mountain Leader',               org:'HATEOA',    cost:300, weeks:4, repReq:60, prereq:'basic',       effect:'Unlocks the hardest summit routes.'},
+  // Paddle UK — sea-kayak scheme (DISCIPLINES.md § SEA KAYAKING → cert ladder)
+  {id:'kayakBasic',     name:'Sea Kayak Award',               org:'Paddle UK', cost:140, weeks:2, repReq:0,  prereq:null,          effect:'The gate to guiding kayak at all.'},
+  {id:'kayakLeader',    name:'Sea Kayak Leader Award',        org:'Paddle UK', cost:220, weeks:3, repReq:30, prereq:'kayakBasic',  effect:'Lead groups on exposed water — the wreck, the caves.'},
+  {id:'kayakAdvanced',  name:'Advanced Sea Kayak Leader',     org:'Paddle UK', cost:320, weeks:4, repReq:60, prereq:'kayakLeader', effect:'Unlocks the open crossings (Proti, Tainaron, Sapientza).'},
 ];
 function hasCert(id){ return S.certs && S.certs.includes(id); }
 function certName(id){ const c=CERTS.find(x=>x.id===id); return c?c.name:id; }
