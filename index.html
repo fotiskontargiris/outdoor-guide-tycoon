@@ -269,6 +269,24 @@ const ROUTES=[
   {name:'The Proti island crossing',                activity:'seakayak', diff:3, base:190, tags:['open-water','exposed','remote']},
   {name:'Cape Tainaron lighthouse (kayak)',         activity:'seakayak', diff:3, base:205, tags:['open-water','exposed','remote','historical']},
   {name:'Sapientza & Schiza crossing',              activity:'seakayak', diff:3, base:200, tags:['open-water','remote','exposed']},
+  // CANYONING — DISCIPLINES.md § CANYONING (5 routes; Polylimnio & Neda & Vyros & Lousios share
+  // names with hike routes but are separate activity trips with different kit and risk profile)
+  {name:'Polylimnio canyon (pools & jumps)',        activity:'canyon',   diff:1, base:70,  tags:['river','waterfalls','forest']},
+  {name:'Neda Gorge canyon',                        activity:'canyon',   diff:2, base:120, tags:['river','gorge','remote']},
+  {name:'Vyros Gorge canyon',                       activity:'canyon',   diff:2, base:115, tags:['gorge','remote','forest']},
+  {name:'Lousios Gorge canyon',                     activity:'canyon',   diff:2, base:130, tags:['river','gorge','historical']},
+  {name:'Ridomo Gorge (technical)',                 activity:'canyon',   diff:3, base:180, tags:['technical','remote','abseil']},
+  // RAFTING — DISCIPLINES.md § RAFTING (4 routes; Arcadia + north-Peloponnese rivers)
+  {name:'Alfeios River (Olympia)',                  activity:'raft',     diff:1, base:100, tags:['river','scenic','family']},
+  {name:'Lousios River',                            activity:'raft',     diff:2, base:130, tags:['river','gorge','historical']},
+  {name:'Ladonas River (dam-fed)',                  activity:'raft',     diff:2, base:125, tags:['river','dam-fed','reliable']},
+  {name:'Neda run',                                 activity:'raft',     diff:1, base:80,  tags:['river','remote']},
+  // CYCLING — DISCIPLINES.md § CYCLING / E-BIKE (5 routes)
+  {name:'Olive-grove gravel lanes',                 activity:'cycle',    diff:1, base:70,  tags:['backcountry','family']},
+  {name:'Voidokilia & Gialova loop',                activity:'cycle',    diff:1, base:75,  tags:['coast','eco','family']},
+  {name:'Ancient Messene back-lanes',               activity:'cycle',    diff:2, base:110, tags:['historical','backcountry']},
+  {name:'Mani coast road',                          activity:'cycle',    diff:2, base:120, tags:['coast','long','exposed']},
+  {name:'Taygetos foothill climb',                  activity:'cycle',    diff:3, base:165, tags:['mountain','hard','long']},
 ];
 const CLIENTS=[
   {label:'a family with two young children', type:'family', g:4, pm:1.0},
@@ -303,9 +321,9 @@ let pickedBg='medic', pendingName='', cachedSave=null, pickedKit=['water'], pick
 const DISCIPLINES=[
   {id:'hike',     name:'Hiking',           status:'available', blurb:'The classic. Low capital, steady, the gentle start.'},
   {id:'seakayak', name:'Sea kayaking',     status:'available', blurb:'Wind is the killer, fleet is the cost — dolphins, monk seals, the open sea.'},
-  {id:'canyon',   name:'Canyoning',        status:'soon',      blurb:'Cold water, technical rappels, deep shaded gorges. Heat-proof; storm-fragile.'},
-  {id:'raft',     name:'Rafting',          status:'soon',      blurb:'Whole boats of clients. Big fleet, big fees, flow-dependent.'},
-  {id:'cycle',    name:'Cycling / e-bike', status:'soon',      blurb:'Tourist-friendly. e-bikes premium. Hot road days.'},
+  {id:'canyon',   name:'Canyoning',        status:'available', blurb:'Cold water, technical rappels, deep shaded gorges. Heat-proof; storm-fragile.'},
+  {id:'raft',     name:'Rafting',          status:'available', blurb:'Whole boats of clients. Big fleet, big fees, flow-dependent.'},
+  {id:'cycle',    name:'Cycling / e-bike', status:'available', blurb:'Tourist-friendly. e-bikes premium. Hot road days.'},
   {id:'sup',      name:'SUP',              status:'soon',      blurb:'Sun, board, lazy lagoon. Niche. Wind-fragile.'},
   {id:'climb',    name:'Climbing',         status:'soon',      blurb:'Premium per client. Gear-light per head. Niche.'},
 ];
@@ -470,13 +488,20 @@ function initGame(name, bgId, kit, discipline){
   if(bg.id==='outfitter'){ S.packSize=6; S.cash+=150; ['firstaid','map'].forEach(id=>{ if(!ownsItem(id)) S.owned[id]=freshOwned(id,'standard'); }); }
   if(bg.id==='captain'){ S.cash+=200; }
   if(bg.id==='busker'){ S.packSize=3; }
-  // Discipline starter grants — kayak needs the L1 cert to lead at all, and
-  // a starter loan because the fleet (~€220 a boat) is well past a €200 purse.
-  if(disc==='seakayak'){
-    S.certs.push('kayakBasic');
-    S.cash += 1500;
-    S.loan = { source:'the bank', balance:1500, perYear:600 };
-    note('Took out a €1500 starter loan from the bank for a kayak fleet. A season instalment of €600 falls due each winter.');
+  // Discipline starter grants — fleet disciplines need the L1 cert to lead at
+  // all, AND a starter loan because the fleet is well past a €200 purse.
+  const DISCIPLINE_START = {
+    seakayak: {cert:'kayakBasic',  loan:1500, perYear:600, blurb:'kayak fleet'},
+    canyon:   {cert:'canyonBasic', loan:1200, perYear:500, blurb:'wetsuits, harnesses and rope'},
+    raft:     {cert:'raftBasic',   loan:2200, perYear:850, blurb:'a raft and a kit set'},
+    cycle:    {cert:'cycleBasic',  loan:2000, perYear:800, blurb:'a small bike fleet'},
+  };
+  const start = DISCIPLINE_START[disc];
+  if(start){
+    S.certs.push(start.cert);
+    S.cash += start.loan;
+    S.loan = { source:'the bank', balance:start.loan, perYear:start.perYear };
+    note(`Took out a €${start.loan} starter loan from the bank for ${start.blurb}. A season instalment of €${start.perYear} falls due each winter.`);
   }
   ensureForecast();
   setSub('Year 1 · Phase I — '+name+', a guide making a name in Messinia.');
@@ -511,6 +536,20 @@ function mkBookings(n){
       if(S.weather.storm && r.diff>=2){ cancelled=true; cancelReason='Cancelled — storm at sea'; }
       else if(S.weather.wind && tags.includes('open-water')){ cancelled=true; cancelReason='Cancelled — the meltemi is up, no open crossings today'; }
       else if(S.weather.wind && tags.includes('exposed') && r.diff===3){ cancelled=true; cancelReason='Cancelled — too much wind for exposed water at this grade'; }
+    }
+    // Canyon: any storm risk on committing canyons is a flash-flood danger.
+    if(act==='canyon'){
+      if(S.weather.storm && r.diff>=2){ cancelled=true; cancelReason='Cancelled — flash-flood danger; storm anywhere upstream'; }
+      else if(S.weather.mist && r.diff===3){ cancelled=true; cancelReason='Cancelled — drizzle is raising the water, technical descents are off'; }
+    }
+    // Rafting: storm = high water, cancels the hard runs; dam-fed routes shrug off mild weather.
+    if(act==='raft'){
+      if(S.weather.storm && r.diff>=2 && !tags.includes('dam-fed')){ cancelled=true; cancelReason='Cancelled — the river is up and pushing brown'; }
+    }
+    // Cycling: heat on the long exposed climbs is dangerous; storm cancels the mountain route.
+    if(act==='cycle'){
+      if(S.weather.heat && r.diff===3 && tags.includes('long')){ cancelled=true; cancelReason='Cancelled — too hot for a long climb today'; }
+      else if(S.weather.storm && r.diff>=2){ cancelled=true; cancelReason='Cancelled — slick roads and lightning on the open road'; }
     }
     out.push({route:r.name, activity:act, diff:r.diff, client:c.label, ctype:c.type, group:c.g, pay, tags,
               cancelled, cancelReason});
@@ -626,14 +665,32 @@ function note(t){ S.history.push({d:S.day,t}); }
 function bookingLock(b){
   if(b.cancelled) return b.cancelReason || 'Cancelled — too dangerous today';
   const act = b.activity||'hike';
+  const tags = b.tags||[];
   if(act==='hike' && b.diff===3 && !hasCert('mountain')) return 'Locked — needs the Mountain Leader cert';
   if(act==='seakayak'){
     if(!hasCert('kayakBasic')) return 'Locked — needs the Sea Kayak Award (the gate to guiding kayak)';
-    const exposed = (b.tags||[]).includes('exposed') || (b.tags||[]).includes('open-water');
+    const exposed = tags.includes('exposed') || tags.includes('open-water');
     if(exposed && b.diff>=2 && !hasCert('kayakLeader')) return 'Locked — needs the Sea Kayak Leader Award for exposed water';
     if(b.diff===3 && !hasCert('kayakAdvanced')) return 'Locked — needs the Advanced Sea Kayak Leader Award';
-    const cap = fleetCapacity('seakayak');
-    if(cap < 1) return 'Locked — you have no kayaks (or no PFD sets) yet';
+    if(fleetCapacity('seakayak') < 1) return 'Locked — you have no kayaks (or no PFD sets) yet';
+  }
+  if(act==='canyon'){
+    if(!hasCert('canyonBasic')) return 'Locked — needs the Canyon Guide cert';
+    if(b.diff===2 && !hasCert('canyonLeader')) return 'Locked — needs the Canyon Leader cert for standard gorges';
+    if(b.diff===3 && !hasCert('canyonAdvanced')) return 'Locked — needs the Advanced Canyon Leader cert';
+    if(fleetCapacity('canyon') < 1) return 'Locked — you have no client wetsuits / harness sets yet';
+  }
+  if(act==='raft'){
+    if(!hasCert('raftBasic')) return 'Locked — needs the Raft Guide cert';
+    if(b.diff===2 && !hasCert('raftLeader')) return 'Locked — needs the Trip Leader cert';
+    if(b.diff===3 && !hasCert('raftAdvanced')) return 'Locked — needs the Raft Instructor cert';
+    if(fleetCapacity('raft') < 1) return 'Locked — you have no raft (or kit set) yet';
+  }
+  if(act==='cycle'){
+    if(!hasCert('cycleBasic')) return 'Locked — needs the Trail Cycle Leader cert';
+    if(b.diff===2 && !hasCert('cycleLeader')) return 'Locked — needs the Mountain Bike Leader cert';
+    if(b.diff===3 && !hasCert('cycleAdvanced')) return 'Locked — needs the Advanced MTB Guide cert';
+    if(fleetCapacity('cycle') < 1) return 'Locked — you have no client bikes (or helmets) yet';
   }
   return null;
 }
@@ -823,7 +880,6 @@ function recommended(b,w){
   const act=b.activity||'hike';
   const t=b.tags||[];
   if(act==='seakayak'){
-    // Always: PFD + paddle + drybag + water. Add gear as exposure/sea-state rises.
     const r=new Set(['water','pfd','paddle','drybag']);
     if(w.heat||t.includes('exposed')||t.includes('open-water')) r.add('sunscreen');
     if(t.includes('exposed')||t.includes('open-water')) { r.add('sprayskirt'); r.add('bilgepump'); }
@@ -832,6 +888,35 @@ function recommended(b,w){
     if(w.mist||w.storm||w.wind&&t.includes('open-water')) r.add('cag');
     if(b.diff>=2||t.includes('remote')) r.add('firstaid');
     if(t.includes('long')) r.add('snacks');
+    return r;
+  }
+  if(act==='canyon'){
+    // Always: rope + harness + helmet + wetsuit. Throw-line and shoes as grade rises.
+    const r=new Set(['water','wetsuit','canyonHarness','canyonHelmet','rope','canyonBag']);
+    if(b.diff>=2||t.includes('river')) r.add('throwline');
+    if(b.diff>=2||t.includes('technical')) r.add('descender');
+    if(t.includes('technical')||t.includes('abseil')) r.add('cowstails');
+    if(t.includes('technical')||t.includes('abseil')||t.includes('remote')) r.add('canyonShoes');
+    if(b.diff>=2||t.includes('remote')) r.add('firstaid');
+    if(t.includes('long')||b.diff>=3) r.add('snacks');
+    return r;
+  }
+  if(act==='raft'){
+    // Throw-bag, pump+repair, spare paddle, flip line — the river guide's basics.
+    const r=new Set(['water','raftThrow','raftPump','raftSparePaddle','raftFlip']);
+    if(w.heat) r.add('sunscreen');
+    if(b.diff>=2) r.add('raftBail');
+    if(b.diff>=2||t.includes('remote')) r.add('firstaid');
+    if(t.includes('long')) r.add('snacks');
+    return r;
+  }
+  if(act==='cycle'){
+    // Repair kit + tubes + pump always. GPS on long backcountry. Sun matters.
+    const r=new Set(['water','bikeRepair','bikeTubes','bikePump']);
+    if(w.heat||t.includes('exposed')) r.add('sunscreen');
+    if(t.includes('backcountry')||t.includes('long')||t.includes('mountain')) r.add('bikeGPS');
+    if(b.diff>=2||t.includes('long')) r.add('snacks');
+    if(b.diff>=2||t.includes('mountain')) r.add('firstaid');
     return r;
   }
   // hiking
@@ -863,6 +948,40 @@ function conditionsLine(b,w){
     if(t.includes('long')||b.diff>=3) bits.push('a long day on the water');
     if(t.includes('remote')) bits.push('miles from any harbour');
     return bits.length ? cap(bits.join(', '))+'.' : 'A gentle paddle in fair weather.';
+  }
+  if(act==='canyon'){
+    if(t.includes('technical')) bits.push('big committing rappels and serious cold water');
+    else if(t.includes('gorge')) bits.push('a deep, cold gorge under high walls');
+    else if(t.includes('waterfalls')) bits.push('emerald pools and small jumps');
+    if(t.includes('historical')) bits.push('monasteries glued to the cliffs far overhead');
+    if(t.includes('remote')) bits.push('a long approach from the road');
+    if(w.storm) bits.push('a storm anywhere upstream is a flash-flood risk');
+    if(w.mist) bits.push('the water is rising, the rock will be slick');
+    if(w.heat) bits.push('ideal — the cold water is the reward');
+    if(t.includes('abseil')||b.diff===3) bits.push('rope work, properly committing');
+    return bits.length ? cap(bits.join(', '))+'.' : 'A gentle gorge in fair weather.';
+  }
+  if(act==='raft'){
+    if(t.includes('dam-fed')) bits.push('reliable dam-released flow');
+    else if(t.includes('river')) bits.push('moving water under low arching trees');
+    if(t.includes('historical')) bits.push('cliff-clinging monasteries pass overhead');
+    if(t.includes('remote')) bits.push('a put-in nobody else uses today');
+    if(w.storm) bits.push('the river is up and pushing brown');
+    if(w.heat) bits.push('a swimming-stop kind of heat');
+    if(b.diff>=2) bits.push('lively water, real rapids');
+    return bits.length ? cap(bits.join(', '))+'.' : 'A gentle river day.';
+  }
+  if(act==='cycle'){
+    if(t.includes('mountain')) bits.push('a proper climb into chestnut forests');
+    else if(t.includes('coast')) bits.push('coast road with tower villages and sea drops');
+    else if(t.includes('backcountry')) bits.push('quiet backcountry lanes');
+    if(t.includes('historical')) bits.push('ruins around every corner');
+    if(t.includes('exposed')) bits.push('no shade on the open tarmac');
+    if(w.heat) bits.push('a brutal midday sun on the road');
+    if(w.wind) bits.push('a headwind that saps and steers');
+    if(w.storm) bits.push('slick roads, no day for the long way');
+    if(b.diff>=3||t.includes('long')) bits.push('a long day in the saddle');
+    return bits.length ? cap(bits.join(', '))+'.' : 'A gentle pedal in fair weather.';
   }
   // hiking
   if(t.includes('gorge')) bits.push('a deep gorge with cool air and slippery rock');
@@ -1021,17 +1140,26 @@ function finishPlayerTrip(){
   if(perkIs('animator') && b.ctype==='tourist') t.tips=Math.round(t.tips*1.5);
   let coastBonus=0;
   if(perkIs('captain') && (b.tags||[]).includes('coast')){ coastBonus=12; applyRep(2); t.repDelta=(t.repDelta||0)+2; }
-  // Sea-kayak comfort read (DISCIPLINES.md § SEA KAYAKING → Choppy). Wind on
-  // open water is uncomfortable for families/tourists (queasy, dipped reviews)
-  // and a delight for thrill-seekers. Not dangerous, just felt.
-  if((b.activity||'hike')==='seakayak' && (S.weather.wind || S.weather.storm)){
+  // Discipline comfort read (DISCIPLINES.md § COMFORT — PHASE-ARCHITECTURE §16):
+  //   seakayak — wind/storm = chop. Family/tourist suffer, thrill enjoy.
+  //   canyon   — mist/storm = cold rising water. Family/tourist shiver, thrill grin.
+  //   raft     — storm = high water. Family/tourist scared, thrill love it.
+  //   cycle    — heat on a long exposed road. Family/tourist wilt, thrill push through.
+  const act = b.activity||'hike';
+  const w = S.weather;
+  let comfortHit = false, comfortLine = '';
+  if(act==='seakayak' && (w.wind||w.storm))                                     { comfortHit=true; comfortLine='The chop took the joy out of it'; }
+  if(act==='canyon'   && (w.storm||w.mist))                                     { comfortHit=true; comfortLine='The water was cold and rising, and they felt every minute of it'; }
+  if(act==='raft'     && w.storm && b.diff>=2)                                  { comfortHit=true; comfortLine='The river was up and frightening'; }
+  if(act==='cycle'    && w.heat && (tags.includes('long')||tags.includes('exposed'))) { comfortHit=true; comfortLine='The heat on the road broke them'; }
+  if(comfortHit){
     if(b.ctype==='family' || b.ctype==='tourist'){
-      t.tips = Math.round(t.tips * 0.5);
+      t.tips = Math.round((t.tips||0) * 0.5);
       const r = applyRep(-2); t.repDelta = (t.repDelta||0) + r;
-      t.logs && t.logs.push('The chop took the joy out of it for them — reviews will reflect that.');
+      t.logs && t.logs.push(comfortLine + ' for them — reviews will reflect that.');
     } else if(b.ctype==='thrill'){
       t.tips = Math.round((t.tips||0) * 1.3) + 10;
-      t.logs && t.logs.push('The climbers loved the chop; the reviews will be exuberant.');
+      t.logs && t.logs.push('The thrill-seekers loved it; the reviews will be exuberant.');
     }
   }
   let hotelBonus=0;
@@ -1540,22 +1668,41 @@ function renderSummary(){
 /* ---------------- gear & trailhead ---------------- */
 const ITEMS={ water:'Water', firstaid:'First-aid kit', snacks:'Snacks', sunscreen:'Sunscreen',
   repellent:'Insect repellent', poles:'Walking poles', map:'Map &amp; compass', shell:'Rain shells', lamp:'Headlamp',
-  // Sea-kayak safety kit (DISCIPLINES.md → SEA KAYAKING → Gear line)
+  // Sea-kayak safety kit
   pfd:'PFD (lifejacket)', paddle:'Paddle', sprayskirt:'Spray-skirt', drybag:'Dry bag',
   bilgepump:'Bilge pump', towline:'Tow-line', vhf:'VHF radio', sparepaddle:'Spare split paddle',
-  paddleleash:'Paddle leash', cag:'Cag / wetsuit', compass:'Compass &amp; chart' };
+  paddleleash:'Paddle leash', cag:'Cag / wetsuit', compass:'Compass &amp; chart',
+  // Canyoning safety kit (DISCIPLINES.md § CANYONING → Gear line)
+  wetsuit:'Wetsuit', canyonHarness:'Canyoning harness', canyonHelmet:'Canyoning helmet',
+  rope:'Rope', descender:'Descender / belay device', throwline:'Throw-line',
+  canyonBag:'Canyon dry bag', canyonShoes:'Canyoning shoes', cowstails:'Cowstails / lanyards',
+  // Rafting safety kit (DISCIPLINES.md § RAFTING)
+  raftThrow:'Throw-bag', raftPump:'Pump + repair kit', raftFlip:'Flip line', raftBail:'Bailing bucket', raftSparePaddle:'Spare raft paddle',
+  // Cycling safety kit (DISCIPLINES.md § CYCLING / E-BIKE)
+  bikeRepair:'Bike repair kit', bikeTubes:'Spare tubes &amp; tyres', bikePump:'Pump &amp; multitool', bikeGPS:'GPS computer'
+};
 const ITEM_ORDER=['water','firstaid','snacks','sunscreen','repellent','poles','map','shell','lamp',
-  'pfd','paddle','sprayskirt','drybag','bilgepump','towline','vhf','sparepaddle','paddleleash','cag','compass'];
+  'pfd','paddle','sprayskirt','drybag','bilgepump','towline','vhf','sparepaddle','paddleleash','cag','compass',
+  'wetsuit','canyonHarness','canyonHelmet','rope','descender','throwline','canyonBag','canyonShoes','cowstails',
+  'raftThrow','raftPump','raftFlip','raftBail','raftSparePaddle',
+  'bikeRepair','bikeTubes','bikePump','bikeGPS'];
 // activity scope: items absent from this map are shared across disciplines (water, snacks, sunscreen, firstaid).
 const ITEM_ACTIVITY={
   repellent:'hike', poles:'hike', map:'hike', shell:'hike', lamp:'hike',
   pfd:'seakayak', paddle:'seakayak', sprayskirt:'seakayak', drybag:'seakayak',
   bilgepump:'seakayak', towline:'seakayak', vhf:'seakayak', sparepaddle:'seakayak',
   paddleleash:'seakayak', cag:'seakayak', compass:'seakayak',
+  wetsuit:'canyon', canyonHarness:'canyon', canyonHelmet:'canyon', rope:'canyon',
+  descender:'canyon', throwline:'canyon', canyonBag:'canyon', canyonShoes:'canyon', cowstails:'canyon',
+  raftThrow:'raft', raftPump:'raft', raftFlip:'raft', raftBail:'raft', raftSparePaddle:'raft',
+  bikeRepair:'cycle', bikeTubes:'cycle', bikePump:'cycle', bikeGPS:'cycle',
 };
 function itemForActivity(id, act){ const a=ITEM_ACTIVITY[id]; return !a || a===act; }
 const CON=['water','snacks','sunscreen','repellent'];   // consumed each trip
-const DUR=['firstaid','poles','map','shell','lamp','pfd','paddle','sprayskirt','drybag','bilgepump','towline','vhf','sparepaddle','paddleleash','cag','compass']; // reusable, limits concurrent trips
+const DUR=['firstaid','poles','map','shell','lamp','pfd','paddle','sprayskirt','drybag','bilgepump','towline','vhf','sparepaddle','paddleleash','cag','compass',
+  'wetsuit','canyonHarness','canyonHelmet','rope','descender','throwline','canyonBag','canyonShoes','cowstails',
+  'raftThrow','raftPump','raftFlip','raftBail','raftSparePaddle',
+  'bikeRepair','bikeTubes','bikePump','bikeGPS']; // reusable, limits concurrent trips
 
 /* ---------------- fleet (count-based capacity per discipline) ----------------
    Some disciplines (seakayak, raft, cycle, SUP, canyon) cap group size by
@@ -1563,8 +1710,20 @@ const DUR=['firstaid','poles','map','shell','lamp','pfd','paddle','sprayskirt','
    returns how many clients you can serve for a given activity. */
 const FLEET_ITEMS={
   seakayak:[
-    {id:'clientkayak', name:'Client kayak (sit-on-top)',   cost:220},
-    {id:'clientpfd',   name:'Client paddle + PFD set',     cost:70},
+    {id:'clientkayak',       name:'Client kayak (sit-on-top)',     cost:220, capPer:1},
+    {id:'clientpfd',         name:'Client paddle + PFD set',       cost:70,  capPer:1},
+  ],
+  canyon:[
+    {id:'clientwetsuit',     name:'Client wetsuit',                cost:70,  capPer:1},
+    {id:'clientharnessset',  name:'Client harness + helmet set',   cost:60,  capPer:1},
+  ],
+  raft:[
+    {id:'raft',              name:'Raft (one crew per boat)',      cost:900, capPer:6},
+    {id:'raftkitset',        name:'Raft kit set (paddle+PFD+helmet)', cost:90, capPer:1},
+  ],
+  cycle:[
+    {id:'clientbike',        name:'Client bike',                   cost:250, capPer:1},
+    {id:'clientbikehelmet',  name:'Cycling helmet',                cost:30,  capPer:1},
   ],
 };
 function fleetItemsFor(act){ return FLEET_ITEMS[act]||[]; }
@@ -1572,7 +1731,7 @@ function fleetCount(id){ return (S.fleet&&S.fleet[id])||0; }
 function fleetCapacity(act){
   const items = fleetItemsFor(act);
   if(!items.length) return Infinity; // hiking and other non-fleet disciplines have no cap
-  return items.reduce((cap, it) => Math.min(cap, fleetCount(it.id)), Infinity);
+  return items.reduce((cap, it) => Math.min(cap, fleetCount(it.id) * (it.capPer||1)), Infinity);
 }
 function buyFleet(id, act){
   const it = (FLEET_ITEMS[act]||[]).find(x=>x.id===id);
@@ -1588,9 +1747,15 @@ const GEAR=[
   {id:'map', cost:25, batch:1}, {id:'shell', cost:30, batch:1}, {id:'lamp', cost:20, batch:1},
 ];
 const ITEM_COST={water:25, snacks:20, sunscreen:25, repellent:25, firstaid:70, poles:55, map:40, shell:60, lamp:35,
-  // Sea-kayak safety kit (standard tier costs per DISCIPLINES.md)
   pfd:35, paddle:40, sprayskirt:30, drybag:20, bilgepump:15, towline:25, vhf:40,
-  sparepaddle:40, paddleleash:12, cag:60, compass:25};
+  sparepaddle:40, paddleleash:12, cag:60, compass:25,
+  // Canyoning safety kit
+  wetsuit:60, canyonHarness:45, canyonHelmet:30, rope:80, descender:25, throwline:30,
+  canyonBag:25, canyonShoes:50, cowstails:30,
+  // Rafting safety kit
+  raftThrow:30, raftPump:40, raftFlip:20, raftBail:10, raftSparePaddle:25,
+  // Cycling safety kit
+  bikeRepair:40, bikeTubes:15, bikePump:20, bikeGPS:90};
 
 /* ---------------- equipment quality tiers ----------------
    Every item comes in three qualities. Higher tiers cost more upfront but
@@ -1609,9 +1774,15 @@ const TIER_MULT={
 const ITEM_LIFETIME={  // trips at standard quality before wear-out / consumption
   water:4, snacks:4, sunscreen:8, repellent:8,
   firstaid:25, poles:50, map:80, shell:30, lamp:40,
-  // Sea-kayak safety kit — durable; cag/sprayskirt take immersion+sun, vhf eats batteries.
   pfd:35, paddle:40, sprayskirt:25, drybag:50, bilgepump:60, towline:60, vhf:30,
   sparepaddle:60, paddleleash:20, cag:25, compass:80,
+  // Canyoning — ropes wear with rappels; wetsuit takes immersion+sun; helmets eat knocks
+  wetsuit:30, canyonHarness:50, canyonHelmet:60, rope:40, descender:80, throwline:60,
+  canyonBag:50, canyonShoes:30, cowstails:60,
+  // Rafting — throw-bag and pump last; bail bucket effectively forever
+  raftThrow:60, raftPump:80, raftFlip:80, raftBail:120, raftSparePaddle:60,
+  // Cycling — repair kit consumed with use; tubes are basically consumable; GPS lasts
+  bikeRepair:40, bikeTubes:8, bikePump:60, bikeGPS:120,
 };
 function itemCost(id, tier){ return Math.round(ITEM_COST[id] * TIER_MULT[tier].cost); }
 function itemLifetime(id, tier){ return Math.max(1, Math.round(ITEM_LIFETIME[id] * TIER_MULT[tier].life)); }
@@ -1630,6 +1801,18 @@ const CERTS=[
   {id:'kayakBasic',     name:'Sea Kayak Award',               org:'Paddle UK', cost:140, weeks:2, repReq:0,  prereq:null,          effect:'The gate to guiding kayak at all.'},
   {id:'kayakLeader',    name:'Sea Kayak Leader Award',        org:'Paddle UK', cost:220, weeks:3, repReq:30, prereq:'kayakBasic',  effect:'Lead groups on exposed water — the wreck, the caves.'},
   {id:'kayakAdvanced',  name:'Advanced Sea Kayak Leader',     org:'Paddle UK', cost:320, weeks:4, repReq:60, prereq:'kayakLeader', effect:'Unlocks the open crossings (Proti, Tainaron, Sapientza).'},
+  // ICOpro — canyoning scheme (DISCIPLINES.md § CANYONING → cert)
+  {id:'canyonBasic',    name:'Canyon Guide',                  org:'ICOpro',    cost:150, weeks:2, repReq:0,  prereq:null,          effect:'Gate to guiding canyon at all. Gentle gorges only.'},
+  {id:'canyonLeader',   name:'Canyon Leader',                 org:'ICOpro',    cost:230, weeks:3, repReq:30, prereq:'canyonBasic', effect:'Lead standard gorges with water (Neda, Vyros, Lousios).'},
+  {id:'canyonAdvanced', name:'Advanced Canyon Leader',        org:'ICOpro',    cost:340, weeks:4, repReq:60, prereq:'canyonLeader',effect:'Technical/abseil canyons (Ridomo). Flash-flood judgement.'},
+  // IRF — rafting scheme
+  {id:'raftBasic',      name:'Raft Guide',                    org:'IRF',       cost:140, weeks:2, repReq:0,  prereq:null,          effect:'The gate; gentle / family runs (Alfeios).'},
+  {id:'raftLeader',     name:'Trip Leader',                   org:'IRF',       cost:220, weeks:3, repReq:30, prereq:'raftBasic',   effect:'Standard grade-2 rivers (Lousios, Ladonas).'},
+  {id:'raftAdvanced',   name:'Raft Instructor',               org:'IRF',       cost:320, weeks:4, repReq:60, prereq:'raftLeader',  effect:'High-water and harder rivers; rescue leadership.'},
+  // IMBA — cycling scheme
+  {id:'cycleBasic',     name:'Trail Cycle Leader',            org:'IMBA',      cost:130, weeks:2, repReq:0,  prereq:null,          effect:'The gate; easy lanes and coast loops.'},
+  {id:'cycleLeader',    name:'Mountain Bike Leader',          org:'IMBA',      cost:210, weeks:3, repReq:30, prereq:'cycleBasic',  effect:'Longer / exposed routes (Mani coast, Messene lanes).'},
+  {id:'cycleAdvanced',  name:'Advanced MTB Guide',            org:'IMBA',      cost:300, weeks:4, repReq:60, prereq:'cycleLeader', effect:'Technical / backcountry climbs (Taygetos foothills).'},
 ];
 function hasCert(id){ return S.certs && S.certs.includes(id); }
 function certName(id){ const c=CERTS.find(x=>x.id===id); return c?c.name:id; }
@@ -1814,6 +1997,60 @@ const TRAILHEAD=[
      {need:'snacks', label:'Ginger, the sheltered line, and a calm word', hint:'A kindness, well placed', run:()=>({line:'A biscuit, a promise to stay close to shore, and their colour returns. Kindly done.', rep:5})},
      {label:'Suggest they sit this one out', hint:'Disappointing, but kind', run:()=>({line:'You gently stand them down. Disappointing, but no one wants them green over the side.', payMul:0.92, rep:2})},
    ]},
+  /* --- CANYON put-in beats (DISCIPLINES.md § CANYONING → Put-in situations) --- */
+  {id:'ca-smudge', activities:['canyon'], w:1.4, when:(b,w)=>w.storm||w.mist||b.diff>=2, title:'A smudge on the horizon',
+   text:()=>`The forecast said clear, but there is grey building over the peaks behind the gorge. A storm anywhere upstream means a wall of brown water in minutes.`,
+   choices:[
+     {label:'Drop to a low, easy-exit canyon', hint:'Boring, alive', run:()=>({line:'You bin the deep slot for a route you can climb out of. Boring, alive.', payMul:0.8, rep:3})},
+     {label:'Wait an hour and watch the water', hint:'Patience as professionalism', run:()=>({line:'You sit on the lip and read the river. Patience as professionalism.', energy:-4})},
+     {label:'Commit to the descent', hint:'The last bold thing you do?', run:()=>({line:'You drop in under a darkening sky. Bold. Possibly the last bold thing you do.', risk:0.22})},
+   ]},
+  {id:'ca-swim', activities:['canyon'], w:1.1, when:()=>true, title:'"I can’t really swim"',
+   text:()=>`Announced cheerfully at the lip of a canyon that is, fundamentally, a river.`,
+   choices:[
+     {need:'throwline', label:'Keep them on the line through the pools', hint:'Slow, safe, attentive', run:()=>({line:'You short-rope them through every swim. Slow, safe, attentive.', rep:5, energy:-6})},
+     {label:'Turn them back at the road', hint:'The right call', run:()=>({line:'Kindly but firmly, you stand them down. The right call.', payMul:0.92, rep:2})},
+   ]},
+  {id:'ca-jump', activities:['canyon'], w:1.1, when:(b)=>b.diff>=2, title:'The first big jump',
+   text:()=>`A client has frozen at the edge of a six-metre leap, the group backing up behind them.`,
+   choices:[
+     {need:'snacks', label:'Coax, breathe, offer the climb-down', hint:'No shame in the chicken exit', run:()=>({line:'No shame in the chicken exit; you talk them down the rocks and the day rolls on warm.', rep:5})},
+     {label:'Let the pressure build', hint:'Awkward and unkind', run:()=>({line:'You wait it out, awkwardly. They jump, eventually, furious and shaken.', rep:-3})},
+   ]},
+  {id:'ca-cold', activities:['canyon'], w:1.2, when:()=>true, title:'Nobody warned them it would be cold',
+   text:()=>`Summer outside, but the gorge is a fridge, and half the group is in swim shorts and goosebumps.`,
+   choices:[
+     {label:'Hand out spare wetsuits from the fleet', hint:'Bought into the fleet for a reason', run:()=>({line:'Everyone zips into neoprene; the shivering stops, the fun starts.', rep:4})},
+     {label:'Push a brisk pace to keep them warm', hint:'Mostly works, mostly', run:()=>({line:'You keep them moving and the blood up. It mostly works.', energy:-8, risk:0.06})},
+   ]},
+  /* --- RAFT put-in beats --- */
+  {id:'ra-up', activities:['raft'], w:1.3, when:(b,w)=>w.storm||w.mist, title:'The river is up',
+   text:()=>`Overnight rain has it pushing brown and quick.`,
+   choices:[
+     {label:'Run the gentler section', hint:'Less drama', run:()=>({line:'You loop the day onto the easier reach. Less drama, everyone smiles.', payMul:0.8, rep:3})},
+     {label:'Wait and read it', hint:'Read the water', run:()=>({line:'You sit on the bank and watch a stick go by. Then another. Then commit when it slows.', energy:-4})},
+     {label:'Commit to the big water', hint:'Real river, real risk', run:()=>({line:'You launch into proper water. The grade jumped.', risk:0.2})},
+   ]},
+  {id:'ra-deadweight', activities:['raft'], w:1.0, when:()=>true, title:'The dead-weight paddler',
+   text:()=>`One of the crew folds his arms and announces he is "just here for the ride", unbalancing the boat.`,
+   choices:[
+     {label:'Coax and re-seat them', hint:'Crew is the boat', run:()=>({line:'You put them on the strong-side bow with a job and they discover, grudgingly, that this is fun.', rep:4})},
+     {label:'Let it slide', hint:'A list and a slack stroke', run:()=>({line:'You take what they give. The boat lists in the corners.', risk:0.08, rep:-2})},
+   ]},
+  /* --- CYCLE put-in beats --- */
+  {id:'cy-fitness', activities:['cycle'], w:1.4, when:()=>true, title:'The fitness gap',
+   text:()=>`Two are clearly racers; two have not ridden since childhood. The first hill is on the route.`,
+   choices:[
+     {label:'Split the pace and meet at the cafe', hint:'Two paces, one plan', run:()=>({line:'You ride sweep with the slow pair; the fast two scout ahead. Everyone reunites grinning over coffee.', energy:-6, rep:3})},
+     {label:'Put the slow pair on e-bikes', hint:'The whole point of e-bikes', run:()=>({line:'A quick swap to the e-bikes and the gap evaporates. The group laughs all the way up.', rep:4})},
+     {label:'Hold one pace for everyone', hint:'Someone suffers', run:()=>({line:'Either the slow are dropped or the fast are bored. You pick the suffering and the day is uneven.', rep:-3})},
+   ]},
+  {id:'cy-pretrip', activities:['cycle'], w:1.0, when:()=>true, title:'Brakes that sing',
+   text:()=>`A wheel-side glance, a squeeze of a lever, and you hear that thin metallic squeal that means yesterday's mechanic took a shortcut.`,
+   choices:[
+     {need:'bikeRepair', label:'Five-minute roadside adjust', hint:'You came prepared', run:()=>({line:'You true a pad, snug a bolt, the squeal disappears. Quiet, professional.', rep:3})},
+     {label:'Send the client off as-is', hint:'A loud, distracting descent', run:()=>({line:'The squeal becomes the soundtrack of the morning. They mention it. In the review.', rep:-3})},
+   ]},
 ];
 
 /* ---------------- personal-trip events ---------------- */
@@ -1989,6 +2226,134 @@ const EVENTS=[
         ?{lines:['You take a heading and bring them out of the murk dead on the beach. Quietly masterful.'], rep:6}
         :{lines:['You misread the set and pop out half a kilometre off. Mostly disguised as competence.'], rep:-2}},
      {label:'Feel your way along the coast', hint:'Slow, tense, eventually fine', run:()=>({lines:['A tense, disoriented hour clawing back to land.'], rep:-5, energy:-10})},
+   ]},
+  /* --- CANYON on-route events (DISCIPLINES.md § CANYONING → In-canyon events) --- */
+  {id:'ca-rises', activities:['canyon'], w:1.5, when:(b,w)=>w.storm||w.mist, title:'The water rises',
+   text:()=>`The pool you just swam is suddenly pushing, and the noise upstream has changed.`,
+   choices:[
+     {label:'Drive everyone up to a high ledge', hint:'The flash-flood call',
+      run:(b,S)=>chance(0.55+(hasCert('canyonAdvanced')?0.2:hasCert('canyonLeader')?0.1:0))
+        ?{lines:['You read it early, drive everyone up to a high ledge, and watch the canyon roar through where you would have been. Nobody breathes.'], rep:8}
+        :{lines:['You get out, but barely, scattered and frightened, gear lost downstream.'], rep:-12, cash:-60, energy:-16}},
+   ]},
+  {id:'ca-stuckrope', activities:['canyon'], w:1.0, when:(b)=>b.diff>=2, title:'The stuck rappel',
+   text:()=>`The rope is jammed below the lip and a client is dangling, spinning, fifteen metres up.`,
+   choices:[
+     {label:'Talk-and-fix from above', hint:'Rope skill saves the day',
+      run:(b,S)=>chance(0.55+(hasCert('canyonLeader')?0.15:0)+(hasCert('canyonAdvanced')?0.15:0))
+        ?{lines:['A quiet word, a deft trick on the line, and they are down dignity intact.'], rep:6}
+        :{lines:['A slow, frightening recovery. They are unhurt; their faith in you is dented.'], rep:-5, energy:-12}},
+   ]},
+  {id:'ca-chamber', activities:['canyon'], w:1.3, when:()=>true, title:'The hidden chamber',
+   text:()=>`You swim through a curtain of falling water into a chamber lit blue from below, and the whole group goes silent.`,
+   choices:[
+     {label:'Hold it', hint:'A memory they will keep', run:()=>({lines:['Nobody speaks. A kingfisher cuts the light. This is the one they will describe badly to everyone they love for years.'], rep:7, tips:20})},
+   ]},
+  {id:'ca-cold', activities:['canyon'], w:1.0, when:()=>true, title:'The cold creeps in',
+   text:()=>`A client has gone quiet and grey-lipped; the gorge has been taking heat from them for an hour.`,
+   choices:[
+     {need:'wetsuit', label:'Warm them, feed them, push for the sun', hint:'Wetsuit + medic help',
+      run:(b,S)=>chance(0.65+(perkIs('medic')?0.2:0))
+        ?{lines:['You strip them, stuff a warm layer on, sugar in the hand, march for the sun-warmed slabs. Crisis averted.'], rep:4, energy:-6}
+        :{lines:['A near-miss with hypothermia. You walk them out warm but the day is broken.'], rep:-6, cash:-30}},
+     {label:'Push on, they will warm up moving', hint:'They will not warm up moving', run:()=>({lines:['They do not warm up moving. The day finishes early and a little frightened.'], rep:-5, energy:-8})},
+   ]},
+  {id:'ca-slick', activities:['canyon'], w:1.1, when:(b)=>b.diff>=2, title:'Slick rock',
+   text:()=>`Someone goes down hard on a polished boulder; an ankle, maybe a wrist.`,
+   choices:[
+     {label:'Splint and walk them out', hint:'First-aid + medic help',
+      run:(b,S)=>chance(0.6+(hasItem('firstaid')?0.18:0)+(perkIs('medic')?0.2:0)+(hasCert('firstaid')?0.15:0))
+        ?{lines:['You strap and walk them out yourself. Slow, careful, kind.'], rep:5, energy:-15}
+        :{lines:['The walk-out is harder than you judged. They get there, but the day is a slog.'], rep:-3, energy:-22, cash:-20}},
+     {label:'Call the rescue', hint:'Safe, expensive', run:()=>({lines:['Help arrives. Everyone is fine; the bill is not.'], cash:-90, rep:3, payMul:0.85})},
+   ]},
+  {id:'ca-rockfall', activities:['canyon'], w:0.8, when:(b)=>(b.tags||[]).includes('technical')||b.diff===3, title:'Rockfall in the slot',
+   text:()=>`A clatter echoes from above and a fist of stone bounces past.`,
+   choices:[
+     {label:'Hold position and call clear', hint:'Helmets earn their keep',
+      run:(b,S)=>chance(0.7+(hasItem('canyonHelmet')?0.15:0))
+        ?{lines:['Helmets ring. Nobody is hit. You hustle them past the unstable wall.'], rep:2}
+        :{lines:['A graze and a real fright. The mood is brittle the rest of the day.'], rep:-4, risk:0.06}},
+   ]},
+  /* --- RAFT on-route events --- */
+  {id:'ra-flip', activities:['raft'], w:1.2, when:(b)=>b.diff>=2, title:'The flip',
+   text:()=>`A drop catches the boat wrong and the whole crew is suddenly in the river.`,
+   choices:[
+     {need:'raftThrow', label:'Throw-bag, count heads, regroup', hint:'Cert + calm carry it',
+      run:(b,S)=>chance(0.6+(hasCert('raftLeader')?0.15:0)+(hasCert('raftAdvanced')?0.1:0))
+        ?{lines:['You count heads, throw the bag, swim them in one by one. Cold, fast, clean.'], rep:6}
+        :{lines:['A long, scattered swim. Everyone makes it. Nobody is thanking you.'], rep:-10, cash:-40, energy:-14}},
+   ]},
+  {id:'ra-swimmer', activities:['raft'], w:1.0, when:()=>true, title:'Swimmer downstream',
+   text:()=>`One paddler bounces out in a rapid and is moving fast.`,
+   choices:[
+     {need:'raftThrow', label:'Throw-bag the eddy line', hint:'The bag was made for this',
+      run:()=>chance(0.75)?{lines:['Bag lands clean across the chest. They grab, you pull, they spin in. Textbook.'], rep:6}:{lines:['You miss with the first bag and have to chase. They are unhurt and rattled.'], rep:-2, energy:-6}},
+     {label:'Boat-rescue, push for the eddy', hint:'Slower, harder',
+      run:()=>({lines:['You ferry across and haul them aboard. Slower than the bag, but it works.'], rep:3, energy:-8})},
+   ]},
+  {id:'ra-otter', activities:['raft'], w:1.0, when:(b)=>(b.tags||[]).includes('river'), title:'The otter',
+   text:()=>`The gorge opens, the water stills, and an otter slips off a rock ahead of the boat.`,
+   choices:[
+     {label:'Drift quiet and watch', hint:'Pure river', run:()=>({lines:['Paddles up, breath in. It dives, surfaces twice, vanishes. The boat is silent for a long minute after.'], rep:6, tips:18})},
+   ]},
+  {id:'ra-jumppool', activities:['raft'], w:1.1, when:(b,w)=>!w.storm, title:'The jump pool',
+   text:()=>`A deep green pool, a warm rock to leap from, and the entire crew begs for "just ten more minutes".`,
+   choices:[
+     {label:'Give them the ten minutes', hint:'The whole reason they came', run:()=>({lines:['You pull the boat in, tie it off, and let the day breathe. Ten minutes becomes thirty. Nobody minds.'], rep:6, tips:18, energy:3})},
+     {label:'Press on for the schedule', hint:'A clean exit, no magic', run:()=>({lines:['You push past the pool. A clean exit, on time, faintly disappointed.'], rep:-2})},
+   ]},
+  {id:'ra-wrap', activities:['raft'], w:0.8, when:(b)=>b.diff>=2, title:'Wrapped raft',
+   text:()=>`The boat pins broadside on a midstream rock and the whole river piles onto it.`,
+   choices:[
+     {label:'Run a Z-drag from the bank', hint:'Cert + drilled crew',
+      run:(b,S)=>chance(0.5+(hasCert('raftLeader')?0.2:0)+(hasCert('raftAdvanced')?0.15:0))
+        ?{lines:['You rig a Z-drag, the crew pulls, the boat slides free with a sucking pop. Quietly heroic.'], rep:6}
+        :{lines:['A long, cold, frightening extraction. The boat comes off; the day does not recover.'], rep:-8, energy:-14}},
+   ]},
+  {id:'ra-dam', activities:['raft'], w:0.7, when:(b,w)=>!w.storm&&!w.mist, title:'A dam release',
+   text:()=>`Word comes that Ladonas is releasing — real water, on a day the other rivers are bones.`,
+   choices:[
+     {label:'Race to the put-in', hint:'A reward for being ready', run:()=>({lines:['You reshuffle the day; the crew shouts the whole drive. The water is fat and lively. Hero day.'], rep:5, tips:30, energy:-3})},
+     {label:'Miss the window', hint:'Run the thin section instead', run:()=>({lines:['You stick to the plan; the run is bony and shallow. Fine. Not the day it could have been.'], payMul:0.85})},
+   ]},
+  /* --- CYCLE on-route events --- */
+  {id:'cy-puncture', activities:['cycle'], w:1.3, when:()=>true, title:'The puncture',
+   text:()=>`A hiss, a slow sag, a sigh. Twenty kilometres in.`,
+   choices:[
+     {need:'bikeTubes', label:'Roadside fix', hint:'Tube + pump + done', run:()=>({lines:['Tube out, tube in, pump, roll. Five minutes; you make it look easy.'], rep:3})},
+     {label:'Improvise without a spare', hint:'A long faff', run:()=>({lines:['A long roadside faff with the wrong valve and a borrowed bottle of water. Eventually you ride.'], rep:-3, energy:-5})},
+   ]},
+  {id:'cy-battery', activities:['cycle'], w:1.0, when:(b)=>(b.tags||[]).includes('long')||(b.tags||[]).includes('mountain'), title:'Flat battery, far out',
+   text:()=>`Someone burned the assist on the climbs; now it is a 22-kilo bike and a long way home.`,
+   choices:[
+     {label:'Shuttle them with the van', hint:'A short drive saves the day', run:()=>({lines:['You phone the van, meet at the next junction, and they roll the last stretch on a fresh battery.'], energy:-10})},
+     {label:'Tow and grind it home', hint:'Hard, but cheap', run:()=>({lines:['You set a low gear and they grind. A grim but cheap finish.'], rep:-4, energy:-8})},
+   ]},
+  {id:'cy-view', activities:['cycle'], w:1.2, when:()=>true, title:'The viewpoint',
+   text:()=>`You crest a rise and the whole gulf is laid out, then a long freewheel down into a village square.`,
+   choices:[
+     {label:'Stop and let them feel it', hint:'A free piece of magic', run:()=>({lines:['Bottles out, photos taken, then a kilometre of grinning freewheel into shade and coffee.'], rep:6, tips:15, energy:3})},
+   ]},
+  {id:'cy-heatwave', activities:['cycle'], w:1.0, when:(b,w)=>w.heat&&((b.tags||[]).includes('long')||(b.tags||[]).includes('mountain')), title:'Heatwave on the climb',
+   text:()=>`Halfway up the foothills at forty degrees, a rider has gone silent and grey.`,
+   choices:[
+     {need:'water', label:'Ease off, find shade, cool them', hint:'Honest, kind, slower',
+      run:(b,S)=>chance(0.75)?{lines:['You stop in olive shade, sponge their neck, water in the hand. Their colour returns. You finish slow and intact.'], rep:4, energy:-6}:{lines:['It is too late. Heat exhaustion proper; you abandon the climb, get them down, and the day ends in a chemist.'], rep:-8, cash:-40, energy:-10}},
+     {label:'Push the schedule', hint:'Heat exhaustion lurks', run:()=>({lines:['You push the schedule. Heat exhaustion catches them; everyone is rattled.'], rep:-8, cash:-40, energy:-10})},
+   ]},
+  {id:'cy-dogs', activities:['cycle'], w:1.0, when:()=>true, title:'The dog pack',
+   text:()=>`Three village dogs erupt from a gateway and give joyful, terrifying chase.`,
+   choices:[
+     {label:'Group up and ride it out', hint:'Hold the line', run:()=>({lines:['You shout, regroup, and pedal calm. The dogs lose interest at the village edge. The story of the day.'], rep:3})},
+     {label:'Scatter and pedal', hint:'A bike goes in the ditch', run:()=>({lines:['Someone bolts, a bike goes in the ditch, the dogs absolutely love it. Nobody hurt; one bent derailleur.'], rep:-3, risk:0.06})},
+   ]},
+  {id:'cy-chain', activities:['cycle'], w:0.8, when:(b)=>(b.tags||[]).includes('long')||(b.tags||[]).includes('mountain'), title:'Chain snaps, far out',
+   text:()=>`A crack, and a rider freewheels to a silent stop twenty kilometres from anywhere.`,
+   choices:[
+     {need:'bikeRepair', label:'Quick-link fix on the roadside', hint:'You came prepared',
+      run:()=>chance(0.8)?{lines:['Out come the quick-links and a chain tool. Five minutes; you ride on, mildly pleased with yourself.'], rep:4}:{lines:['The fix does not hold; the bike sulks for the rest of the day. A long, slow finish.'], rep:-2, energy:-8}},
+     {label:'Shuttle and absorb the dent', hint:'A long wait at the roadside', run:()=>({lines:['Phone, wait, van, ride home in defeat.'], rep:-3, energy:-8})},
    ]},
 ];
 
