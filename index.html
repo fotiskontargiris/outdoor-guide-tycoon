@@ -632,7 +632,7 @@ function initGame(name, bgId, kit, discipline, loanSourceId, dishId){
       weather:null, bookings:[], history:[], forecast:[WEATHER[0]],
       stats:{earned:0, fees:0, tips:0, wagesPaid:0, retainersPaid:0, tripsYou:0, tripsGuides:0, hires:0, bestRep:50, yearsCompleted:0},
       yearStats:freshYearStats(),
-      you:{id:'you', name:name, isYou:true, skill:90, morale:100, wage:0, spec:bg.name, perk:(bg.tag||bg.id), task:null},
+      you:{id:'you', name:name, isYou:true, skill:90, morale:100, wage:0, spec:bg.name, perk:(bg.tag||bg.id), heroId:bg.id, gender:bg.gender, task:null},
       guides:[], queue:null, dayReports:[], trip:null, yearLogs:[] };
   // Hero start-grants (the simple, safe part of each model; deeper hooks live in events via perkIs).
   if(bg.id==='medic'  && !ownsItem('firstaid')) S.owned.firstaid=freshOwned('firstaid','standard');
@@ -1236,7 +1236,14 @@ function logStrip(){
   const items=S.history.slice(-6).reverse().map(h=>`<li><b>D${h.d}</b> ${h.t}</li>`).join('');
   return `<div class="log-strip" style="margin-top:16px"><div style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px">Logbook</div><ul style="list-style:none;margin:0;padding:0;max-height:130px;overflow-y:auto">${items}</ul></div>`;
 }
-function restDay(){ S.energy=clamp(S.energy+55,0,100); note('Rested at the village.'); advanceDay(); }
+function restDay(){
+  // Fasaia rests with intent — the same morning of yoga, the same breath. She
+  // gets more out of a recovery day than the rest of us (HEROES.md → Fasaia).
+  const rest = perkIs('fasaia') ? 70 : 55;
+  S.energy=clamp(S.energy+rest,0,100);
+  note(perkIs('fasaia') ? 'A day on the mat. You return rebuilt.' : 'Rested at the village.');
+  advanceDay();
+}
 function fixGear(){ S.cash-=40; S.gear=clamp(S.gear+35,0,100); note('Serviced boots, ropes and packs (−€40).'); advanceDay(); }
 function pickBooking(i){ beginTrip(S.bookings[i]); }
 
@@ -1587,7 +1594,10 @@ function finishPlayerTrip(){
   const broken=[];
   (S.loadout||[]).forEach(id=>{
     if(!S.owned[id]) return;
-    const skipWear = perkIs('chef') && id==='snacks' && chance(0.5);
+    // The Mykonos chef (hero id) stretches snacks — even though her engine
+    // tag is 'charmer' for the tip-and-rep model, the snacks-half-rate hook
+    // identifies by heroId so both effects coexist.
+    const skipWear = (S.you && S.you.heroId==='chef') && id==='snacks' && chance(0.5);
     if(!skipWear) S.owned[id].trips--;
     if(S.owned[id].trips<=0){ broken.push({id, tier:S.owned[id].tier}); delete S.owned[id]; }
   });
