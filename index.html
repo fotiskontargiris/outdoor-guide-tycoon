@@ -755,7 +755,22 @@ function pickBooking(i){ beginTrip(S.bookings[i]); }
 function hasItem(id){ return S.loadout.includes(id); }
 function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 function recommended(b,w){
-  const r=new Set(['water']); const t=b.tags||[];
+  const act=b.activity||'hike';
+  const t=b.tags||[];
+  if(act==='seakayak'){
+    // Always: PFD + paddle + drybag + water. Add gear as exposure/sea-state rises.
+    const r=new Set(['water','pfd','paddle','drybag']);
+    if(w.heat||t.includes('exposed')||t.includes('open-water')) r.add('sunscreen');
+    if(t.includes('exposed')||t.includes('open-water')) { r.add('sprayskirt'); r.add('bilgepump'); }
+    if(t.includes('open-water')||t.includes('remote')) { r.add('towline'); r.add('vhf'); r.add('sparepaddle'); }
+    if(w.mist||t.includes('open-water')) r.add('compass');
+    if(w.mist||w.storm||w.wind&&t.includes('open-water')) r.add('cag');
+    if(b.diff>=2||t.includes('remote')) r.add('firstaid');
+    if(t.includes('long')) r.add('snacks');
+    return r;
+  }
+  // hiking
+  const r=new Set(['water']);
   if(w.heat||t.includes('exposed')) r.add('sunscreen');
   if(t.includes('river')||t.includes('forest')||t.includes('gorge')) r.add('repellent');
   if(b.diff>=2||t.includes('rock')||t.includes('alpine')||t.includes('gorge')) r.add('poles');
@@ -767,7 +782,24 @@ function recommended(b,w){
   return r;
 }
 function conditionsLine(b,w){
+  const act=b.activity||'hike';
   const t=b.tags||[], bits=[];
+  if(act==='seakayak'){
+    if(t.includes('open-water')) bits.push('an open crossing where the wind is everything');
+    else if(t.includes('caves')) bits.push('sea caves and clear deep water');
+    else if(t.includes('calm')) bits.push('glassy sheltered water');
+    else if(t.includes('coast')) bits.push('coastal paddling under cliffs');
+    if(t.includes('historical')) bits.push('old stone watching from above');
+    if(t.includes('snorkel')) bits.push('a swim stop on the way');
+    if(w.wind) bits.push('a wind that the meltemi may yet decide is its own');
+    if(w.storm) bits.push('a storm coming in — open water is no place to be');
+    if(w.mist) bits.push('sea fog flattening the horizon');
+    if(w.heat) bits.push('a flat-calm hammer of a sun');
+    if(t.includes('long')||b.diff>=3) bits.push('a long day on the water');
+    if(t.includes('remote')) bits.push('miles from any harbour');
+    return bits.length ? cap(bits.join(', '))+'.' : 'A gentle paddle in fair weather.';
+  }
+  // hiking
   if(t.includes('gorge')) bits.push('a deep gorge with cool air and slippery rock');
   else if(t.includes('river')) bits.push('a river path where the bugs swarm');
   else if(t.includes('forest')) bits.push('shaded forest');
@@ -784,6 +816,9 @@ function conditionsLine(b,w){
   if(t.includes('remote')) bits.push('miles from the nearest road');
   return bits.length ? cap(bits.join(', '))+'.' : 'A gentle outing in fair weather.';
 }
+// Activity match for event pools: events with no `activities` apply to all
+// disciplines; otherwise they only fire for routes in the listed activities.
+function activityMatch(e, act){ return !e.activities || e.activities.includes(act); }
 function prepScore(){
   const need=recommended(S.trip.b,S.weather); let got=0;
   need.forEach(id=>{ if(S.loadout.includes(id)) got++; });
@@ -804,7 +839,9 @@ function showDepartBrief(b){
 }
 function renderPacking(){
   const b=S.trip.b, w=S.weather, full=S.loadout.length>=S.packSize;
-  const ownedItems=ITEM_ORDER.filter(id=>ownsItem(id));
+  // Only show kit relevant to today's activity — kayakers don't pack walking poles.
+  const act=b.activity||'hike';
+  const ownedItems=ITEM_ORDER.filter(id=>ownsItem(id) && itemForActivity(id, act));
   const chips=ownedItems.map(id=>{
     const on=S.loadout.includes(id), dis=!on&&full;
     const trips=ownedTrips(id), tier=ownedTier(id);
@@ -816,7 +853,7 @@ function renderPacking(){
         <span style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:${tripCol}">${tier} · ${trips} trip${trips===1?'':'s'}</span>
       </span></button>`;
   }).join('');
-  const locked=ITEM_ORDER.filter(id=>!ownsItem(id));
+  const locked=ITEM_ORDER.filter(id=>!ownsItem(id) && itemForActivity(id, act));
   const lockedHTML = locked.length?`<div style="font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:10px">Not in your kit: ${locked.map(id=>ITEMS[id]).join(', ')} — buy at the shop.</div>`:'';
   const emptyHTML = ownedItems.length?'':`<div style="font-style:italic;color:var(--ink-dim)">You own no kit yet — you'll head out with empty hands. Visit the shop to change that.</div>`;
   const spare=S.packSize-S.loadout.length;
@@ -836,7 +873,8 @@ function toggleItem(id){
 function setOff(){ startTrailhead(); }
 function startTrailhead(){
   const b=S.trip.b,w=S.weather;
-  const pool=TRAILHEAD.filter(e=>e.when(b,w));
+  const act=b.activity||'hike';
+  const pool=TRAILHEAD.filter(e=>activityMatch(e,act) && e.when(b,w));
   if(!pool.length){ runEvent(); return; }
   const ev=wpick(pool); S.trip.meet=ev;
   const choices=ev.choices.filter(c=>!c.need || S.loadout.includes(c.need));
@@ -858,7 +896,7 @@ function resolveMeet(ci){
     <div class="res"><p class="line">${r.line}</p><div>${deltaHTML(r)}</div></div>
     <div class="choices"><button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Walk on</span></button></div>`);
 }
-function eligible(){ const b=S.trip.b,w=S.weather; return EVENTS.filter(e=>e.when(b,w)); }
+function eligible(){ const b=S.trip.b,w=S.weather; const act=b.activity||'hike'; return EVENTS.filter(e=>activityMatch(e,act) && e.when(b,w)); }
 function wpick(list){ let t=list.reduce((s,e)=>s+e.w,0),r=Math.random()*t; for(const e of list){ if((r-=e.w)<=0) return e; } return list[0]; }
 function runEvent(){
   const ev=wpick(eligible()); S.trip.cur=ev; const b=S.trip.b;
@@ -1568,7 +1606,7 @@ const TRAILHEAD=[
      {label:'Improvise with buffs and frequent shade', hint:'Manageable', run:()=>({line:'You rig makeshift cover and keep to the shadows where you can.', energy:-4, risk:0.06})},
      {label:'Press on and hope for cloud', hint:'Sunstroke risk', run:()=>({line:'You set off exposed, betting the heat eases. Bold.', risk:0.16})},
    ]},
-  {id:'bugs', w:1.2, when:(b)=>(b.tags||[]).includes('river')||(b.tags||[]).includes('forest'), title:'A cloud of mosquitoes',
+  {id:'bugs', activities:['hike'], w:1.2, when:(b)=>(b.tags||[]).includes('river')||(b.tags||[]).includes('forest'), title:'A cloud of mosquitoes',
    text:()=>`Down by the water the mosquitoes are already feasting, and the group is swatting and grumbling.`,
    choices:[
      {need:'repellent', label:'Pass round the insect repellent', hint:'You packed it', run:()=>({line:'A quick spray-down and the mood lifts at once. They love you for it.', rep:5})},
@@ -1589,7 +1627,7 @@ const TRAILHEAD=[
      {label:'Wait for them', hint:'Eats into the day', run:()=>({line:'You wait. Everyone sets off together, if a little behind.', energy:-5, risk:0.06})},
      {label:'Start with those who are ready', hint:'Latecomers miffed', run:()=>({line:'You set off on time. The stragglers catch up grumbling.', rep:-3})},
    ]},
-  {id:'shoes', w:1.0, when:(b)=>b.diff>=2, title:'The wrong footwear',
+  {id:'shoes', activities:['hike'], w:1.0, when:(b)=>b.diff>=2, title:'The wrong footwear',
    text:()=>`One client has turned up for a rough mountain route in flimsy trainers.`,
    choices:[
      {label:'Turn them back for their own safety', hint:'Firm but fair', run:(b)=>({line: b.ctype==='family'?'You gently insist they sit this one out. The family respects the call.':'You refuse to take them up in those. Some grumbling, but it is the right call.', rep: 2, payMul:0.92})},
@@ -1603,26 +1641,26 @@ const TRAILHEAD=[
      {label:'Give a calm, thorough safety talk', hint:'Reassuring', run:()=>({line:'You talk them through every step. Their confidence steadies.', rep:3, energy:-3})},
      {label:'Brush it off and set the pace', hint:'Cold', run:()=>({line:'You tell them they will be fine and start walking. They stay tense all day.', rep:-3})},
    ]},
-  {id:'gearhead', w:0.9, when:()=>true, title:'The over-equipped client',
+  {id:'gearhead', activities:['hike'], w:0.9, when:()=>true, title:'The over-equipped client',
    text:()=>`One of them has rocked up for a half-day stroll dressed for the north face of K2. Crampons. Ice axe. A look of grim purpose.`,
    choices:[
      {label:'Gently talk them out of the heavy kit', hint:'Saves them a tough day', run:()=>({line:'You convince them to leave the axe in the car. They are slightly disappointed and quietly relieved.', rep:3, energy:2})},
      {label:'Let them carry it all', hint:'They will learn', run:()=>({line:'They sweat their way up looking like a Himalayan expedition lost in olive country. The rest of the group cannot stop laughing.', rep:2, tips:10, energy:-3})},
    ]},
-  {id:'dog', w:1.0, when:(b)=>!(b.tags||[]).includes('alpine'), title:'They brought a dog',
+  {id:'dog', activities:['hike'], w:1.0, when:(b)=>!(b.tags||[]).includes('alpine'), title:'They brought a dog',
    text:(b)=>`A small, optimistic dog is straining at the lead. The owner assumes this is fine. ${b.ctype==='family'?'The kids are already in love.':''}`,
    choices:[
      {label:'Welcome the dog along', hint:'A small risk, a warm crowd', run:()=>({line:'You add a water bowl to the kit and the dog becomes the unofficial mascot. Everyone is charmed.', rep:5, tips:10})},
      {label:'Refuse politely — too much for the route', hint:'A firm professional call', run:(b)=>({line: b.ctype==='family'?'You explain why, kindly. They sulk a bit, but appreciate the honesty.':'You hold the line. The owner takes it well.', rep:1, payMul:0.92})},
    ]},
-  {id:'schooltrip', w:1.2, when:(b)=>b.ctype==='school', title:'Thirty teenagers and one tired teacher',
+  {id:'schooltrip', activities:['hike'], w:1.2, when:(b)=>b.ctype==='school', title:'Thirty teenagers and one tired teacher',
    text:()=>`The teacher looks like they have not slept since Tuesday. The kids are loud, the kids are hungry, and the kids have phones.`,
    choices:[
      {label:'Take charge with a game plan', hint:'You set the rhythm', run:()=>({line:'You split them into pairs, give them a thing to spot, and watch them transform into a half-decent walking group. The teacher silently mouths "thank you".', rep:6, tips:5})},
      {label:'Let the teacher lead, you support', hint:'Light touch', run:()=>({line:'You walk at the back with the slowest kid and the teacher gradually finds their feet. Decent day, quietly run.', rep:3, energy:-3})},
      {need:'snacks', label:'Hand out snacks first', hint:'Calm the chaos', run:()=>({line:'A snack each and the noise drops by half. You are a hero. The teacher considers nominating you for sainthood.', rep:7, tips:15})},
    ]},
-  {id:'photogear', w:1.2, when:(b)=>b.ctype==='photo', title:'Tripods, lenses, and a lot of bags',
+  {id:'photogear', activities:['hike'], w:1.2, when:(b)=>b.ctype==='photo', title:'Tripods, lenses, and a lot of bags',
    text:()=>`Three photographers, six bags, two tripods, and an opinion each about the light. They want golden hour at the summit. The summit is three hours away. Golden hour is in two.`,
    choices:[
      {label:'Pick a closer viewpoint that catches the same light', hint:'Save the day with local knowledge', run:()=>({line:'You divert to a ridge you know. They get the shot, you get the rep. Everyone wins.', rep:7, tips:25})},
@@ -1636,6 +1674,52 @@ const TRAILHEAD=[
      {label:'Treat them exactly like everyone else', hint:'Quietly confident', run:()=>({line:'You shrug, smile, and run your normal day. The piece, when it appears, calls you "refreshingly unbothered".', rep:7, tips:15})},
      {label:'Get nervous and overpromise', hint:'A bad start', run:()=>({line:'You promise things you cannot quite deliver. They are too polite to mention it. The piece never appears.', rep:-4, energy:-3})},
    ]},
+  /* --- SEA KAYAK put-in beats (DISCIPLINES.md § SEA KAYAKING → Put-in situations) --- */
+  {id:'k-swim', activities:['seakayak'], w:1.3, when:()=>true, title:'"I can swim, basically"',
+   text:()=>`As you hand out spray-skirts, one of the group mentions, with a laugh, that they are "not really a water person".`,
+   choices:[
+     {need:'towline', label:'Pair them to you on a short leash and keep it gentle', hint:'A quiet professional fix', run:()=>({line:'You clip them close and pick the sheltered line. Quietly handled.', rep:5})},
+     {label:'Run a proper wet-exit drill in the shallows first', hint:'Costs time, buys safety', run:()=>({line:'Ten minutes in waist-deep water and the panic drains out of them.', energy:-5})},
+     {label:'Wave it off, they will be fine', hint:'They will not, it turns out, be fine', run:()=>({line:'You shrug and launch. They are not, it turns out, fine.', risk:0.18})},
+   ]},
+  {id:'k-wind', activities:['seakayak'], w:1.4, when:(b,w)=>w.wind||(b.tags||[]).includes('exposed'), title:'The wind is already up',
+   text:()=>`Whitecaps are forming across the bay before you have even launched.`,
+   choices:[
+     {label:'Drop to the sheltered lagoon line', hint:'Less drama, everyone dry', run:()=>({line:'You bin the crossing for the calm water inside the bay. Less drama, everyone dry.', payMul:0.8})},
+     {need:'vhf', label:'Check the marine forecast and pick a window', hint:'A professional move', run:()=>({line:'You raise the port, get the window, and time the launch like a professional.', rep:4})},
+     {label:'Launch anyway', hint:'The horizon has opinions', run:()=>({line:'You point at the horizon and go. The horizon, it turns out, has opinions.', risk:0.2})},
+   ]},
+  {id:'k-dry', activities:['seakayak'], w:1.1, when:()=>true, title:'Nowhere dry for the phones',
+   text:()=>`Six phones, two passports, and a look of dawning horror as they realise the kayak is, fundamentally, wet.`,
+   choices:[
+     {need:'drybag', label:'Stow it all in the dry bag', hint:'Came prepared', run:()=>({line:'Everything vanishes into the dry bag. Crisis, and a wet passport, averted.', rep:4})},
+     {label:'Lock the valuables in the van', hint:'A late launch, but dry documents', run:()=>({line:'A trek back to the van, a late launch, but dry documents.', energy:-4})},
+   ]},
+  {id:'k-fleet', activities:['seakayak'], w:1.2, when:(b)=>(b.group||0) > fleetCapacity('seakayak'), title:'Too many bodies, not enough boats',
+   text:(b)=>`${b.group} turned up. You brought ${fleetCapacity('seakayak')} kayaks.`,
+   choices:[
+     {label:'Run two waves yourself', hint:'Knackering, but nobody is turned away', run:()=>({line:'You take what you can, land them, come back for the rest. Knackering, but nobody is turned away.', energy:-12})},
+     {label:'Turn the extras away with a refund', hint:'A small loss, a small dent', run:()=>({line:'A couple go home disappointed and a little out of pocket on your side.', cash:-30, rep:-2})},
+   ]},
+  {id:'k-cotton', activities:['seakayak'], w:1.0, when:()=>true, title:'Cotton kills',
+   text:()=>`One of them has turned up in jeans and a cotton hoodie for a half-day on open water.`,
+   choices:[
+     {need:'cag', label:'Lend a spare layer from the kit bag', hint:'Warm and faintly embarrassed', run:()=>({line:'You dig out a spare top and a windproof. Warm, dry, and faintly embarrassed.', rep:3})},
+     {label:'Send them back to change', hint:'A late launch, but no hypothermia', run:()=>({line:'A trudge back to the car, a late launch, but at least they will not hypothermia on you.', energy:-4})},
+     {label:'Launch as-is', hint:'The mood will go with the warmth', run:()=>({line:'You shrug and push off. By the first cave they are shivering and the mood has gone with the warmth.', rep:-4, risk:0.1})},
+   ]},
+  {id:'k-gopro', activities:['seakayak'], w:0.9, when:()=>true, title:'The GoPro auteur',
+   text:()=>`One client has a phone on a selfie stick and intends to film the entire trip one-handed.`,
+   choices:[
+     {label:'Have them stow it for the open stretches', hint:'Paddle now, post later', run:()=>({line:'You promise a photo break and they reluctantly pocket the rig. Paddle now, post later.', rep:3})},
+     {label:'Let them film', hint:'Patience drains faster than the battery', run:()=>({line:'They paddle in lazy circles, narrating. The group’s patience drains faster than the battery.', rep:-2, risk:0.06})},
+   ]},
+  {id:'k-green', activities:['seakayak'], w:1.0, when:()=>true, title:'Green before the green water',
+   text:()=>`One of the party has gone pale at the sight of the swell, on the slipway, on dry land.`,
+   choices:[
+     {need:'snacks', label:'Ginger, the sheltered line, and a calm word', hint:'A kindness, well placed', run:()=>({line:'A biscuit, a promise to stay close to shore, and their colour returns. Kindly done.', rep:5})},
+     {label:'Suggest they sit this one out', hint:'Disappointing, but kind', run:()=>({line:'You gently stand them down. Disappointing, but no one wants them green over the side.', payMul:0.92, rep:2})},
+   ]},
 ];
 
 /* ---------------- personal-trip events ---------------- */
@@ -1646,7 +1730,7 @@ const EVENTS=[
      {label:'Stop and let them take it in', hint:'They will remember this', run:(b)=>({lines:['You wait while phones come out and shoulders relax. This is why they came.'], rep:7, tips:b.ctype==='tourist'?25:15, energy:4})},
      {label:'Keep the pace to finish strong', hint:'Stay on schedule', run:()=>({lines:['You note it and press on, keeping good time. Solid, professional.'], rep:3, energy:3})},
    ]},
-  {id:'ankle', w:1.0, when:()=>true, title:'A turned ankle',
+  {id:'ankle', activities:['hike'], w:1.0, when:()=>true, title:'A turned ankle',
    text:()=>`On a patch of loose scree, one of the party slips and goes down hard. The ankle is swelling fast — they cannot carry on unaided.`,
    choices:[
      {label:'Splint it and walk them down yourself', hint:'Costs energy · a first-aid kit helps',
@@ -1686,14 +1770,14 @@ const EVENTS=[
         ?{lines:['You read the timing right and beat the worst of the heat down to cooler ground.'], rep:4}
         :{lines:['It is too much — someone goes wobbly with heat exhaustion. You lose time getting them cooled and stable.'], rep:-8, cash:-40, energy:-10}},
    ]},
-  {id:'nav', w:1.1, when:(b,w)=>w.mist||w.storm, title:'The path vanishes',
+  {id:'nav', activities:['hike'], w:1.1, when:(b,w)=>w.mist||w.storm, title:'The path vanishes',
    text:()=>`The trail markers dissolve into the murk. The party looks to you — do you know the way from here, or not?`,
    choices:[
      {label:'Trust your knowledge of the mountain', hint:'A map &amp; compass makes this near-certain',
       run:()=>chance(0.66+(hasItem('map')?0.28:0)+(perkIs('navigator','shepherd','goatherd')?0.2:0))?{lines:[hasItem('map')?'You take a careful bearing with map and compass and bring them out exactly where you meant to.':'You read the land like a page and bring them out exactly where you meant to. Quietly impressive.'], rep:6}:{lines:['A wrong fork costs you a long, tiring backtrack. You get there — eventually.'], rep:-4, energy:-15}},
      {label:'Backtrack to the last sure marker', hint:'Safe, costs time', run:()=>({lines:['You retrace your steps to certainty before continuing. Cautious and correct.'], payMul:0.85, energy:-6})},
    ]},
-  {id:'client', w:1.5, when:(b)=>b.ctype==='corporate', title:'The boss wants a shortcut',
+  {id:'client', activities:['hike'], w:1.5, when:(b)=>b.ctype==='corporate', title:'The boss wants a shortcut',
    text:()=>`The team lead, eager to impress, points at an unmarked scramble. "Surely we can just cut up there? We're on a schedule."`,
    choices:[
      {label:'Hold your safety standards firmly', hint:'They may respect it',
@@ -1701,7 +1785,7 @@ const EVENTS=[
      {label:'Take the shortcut to please the client', hint:'Tempting tip — real risk',
       run:(b)=>chance(0.55-b.diff*0.05)?{lines:['It works out, and the grateful lead slips you a generous tip for the bespoke route.'], rep:4, tips:45}:{lines:['The scramble turns sketchy fast. Nobody is hurt, but the spooked group blames you for indulging it.'], rep:-10, cash:-40, energy:-8}},
    ]},
-  {id:'horses', w:1.1, when:(b)=>(b.tags||[]).includes('forest')||(b.tags||[]).includes('remote'), title:'Wild horses cross the path',
+  {id:'horses', activities:['hike'], w:1.1, when:(b)=>(b.tags||[]).includes('forest')||(b.tags||[]).includes('remote'), title:'Wild horses cross the path',
    text:()=>`A small herd of half-wild horses appears at the edge of the trees, snorts, and starts crossing the trail in front of you. Nobody moves.`,
    choices:[
      {label:'Hold the group quietly and let them pass', hint:'A free piece of magic', run:(b)=>({lines:['You whisper for stillness. The horses cross in their own time. Nobody breathes. It is exactly why people come on these trips.'], rep:6, tips:b.ctype==='photo'?40:20, energy:2})},
@@ -1715,24 +1799,102 @@ const EVENTS=[
      {label:'Lend gear and carry on', hint:'A pragmatic compromise', run:()=>({lines:['You hand over your first-aid kit and a pole, promise to call it in at the trailhead, and keep moving. They thank you. You feel a little odd about it all day.'], rep:1, gear:-4})},
      {label:'Wave and walk past', hint:'You are on the clock', run:()=>({lines:['You nod sympathetically and keep walking. Word gets around. Word always gets around.'], rep:-8})},
    ]},
-  {id:'photoframe', w:1.4, when:(b)=>b.ctype==='photo', title:'The shot they came for',
+  {id:'photoframe', activities:['hike'], w:1.4, when:(b)=>b.ctype==='photo', title:'The shot they came for',
    text:()=>`The photographers have stopped dead. The light has gone perfect. They are setting up tripods on the trail and asking, gently, for thirty minutes.`,
    choices:[
      {label:'Give them their thirty minutes', hint:'The whole reason they booked', run:()=>({lines:['You sit in the shade and let them work. They get the shot. You get a tip the size of half a fee.'], rep:5, tips:50, energy:5})},
      {label:'Give them ten, then push on', hint:'Compromise', run:()=>({lines:['You compromise. The shot is fine, not magic. They are politely disappointed.'], rep:1, tips:10})},
    ]},
-  {id:'shrine', w:1.0, when:(b)=>(b.tags||[]).includes('historical')||(b.tags||[]).includes('forest'), title:'A roadside shrine',
+  {id:'shrine', activities:['hike'], w:1.0, when:(b)=>(b.tags||[]).includes('historical')||(b.tags||[]).includes('forest'), title:'A roadside shrine',
    text:()=>`You pass one of the little blue-domed iron shrines that dot the country roads — a candle inside, a faded photo. The group slows and looks at you.`,
    choices:[
      {label:'Tell the story behind it', hint:'A small gift of context', run:(b)=>({lines:['You explain the custom. They listen with the patient attention people only ever give in the middle of nowhere. Lovely moment.'], rep:5, tips:b.ctype==='tourist'?20:10, energy:2})},
      {label:'Nod respectfully and walk on', hint:'Keep moving', run:()=>({lines:['You give it a respectful glance and keep going. The moment passes unmarked.'], rep:1})},
    ]},
-  {id:'lostpair', w:0.9, when:(b)=>(b.tags||[]).includes('remote')||b.diff>=2, title:'A lost couple',
+  {id:'lostpair', activities:['hike'], w:0.9, when:(b)=>(b.tags||[]).includes('remote')||b.diff>=2, title:'A lost couple',
    text:()=>`Two hikers stagger up to you on the trail, no map, no water, no idea where they are. They were "trying to find Polylimnio" three hours ago. They are nowhere near Polylimnio.`,
    choices:[
      {need:'water', label:'Water, directions, and a clear plan', hint:'You are equipped for this', run:()=>({lines:['You hand over water, draw them a map on a napkin, and point them home. Their relief is comic.'], rep:6})},
      {label:'Walk them to the next junction yourself', hint:'A detour, but the right thing', run:()=>({lines:['You loop the group on a small detour and deliver the strays back to a path they know. Everyone feels good. You burn an hour.'], rep:5, energy:-8, payMul:0.92})},
      {label:'Point them at the path and carry on', hint:'Cold but quick', run:()=>({lines:['You give them a bearing and keep going. You think about them for the next mile.'], rep:-2})},
+   ]},
+  /* --- SEA KAYAK on-water events (DISCIPLINES.md § SEA KAYAKING → On-water events) --- */
+  {id:'k-capsize', activities:['seakayak'], w:1.2, when:()=>true, title:'A capsize',
+   text:()=>`A wobble, a yelp, and suddenly there is a head in the water and an upturned hull.`,
+   choices:[
+     {label:'Brace, recover, get them back aboard', hint:'PFD + tow-line make this much easier',
+      run:(b,S)=>chance(0.55+(hasItem('pfd')?0.15:0)+(hasItem('towline')?0.1:0)+(perkIs('medic','captain')?0.15:0))
+        ?{lines:['You are alongside before they have finished gasping, hull righted, paddler back aboard, dignity mostly intact.'], rep:6}
+        :{lines:['The rescue is slower and colder than it should be; everyone is rattled.'], rep:-4, energy:-12}},
+   ]},
+  {id:'k-offshore', activities:['seakayak'], w:1.5, when:(b,w)=>w.wind||w.mist, title:'The offshore wind',
+   text:()=>`The gap between you and the shore is widening, and it is not the shore that is moving.`,
+   choices:[
+     {need:'towline', label:'Raft up and tow the weakest back', hint:'Textbook, with the right kit',
+      run:(b,S)=>chance(0.7+(perkIs('navigator','captain','shepherd','goatherd')?0.15:0))
+        ?{lines:['You raft the group, clip the tow, and grind everyone back to the lee. Textbook.'], rep:7}
+        :{lines:['You claw back to shelter eventually, soaked and white-knuckled.'], rep:-9, cash:-40, energy:-14}},
+     {label:'Push on to the cave before it builds', hint:'Big reward if you read it right',
+      run:(b,S)=>chance(0.45-S.weather.risk)
+        ?{lines:['You make the lee of the cave with paddles flailing — a wild finish they will not forget.'], rep:8, tips:30}
+        :{lines:['The wind beats you to it; you scrape into shelter wet, frightened, late.'], rep:-7, cash:-30, energy:-12}},
+   ]},
+  {id:'k-cave-seal', activities:['seakayak'], w:1.4, when:(b)=>(b.tags||[]).includes('caves'), title:'The cave, and the seal',
+   text:()=>`You slip into the sea cave and the noise drops to a hush — and there, on a ledge, a monk seal watches you with frank disapproval.`,
+   choices:[
+     {label:'Hold the group silent and let it land', hint:'They will remember this one', run:(b)=>({lines:['Phones down, for once. Nobody breathes. This is the photo they will not get and the memory they will keep.'], rep:7, tips:b.ctype==='tourist'?35:25, energy:3})},
+   ]},
+  {id:'k-straggler', activities:['seakayak'], w:1.0, when:()=>true, title:'The straggler',
+   text:()=>`One paddler is forty metres back and shrinking.`,
+   choices:[
+     {label:'Drop back and shepherd', hint:'Costs energy, keeps the group whole', run:()=>({lines:['You drop back, raft up, and coach them along. Slow, but everyone arrives.'], rep:3, energy:-6})},
+     {label:'Push the pace', hint:'They will catch up. Probably.', run:()=>({lines:['You set a brisker line and trust they will find it. They mostly do.'], rep:-3, risk:0.06})},
+   ]},
+  {id:'k-gear', activities:['seakayak'], w:1.0, when:()=>true, title:'Gear at sea',
+   text:()=>`${rnd(['A paddle splits in two','The skeg jams half-down','A spray-skirt blows clean off'])}. This wants dealing with, and the wind is not waiting.`,
+   choices:[
+     {need:'sparepaddle', label:'Field-fix it', hint:'Better odds with the right spare',
+      run:(b,S)=>chance(0.55+S.gear/200)
+        ?{lines:['Cord, tape, and a calm head. The fix holds and the trip carries on smoothly.'], rep:4}
+        :{lines:['The bodge does not hold and you lose half an hour fussing with it on a rolling sea.'], rep:-5, gear:-8}},
+     {label:'Cut the route short to be safe', hint:'A reduced fee', run:()=>({lines:['You shorten the line rather than risk a failure further from shore. Sensible, if a little flat.'], payMul:0.7, rep:-2})},
+   ]},
+  {id:'k-dolphins', activities:['seakayak'], w:1.2, when:()=>true, title:'Dolphins',
+   text:()=>`A pod falls in alongside, riding the bows, and a whole boatload of adults forgets, completely, how to paddle.`,
+   choices:[
+     {label:'Stop and drift with them', hint:'A story for the year', run:()=>({lines:['You raft up and let it happen. Nobody will stop talking about this for a year.'], rep:7, tips:25, energy:3})},
+   ]},
+  {id:'k-jellies', activities:['seakayak'], w:1.0, when:(b)=>(b.tags||[]).includes('snorkel')||(b.tags||[]).includes('caves'), title:'Jellyfish at the swim stop',
+   text:()=>`The snorkel spot you promised is, today, a slow purple galaxy of bells.`,
+   choices:[
+     {label:'Move the swim around the headland', hint:'Local knowledge wins', run:()=>({lines:['You shift the stop two coves on, to clear water. Smoothly done.'], rep:4, energy:-3})},
+     {need:'firstaid', label:'Brave it and treat the odd sting', hint:'A few yelps, no real harm', run:()=>({lines:['A couple of yelps, a dab of treatment, and everyone lives. Just.'], rep:-2, risk:0.08})},
+   ]},
+  {id:'k-wake', activities:['seakayak'], w:1.0, when:()=>true, title:'The wake',
+   text:()=>`A speedboat carves past far too close and the swell hits the group broadside.`,
+   choices:[
+     {label:'Call the brace and hold the line', hint:'PFDs and a calm captain pay off',
+      run:(b,S)=>chance(0.6+(hasItem('pfd')?0.1:0)+(perkIs('captain')?0.15:0))
+        ?{lines:['You call the brace, they take it on the beam, and the boats stay upright. Textbook.'], rep:5}
+        :{lines:['One goes over. A quick recovery, but the group’s nerves are shot for an hour.'], rep:-4, energy:-8}},
+   ]},
+  {id:'k-squall', activities:['seakayak'], w:1.3, when:(b,w)=>w.wind||w.mist||w.storm, title:'The squall',
+   text:()=>`A line of dark, wind-torn water is racing across the bay toward you. Minutes, not hours.`,
+   choices:[
+     {label:'Raft up and run for the lee shore', hint:'Wet, fast, safe', run:()=>({lines:['You cluster the group, set a hard ferry-angle, and claw into the shelter of the point as it hits. Wet, fast, safe.'], payMul:0.8, rep:4})},
+     {label:'Sprint for the planned landing', hint:'Big reward if you beat it',
+      run:(b,S)=>chance(0.45-S.weather.risk)
+        ?{lines:['You beat it by a paddle-length. The finish is heroic, the photos absurd.'], rep:8, tips:25}
+        :{lines:['It catches you in the open. Everyone makes it; nobody is dry, or fond of you, when they do.'], rep:-10, cash:-40, energy:-14}},
+   ]},
+  {id:'k-fog', activities:['seakayak'], w:1.0, when:(b,w)=>w.mist, title:'Sea fog',
+   text:()=>`The shore dissolves into grey and the group draws quiet and close.`,
+   choices:[
+     {need:'compass', label:'Shepherd in on a bearing', hint:'Quietly masterful',
+      run:()=>chance(0.7+(hasItem('vhf')?0.1:0)+(perkIs('navigator','captain','shepherd','goatherd')?0.15:0))
+        ?{lines:['You take a heading and bring them out of the murk dead on the beach. Quietly masterful.'], rep:6}
+        :{lines:['You misread the set and pop out half a kilometre off. Mostly disguised as competence.'], rep:-2}},
+     {label:'Feel your way along the coast', hint:'Slow, tense, eventually fine', run:()=>({lines:['A tense, disoriented hour clawing back to land.'], rep:-5, energy:-10})},
    ]},
 ];
 
