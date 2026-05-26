@@ -323,7 +323,18 @@ const BACKGROUNDS=[
 
 /* ---------------- setup ---------------- */
 const SAVE_KEY='aegean_save_v8';
-let pickedBg='medic', pendingName='', cachedSave=null, pickedKit=['water'], pickedDiscipline='hike';
+let pickedBg='medic', pendingName='', cachedSave=null, pickedKit=['water'], pickedDiscipline='hike', pickedLoanSource='bank';
+
+/* Loan sources for the starter loan (PHASE-ARCHITECTURE §15). Same reusable
+   shape: principal lands as cash; instalment falls due at the post-season
+   wind-down; interest (if any) accrues on the remaining balance before that
+   instalment is taken. Default consequences are sourced-specific. */
+const LOAN_SOURCES=[
+  {id:'bank',   name:'The bank',         interest:0.10, blurb:'Forms, a credit check, a polite handshake. Interest 10% a season.', defaultLine:'A formal letter from the bank. A black mark on the file. Future credit will be dearer.', defaultConsequence:s=>{ s.creditBlack=(s.creditBlack||0)+1; }},
+  {id:'friend', name:'An old friend',    interest:0.00, blurb:'Zero interest, a handshake, "whenever you can". The cost is emotional, not financial.', defaultLine:'You miss the payment and the call from your friend goes to voicemail. The friendship dims.', defaultConsequence:s=>{ s.rep=clamp(s.rep-5,0,100); s.you.morale=clamp(s.you.morale-15,0,100); }},
+  {id:'dark',   name:'Messier money',    interest:0.25, blurb:'No questions. No paperwork. 25% a season. And, eventually, "the visit".', defaultLine:'A car appears at the trailhead the next morning. Nobody gets out. They sit. They watch. Then they leave.', defaultConsequence:s=>{ s.menace=(s.menace||0)+1; s.rep=clamp(s.rep-2,0,100); }},
+];
+function loanSource(id){ return LOAN_SOURCES.find(x=>x.id===id) || LOAN_SOURCES[0]; }
 
 /* Disciplines that can be picked at character creation. `status:'available'`
    are M1 disciplines you can play today; `status:'soon'` are visible-but-locked
@@ -440,17 +451,27 @@ function renderProfile(){
     return `<button class="opt ${on?'primary':''} ${full?'disabled':''}" onclick="${full?'':`toggleKit('${id}')`}">
       <span class="mark">${on?'✓':'+'}</span><span class="b-main">${ITEMS[id]}</span></button>`;
   }).join('');
-  // Kayak note: a one-time loan grant lands when you commit, so the player
-  // can actually afford the fleet that gates the discipline at all.
-  const disciplineNote = pickedDiscipline==='seakayak'
-    ? `<p style="font-style:italic;color:var(--sea);font-size:13px;margin:8px 0 14px">You will start with the <b>Sea Kayak Award</b> and a small bank loan (€1500) to bootstrap a fleet. Spend it well — a season's instalment is due each winter.</p>`
+  // Fleet disciplines need a starter loan; the player picks who they borrow
+  // from below (each source has its own personality at default — §15).
+  const isFleetDisc = pickedDiscipline!=='hike';
+  const disciplineNote = isFleetDisc
+    ? `<p style="font-style:italic;color:var(--sea);font-size:13px;margin:8px 0 8px">You will start with the L1 award and a starter loan to bootstrap a fleet. Pick your money carefully — a season's instalment falls due each winter.</p>`
     : '';
+  const loanChips = isFleetDisc ? DISCIPLINES && LOAN_SOURCES.map(src=>{
+    const on=pickedLoanSource===src.id;
+    return `<button class="opt ${on?'primary':''}" onclick="pickLoanSource('${src.id}')">
+      <span class="mark">${on?'✓':'·'}</span><span class="b-main">${src.name}<span class="b-sub">${src.blurb}</span></span></button>`;
+  }).join('') : '';
+  const loanSection = isFleetDisc ? `
+    <label style="display:block;margin-top:8px;font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Where the loan comes from</label>
+    <div class="choices" style="margin-top:8px">${loanChips}</div>` : '';
   setScene(`<div class="day-tag">First the paperwork</div>
     <h2>Who is this idiot, exactly?</h2>
     <p>Pick a discipline (what you guide), a backstory (who you are), and a starting kit. You begin with little — some grit, some questionable life choices, and the routes in your head.</p>
     <label style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Your discipline</label>
     <div class="choices" style="margin-top:8px">${discChips}</div>
     ${disciplineNote}
+    ${loanSection}
     <label style="display:block;margin-top:14px;font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Your name</label>
     <input id="gname" type="text" maxlength="18" value="${(pendingName||'').replace(/[<>"]/g,'')}" placeholder="e.g. Alexios"
       style="width:100%;margin:6px 0 16px;padding:12px 14px;border-radius:11px;border:1px solid var(--edge);background:rgba(0,0,0,.18);color:var(--ink);font-family:'Fraunces',serif;font-size:18px;outline:none">
@@ -474,16 +495,23 @@ function pickDiscipline(id){
   if(!pickedKit.length) pickedKit = ['water'];
   renderProfile();
 }
+function pickLoanSource(id){
+  const el=$('gname'); if(el&&typeof el.value==='string') pendingName=el.value;
+  if(!LOAN_SOURCES.find(x=>x.id===id)) return;
+  pickedLoanSource=id;
+  renderProfile();
+}
 function beginNewGame(){
   if(!pickedKit.length) return;
   const el=$('gname'); let nm=(el&&typeof el.value==='string'?el.value.trim():'')||pendingName.trim()||'Alex';
   nm=nm.replace(/[<>"]/g,'').slice(0,18)||'Alex';
-  initGame(nm, pickedBg, pickedKit.slice(), pickedDiscipline);
+  initGame(nm, pickedBg, pickedKit.slice(), pickedDiscipline, pickedLoanSource);
 }
-function initGame(name, bgId, kit, discipline){
+function initGame(name, bgId, kit, discipline, loanSourceId){
   gCounter=0;
   const bg=BACKGROUNDS.find(b=>b.id===bgId)||BACKGROUNDS[0];
   const disc = (DISCIPLINES.find(d=>d.id===discipline && d.status==='available')||DISCIPLINES[0]).id;
+  const loanSrc = loanSource(loanSourceId||'bank');
   const initialOwned={};
   (kit||['water']).forEach(id=>{ if(ITEM_LIFETIME[id]!=null) initialOwned[id]=freshOwned(id,'standard'); });
   S={ phase:1, day:1, year:1, seasonDay:1, season:'summer',
@@ -512,14 +540,23 @@ function initGame(name, bgId, kit, discipline){
   if(start){
     S.certs.push(start.cert);
     S.cash += start.loan;
-    S.loan = { source:'the bank', balance:start.loan, perYear:start.perYear };
-    note(`Took out a €${start.loan} starter loan from the bank for ${start.blurb}. A season instalment of €${start.perYear} falls due each winter.`);
+    S.loan = {
+      sourceId: loanSrc.id,
+      source: loanSrc.name.toLowerCase(),
+      principal: start.loan,
+      balance: start.loan,
+      perYear: start.perYear,
+      interest: loanSrc.interest,
+      missed: 0,
+    };
+    const interestNote = loanSrc.interest>0 ? ` Interest ${Math.round(loanSrc.interest*100)}% a season on the balance.` : ' Zero interest, but you know who they are.';
+    note(`Took out a €${start.loan} starter loan from ${loanSrc.name.toLowerCase()} for ${start.blurb}. A season instalment of €${start.perYear} falls due each winter.${interestNote}`);
   }
   ensureForecast();
   setSub('Year 1 · Phase I — '+name+', a guide making a name in Messinia.');
   startDay();
 }
-function freshYearStats(){ return {fees:0, tips:0, wages:0, retainers:0, loan:0, certs:0, infra:0, tripsYou:0, tripsGuides:0, bestRep:0, worstRep:100, startCash:0, openingRep:0}; }
+function freshYearStats(){ return {fees:0, tips:0, wages:0, retainers:0, loan:0, loanInterest:0, certs:0, infra:0, tripsYou:0, tripsGuides:0, bestRep:0, worstRep:100, startCash:0, openingRep:0}; }
 async function goMenu(){ const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
 function people(){ return [S.you, ...S.guides]; }
 function personById(id){ return id==='you'?S.you:S.guides.find(g=>g.id===id); }
@@ -1319,14 +1356,36 @@ function enterOffSeason(){
   if(S.stats) S.stats.retainersPaid = (S.stats.retainersPaid||0)+retainer;
   if(S.yearStats) S.yearStats.retainers = retainer;
   // Loan instalment — fleet-bootstrap debt is due each winter until paid off.
-  let loanPaid = 0;
+  // (M5) Interest accrues on the remaining balance BEFORE the instalment is
+  //      taken. If the player can't cover the instalment, default fires with
+  //      source-specific consequences (PHASE-ARCHITECTURE §15).
+  let loanPaid = 0, loanInterest = 0, loanDefault = false;
   if(S.loan && S.loan.balance > 0){
-    loanPaid = Math.min(S.loan.perYear, S.loan.balance);
-    S.cash -= loanPaid;
-    S.loan.balance -= loanPaid;
-    if(S.yearStats) S.yearStats.loan = loanPaid;
-    if(S.loan.balance <= 0){ note(`Final loan instalment paid to ${S.loan.source} (−€${loanPaid}). The boats are yours, free and clear.`); S.loan = null; }
-    else note(`Loan instalment paid to ${S.loan.source} (−€${loanPaid}). Balance: €${S.loan.balance}.`);
+    if(S.loan.interest && S.loan.interest>0){
+      loanInterest = Math.round(S.loan.balance * S.loan.interest);
+      S.loan.balance += loanInterest;
+    }
+    const due = Math.min(S.loan.perYear, S.loan.balance);
+    if(S.cash >= due){
+      loanPaid = due;
+      S.cash -= loanPaid;
+      S.loan.balance -= loanPaid;
+      if(S.loan.balance <= 0){
+        note(`Final loan instalment paid to ${S.loan.source} (−€${loanPaid}). The fleet is yours, free and clear.`);
+        S.loan = null;
+      } else {
+        const intNote = loanInterest>0 ? ` (€${loanInterest} interest accrued first)` : '';
+        note(`Loan instalment paid to ${S.loan.source} (−€${loanPaid})${intNote}. Balance: €${S.loan.balance}.`);
+      }
+    } else {
+      // Can't pay → default this winter. Source decides what happens.
+      loanDefault = true;
+      S.loan.missed = (S.loan.missed||0) + 1;
+      const src = loanSource(S.loan.sourceId);
+      if(src.defaultConsequence) src.defaultConsequence(S);
+      note(`Defaulted on the €${due} instalment to ${S.loan.source}. ${src.defaultLine}`);
+    }
+    if(S.yearStats){ S.yearStats.loan = loanPaid; S.yearStats.loanInterest = loanInterest; }
   }
   // Consumables decay over storage
   CON.forEach(id => { if(S.depot[id]) S.depot[id] = Math.floor(S.depot[id]/2); });
@@ -1353,7 +1412,9 @@ function renderSeasonReport(){
       <div class="row"><span class="l">Tips</span><span class="v" style="color:var(--gold)">+€${ys.tips}</span></div>
       ${ys.wages?`<div class="row"><span class="l">Wages</span><span class="v neg">−€${ys.wages}</span></div>`:''}
       ${ys.retainers?`<div class="row"><span class="l">Winter retainers</span><span class="v neg">−€${ys.retainers}</span></div>`:''}
+      ${ys.loanInterest?`<div class="row"><span class="l">Loan interest accrued</span><span class="v neg">−€${ys.loanInterest}</span></div>`:''}
       ${ys.loan?`<div class="row"><span class="l">Loan instalment${S.loan?` · still owed €${S.loan.balance}`:' · paid off'}</span><span class="v neg">−€${ys.loan}</span></div>`:''}
+      ${(S.loan && S.loan.missed)?`<div class="row"><span class="l" style="color:var(--danger)">Loan in default · ${S.loan.missed} missed</span><span class="v neg">€${S.loan.balance} owed</span></div>`:''}
       <div class="row"><span class="l"><b>Net for the year</b></span><span class="v ${net>=0?'pos':'neg'}"><b>${net>=0?'+':'−'}€${Math.abs(net)}</b></span></div>
       <div class="row"><span class="l">Trips you led · guide-led</span><span class="v">${ys.tripsYou} · ${ys.tripsGuides}</span></div>
       <div class="row"><span class="l">Reputation arc · best</span><span class="v">${S.rep} now · ${ys.bestRep} peak</span></div>
