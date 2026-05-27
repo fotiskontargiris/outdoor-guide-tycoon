@@ -194,7 +194,27 @@ draft     — artwork delivered, not yet approved against doctrine
 shipped   — approved, file in assets/, wired into index.html, harness green
 ```
 
-All assets are `planned` right now. The pilot trio (§2) is the first to move to `briefed`.
+**All 43 assets are `shipped`** as of 2026-05-28 — produced via ChatGPT (GPT‑Image) using
+the ChatGPT‑specific prompts in `PROMPT-PACK.md`; the title wordmark was produced in a
+vector tool as recommended. Files live in `assets/<tier>/`; the `ASSETS` map in
+`index.html` (around line 470) maps every id to its path. Harness clean (0 exceptions
+over 100 runs).
+
+**Live wire‑up surface** in `index.html` after this batch:
+- Title screen — cover + wordmark in `renderTitle`
+- Kitchen opening — `scene-kitchen` in `renderKitchen`
+- Hero portraits — auto‑resolved by `HERO_ASSET[b.id]` in `renderKitchenReveal`
+- Discipline picker — `glyph-discipline-{id}` in `renderSetup` discChips
+- Loan source picker — `chrome-loan-papers` in `renderSetup` loan section
+- Panigíri opening — `scene-panigiri` in `renderSetup`
+- Trailhead — place silhouettes auto‑resolved by `placeAssetFor(b.route)` in `startTrailhead`
+- Forecast strip — weather glyphs in `weatherChip` (per `WEATHER_GLYPH` map, plus the
+  dedicated `unstable` glyph when `stability < 50`)
+- Logbook — `chrome-logbook` in `renderLog`
+- Hilux purchase — `scene-hilux-dawn` in `renderVehicleScene` for `id==='pickup'` only
+- Hire trigger — `scene-first-hire` in `renderHireScene`
+- Radio crisis (Phase 2) — `scene-radio-crisis` in `runGuideTrip` radio branch
+- Cert school (winter office) — `chrome-certificate` in `renderOffSeason`
 
 ---
 
@@ -211,12 +231,19 @@ All assets are `planned` right now. The pilot trio (§2) is the first to move to
    the Hilux pathos still in `renderVehicleScene`). As each asset ships, add `id → path` to
    `ASSETS`; nothing else changes.
 3. **Seasonal accent rotation** — `ART-DIRECTION.md §4` rotates the accent hue by season
-   (oleander / noon gold / cypress / rain grey). Decide if `--accent` becomes a seasonal CSS
-   variable (`document.documentElement.style.setProperty` at season change) or if each
-   season ships its own asset variant. The first is cheaper; the second is richer. **Defer
-   until the pilot trio is approved.**
-4. **Asset host** — ship in‑repo (current GitHub Pages serves everything from `/assets/`)
-   or move to a CDN once total weight crosses, say, 5MB. **Defer until Tier B+ ships.**
+   (oleander / noon gold / cypress / rain grey). With assets shipped at the standard noon
+   accent for most cards, the CSS‑variable approach (`document.documentElement.style.
+   setProperty('--accent', …)` at season change) is now the cheaper next step — would tint
+   chrome and instrument labels seasonally without re‑shipping art variants. **Open.**
+4. **Asset weight / CDN** — total `assets/` is **~115 MB** (heroes 33 MB, places 33 MB,
+   scenes 15 MB, chrome 8 MB, disciplines 8 MB, weather 8 MB, title 2 MB). GitHub Pages
+   serves it fine but first‑paint per‑screen is a few MB. `loading="lazy"` on every `<img>`
+   keeps this manageable in practice — only visible assets fetch. An optimisation pass
+   (pngquant / TinyPNG / WebP at 85%) could probably cut to 30–40 MB without visible loss.
+   A separate root‑level copy of the three pilots (`assets/pilot-0[1-3]-*.png`, ~10 MB)
+   sits unreferenced — kept as the canonical "approved pilot" originals for future
+   re‑generation comparisons. **Open — optimise before next public push if bandwidth is
+   a concern.**
 
 ---
 

@@ -148,6 +148,12 @@
   .art-hero{width:80%; max-width:280px; margin:6px auto 12px; aspect-ratio:5/4;}
   .art-place{width:100%; max-width:560px; margin:6px auto 10px; aspect-ratio:8/5;}
   .art-scene{width:100%; max-width:720px; margin:6px auto 14px; aspect-ratio:16/10;}
+  .art-chrome{width:100%; max-width:480px; margin:6px auto 12px; aspect-ratio:4/3;}
+  .art-title{width:100%; max-width:560px; margin:0 auto 6px; aspect-ratio:16/10;}
+  .art-wordmark{display:block; max-width:280px; height:auto; margin:0 auto 14px;}
+  /* Inline glyphs: discipline picker (~36px) + forecast chip (~22px). */
+  .art-glyph{display:inline-block; width:36px; height:36px; vertical-align:middle; margin-right:6px;}
+  .art-glyph-sm{display:block; width:22px; height:22px; margin:4px auto 4px;}
 </style>
 </head>
 <body>
@@ -246,12 +252,19 @@ function weatherAdvice(w){
 }
 function weatherChip(w, label, big){
   // Outline tints by stability so unstable days are subtly flagged in the
-  // forecast strip. The dot still shows the weather type's natural colour.
+  // forecast strip. When a glyph asset is shipped, it replaces the colored
+  // dot; the chip still tints by stability and labels by short name.
   const sh = stabilityHint(w.stability ?? 75);
   const border = w.stability != null && w.stability < 75 ? sh.col : 'var(--edge)';
+  // Unstable forecast days swap to the dedicated unstable glyph; otherwise
+  // we look up by short name (Clear/Hot/Windy/Drizzle/Storm).
+  const unstable = w.stability != null && w.stability < 50;
+  const glyphId = unstable ? 'glyph-weather-unstable' : WEATHER_GLYPH[w.short];
+  const glyph = imgFor(glyphId, {cls:'art art-glyph-sm', alt:w.short});
+  const dot = `<div style="width:${big?'14px':'10px'};height:${big?'14px':'10px'};border-radius:50%;background:${w.col};margin:5px auto 4px;box-shadow:0 0 8px ${w.col}"></div>`;
   return `<div style="flex:1;min-width:0;text-align:center;background:var(--panel2);border:1px solid ${border};border-radius:10px;padding:${big?'10px 6px':'8px 4px'}">
     <div style="font-family:'Spline Sans Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)">${label}</div>
-    <div style="width:${big?'14px':'10px'};height:${big?'14px':'10px'};border-radius:50%;background:${w.col};margin:5px auto 4px;box-shadow:0 0 8px ${w.col}"></div>
+    ${glyph || dot}
     <div style="font-family:'Spline Sans Mono',monospace;font-size:${big?'12px':'10px'};color:${w.col}">${w.short}</div>
   </div>`;
 }
@@ -468,10 +481,63 @@ const DISCIPLINES=[
    entry to ASSETS; broken-image rects (the loud failure case) only
    appear if a file is listed but missing on disk. */
 const ASSETS = {
-  // Populate as assets ship. Pilot trio first — see ASSET-MANIFEST §2:
-  //   'hero-09-alani':       'assets/heroes/hero-09-alani.png',
-  //   'place-voidokilia':    'assets/places/place-voidokilia.png',
-  //   'scene-hilux-dawn':    'assets/scenes/scene-hilux-dawn.png',
+  // Tier A — cover & opening
+  'title-cover':              'assets/title/title-cover.png',
+  'title-wordmark':           'assets/title/title-wordmark.svg',
+  'scene-kitchen':            'assets/scenes/scene-kitchen.png',
+  // Tier B — heroes (HEROES.md order)
+  'hero-01-medic':            'assets/heroes/hero-01-medic.png',
+  'hero-02-chef':             'assets/heroes/hero-02-chef.png',
+  'hero-03-soldier':          'assets/heroes/hero-03-soldier.png',
+  'hero-04-sailor':           'assets/heroes/hero-04-sailor.png',
+  'hero-05-influencer':       'assets/heroes/hero-05-influencer.png',
+  'hero-06-engineer':         'assets/heroes/hero-06-engineer.png',
+  'hero-07-scholar':          'assets/heroes/hero-07-scholar.png',
+  'hero-08-fasaia':           'assets/heroes/hero-08-fasaia.png',
+  'hero-09-alani':            'assets/heroes/hero-09-alani.png',
+  'hero-10-villager':         'assets/heroes/hero-10-villager.png',
+  // Tier C — discipline glyphs
+  'glyph-discipline-hike':    'assets/disciplines/glyph-discipline-hike.png',
+  'glyph-discipline-seakayak':'assets/disciplines/glyph-discipline-seakayak.png',
+  'glyph-discipline-canyon':  'assets/disciplines/glyph-discipline-canyon.png',
+  'glyph-discipline-raft':    'assets/disciplines/glyph-discipline-raft.png',
+  'glyph-discipline-cycle':   'assets/disciplines/glyph-discipline-cycle.png',
+  'glyph-discipline-sup':     'assets/disciplines/glyph-discipline-sup.png',
+  'glyph-discipline-climb':   'assets/disciplines/glyph-discipline-climb.png',
+  // Tier D — weather glyphs
+  'glyph-weather-clear':      'assets/weather/glyph-weather-clear.png',
+  'glyph-weather-hot':        'assets/weather/glyph-weather-hot.png',
+  'glyph-weather-wind':       'assets/weather/glyph-weather-wind.png',
+  'glyph-weather-mist':       'assets/weather/glyph-weather-mist.png',
+  'glyph-weather-storm':      'assets/weather/glyph-weather-storm.png',
+  'glyph-weather-unstable':   'assets/weather/glyph-weather-unstable.png',
+  // Tier E — place silhouettes
+  'place-kalamata':           'assets/places/place-kalamata.png',
+  'place-polylimnio':         'assets/places/place-polylimnio.png',
+  'place-voidokilia':         'assets/places/place-voidokilia.png',
+  'place-pylos-methoni':      'assets/places/place-pylos-methoni.png',
+  'place-mavromati':          'assets/places/place-mavromati.png',
+  'place-neda':               'assets/places/place-neda.png',
+  'place-lousios':            'assets/places/place-lousios.png',
+  'place-taygetos':           'assets/places/place-taygetos.png',
+  'place-mani':               'assets/places/place-mani.png',
+  'place-kardamyli':          'assets/places/place-kardamyli.png',
+  // Tier F — set pieces
+  'scene-hilux-dawn':         'assets/scenes/scene-hilux-dawn.png',
+  'scene-panigiri':           'assets/scenes/scene-panigiri.png',
+  'scene-radio-crisis':       'assets/scenes/scene-radio-crisis.png',
+  'scene-first-hire':         'assets/scenes/scene-first-hire.png',
+  // Tier G — chrome
+  'chrome-logbook':           'assets/chrome/chrome-logbook.png',
+  'chrome-certificate':       'assets/chrome/chrome-certificate.png',
+  'chrome-loan-papers':       'assets/chrome/chrome-loan-papers.png',
+};
+// Weather "short" name → glyph asset id. (`weatherChip` swaps the colored
+// dot for the glyph when the asset is shipped.)
+const WEATHER_GLYPH = {
+  'Clear':'glyph-weather-clear', 'Hot':'glyph-weather-hot',
+  'Windy':'glyph-weather-wind', 'Drizzle':'glyph-weather-mist',
+  'Storm':'glyph-weather-storm',
 };
 // Hero background id → asset id (HEROES.md order).
 const HERO_ASSET = {
@@ -565,6 +631,8 @@ function renderTitle(save, loading){
   const canCont=!!save && !loading;
   const sub = loading?'Checking for a saved season…' : save?`Resume — Year ${save.S.year||1} · ${save.S.season==='winter'?'Winter planning':(save.S.seasonDay?summerDate(save.S.seasonDay):'Day '+save.S.day)}, ${save.S.phase===2?'a team to run':'building your name'}` : 'No saved season yet';
   setScene(`<div class="end" style="padding-top:4px">
+    ${imgFor('title-cover', {cls:'art art-title', alt:'Outdoor Guide Life or no Life'})}
+    ${imgFor('title-wordmark', {cls:'art art-wordmark', alt:'Outdoor Guide Life or no Life'})}
     <div class="day-tag" style="color:var(--gold)">Right then</div>
     <h2>Start a season</h2>
     <p class="verdict">You graduated from your guide course because nothing else worked out. The Peloponnese is now your problem.</p>
@@ -606,6 +674,7 @@ async function doContinue(){
 function renderKitchen(){
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('Home, and the smell of something browning');
   setScene(`<div class="day-tag" style="color:var(--gold)">Kalamata · your mother’s kitchen</div>
+    ${imgFor('scene-kitchen', {cls:'art art-scene', alt:'Your mother’s kitchen in Kalamata'})}
     <h2>You’re home</h2>
     <p class="verdict">The bus smelled of diesel and someone’s gardenia. Now you are at the kitchen table you sat at when you were seven, and twelve, and seventeen and swearing you would never come back. The oilcloth has the same lemons on it. Something is browning in the oven, and the good plates — the ones for guests — are out, which is how you know she has decided you are a guest now. Or, worse, a patient.</p>
     <p>“Sit, sit,” she says, though you are already sitting. “You’ve gotten thin. What did they do to you out there.” It is not a question. Nothing she says tonight will be a question.</p>
@@ -668,8 +737,9 @@ function renderSetup(){
     const cls = on ? 'primary' : (locked ? 'disabled' : '');
     const click = locked ? '' : `pickDiscipline('${d.id}')`;
     const tail = locked ? ' <span style="color:var(--ink-faint)">· coming soon</span>' : '';
+    const glyph = imgFor('glyph-discipline-'+d.id, {cls:'art-glyph', alt:d.name});
     return `<button class="opt ${cls}" onclick="${click}" ${locked?'style="opacity:.5"':''}>
-      <span class="mark">${on?'✓':(locked?'·':'+')}</span><span class="b-main">${d.name}${tail}<span class="b-sub">${d.blurb}</span></span></button>`;
+      <span class="mark">${on?'✓':(locked?'·':'+')}</span>${glyph}<span class="b-main">${d.name}${tail}<span class="b-sub">${d.blurb}</span></span></button>`;
   }).join('');
   const kitChips=ITEM_ORDER.filter(id => itemForActivity(id, pickedDiscipline)).map(id=>{
     const on=pickedKit.includes(id), full=pickedKit.length>=3 && !on;
@@ -687,8 +757,10 @@ function renderSetup(){
   }).join('') : '';
   const loanSection = isFleetDisc ? `
     <label style="display:block;margin-top:8px;font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Where the loan comes from</label>
+    ${imgFor('chrome-loan-papers', {cls:'art art-chrome', alt:'Three financing sources made physical: bank, friend, dark loan'})}
     <div class="choices" style="margin-top:8px">${loanChips}</div>` : '';
   setScene(`<div class="day-tag">The first night</div>
+    ${imgFor('scene-panigiri', {cls:'art art-scene', alt:'The village panigíri at full swing'})}
     <h2>Out into the season</h2>
     <p>Outside, the village is tuning up. It is August; down the lane a clarinet finds its note, and the smell of grilling meat is quietly winning its war with the night jasmine. The panigíri. ${b.pani}</p>
     <p>But first — what will you guide, and what goes in the bag?</p>
@@ -873,6 +945,7 @@ function renderHireScene(){
   const turned = S.turnedAwayThisYear||0;
   setScene(`<div class="end">
     <div class="day-tag" style="color:var(--gold)">${dayTag()} · a turning point</div>
+    ${imgFor('scene-first-hire', {cls:'art art-scene', alt:'You and Maria on the doorstep at first light'})}
     <h2>You can keep doing this, or you can stop being the only one.</h2>
     <p class="verdict">You turned a family away at the trailhead this week. The third this month, if you are honest. You stood and watched them walk back to their car.</p>
     <p><b>${turned}</b> booking${turned===1?'':'s'} have come and gone unrun this year. Your name carries weight enough now — and your savings, just enough — to take someone else on. <b>Maria</b> has been asking. She is steady, she is keen, she is local.</p>
@@ -994,7 +1067,9 @@ function renderLog(){
   } else {
     items='<div class="row"><span class="l">Nothing logged yet.</span><span class="v"></span></div>';
   }
-  setScene(`<div class="day-tag">${dayTag()} · Logbook</div><h2>The logbook</h2>
+  setScene(`<div class="day-tag">${dayTag()} · Logbook</div>
+    ${imgFor('chrome-logbook', {cls:'art art-chrome', alt:'A linen-bound logbook on a taverna table'})}
+    <h2>The logbook</h2>
     <p>Every day's doings, most recent first.${total?` <span style="color:var(--ink-faint);font-style:italic">${total} ${total===1?'entry':'entries'}</span>`:''}</p>
     <div class="ledger" style="max-height:none">${items}</div>
     <div class="actionbar"><button class="go" onclick="${back}">Back to the day</button></div>`);
@@ -2028,6 +2103,7 @@ function renderOffSeason(){
     <h2>The winter office</h2>
     <p>Five quiet months. Long enough to take a course, fix the truck, or develop a serious drinking problem. You have <b>${left}</b> week${left===1?'':'s'} before April pretends to be warm again. Cash <b style="color:var(--gold)">€${S.cash}</b>${S.cash<0?' — and you are in the red':''}.</p>
     <div style="font-family:'Spline Sans Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--terra);margin:8px 0 2px">Cert school</div>
+    ${imgFor('chrome-certificate', {cls:'art art-chrome', alt:'A HATEOA guide certification document'})}
     <div class="choices">${certsHTML}</div>
     <div style="font-family:'Spline Sans Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--terra);margin:22px 0 6px">Infrastructure projects</div>
     <div class="choices">${infraRows}</div>
@@ -2271,6 +2347,7 @@ function runGuideTrip(g,b,job){
   if(pool.length && chance(pRadio)){
     const ev=wpick(pool); S.radio={g,b,ev};
     setScene(`<div class="day-tag">${dayTag()} · ${b.route} · radio call</div>
+      ${imgFor('scene-radio-crisis', {cls:'art art-scene', alt:'A guide on the radio, weather closing in'})}
       <h2>${ev.title(g,b)}</h2><p>${ev.text(g,b,S)}</p>
       <div class="choices">${ev.choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveRadio(${i})">
         <span class="mark">${i+1}</span><span class="b-main">${typeof c.label==='function'?c.label(g,b):c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`);
