@@ -13,9 +13,8 @@ A text-driven outdoor-activities tycoon game set in the Peloponnese. Start as a 
 1. **Polish** the current build — low-stock warnings, season summary, richer logbook.
 2. **Seasons** — restructure days into seasons with off-season cert school.
 3. **Migrate** to Vite + TypeScript + Phaser 3 for a proper engine.
-4. **Pixel art** rollout per `aegean-guide-PIXEL-ART.md`.
-5. **Depth pass** — more routes, events, NPCs.
-6. **Phase 3** — water & air activities.
+4. **Depth pass** — more routes, events, NPCs.
+5. **Phase 3** — water & air activities.
 
 See `aegean-guide-CLAUDE.md` for the working notes and project bible.
 

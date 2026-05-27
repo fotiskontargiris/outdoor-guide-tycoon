@@ -108,8 +108,7 @@ clean. The hiking game is untouched and still passes.
 - **Voice** (`design-system/README.md` → CONTENT FUNDAMENTALS): second person, literary, past
   tense for resolved actions, `€` prefix, `−` minus for negatives, curly quotes, **no emoji**,
   only the sanctioned dingbats (`▸ ▶ ✓ ✦ ▦ ☼ ❧ ⌂ ✕ ≡ · —`).
-- **No stand-in icons.** Weather is the glow-dot placeholder until the pixel sprites exist
-  (`design-system/aegean-guide-PIXEL-ART.md`). Don't add Lucide/Heroicons/emoji.
+- **No stand-in icons.** Weather is the glow-dot placeholder. Don't add Lucide/Heroicons/emoji.
 - Every full-bleed surface keeps the **topo backdrop** at `opacity: 0.06`.
 
 ---

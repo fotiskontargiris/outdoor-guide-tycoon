@@ -19,7 +19,6 @@ Read `README.md` first — it carries the full art direction, content fundamenta
 - `ui_kits/marketing/` — Single-file marketing landing page.
 - `aegean-guide.html` — Original single-file game (vanilla JS). The ground truth.
 - `aegean-guide-CLAUDE.md` — Engineering bible.
-- `aegean-guide-PIXEL-ART.md` — Locked spec for future pixel sprites. Read before drawing any new "icon."
 - `aegean-guide-original-README.md` — Original repo README.
 
 ## How to use
@@ -45,7 +44,7 @@ Read `README.md` first — it carries the full art direction, content fundamenta
 
 Ask the user:
 
-1. **What surface?** (in-game screen, marketing page, devlog, slide, social card, pixel sprite, other)
+1. **What surface?** (in-game screen, marketing page, devlog, slide, social card, other)
 2. **Phase / context?** (Phase 1 solo guide / Phase 2 team management / Phase 3 future water+air activities)
 3. **Tone?** (default = contemplative literary; never arcade)
 4. **Do they want variations?** (offer 2–3 atomic options)
@@ -56,5 +55,5 @@ Then act as an expert designer in the brand. Default output format is HTML.
 
 - Don't invent new colours.
 - Don't use Inter, Roboto, system fonts, or modern UI tropes (purple gradients, glassmorphism beyond what's already here, rainbow accents).
-- Don't draw stand-in icons (Lucide / Heroicons / emoji). Use the placeholder pattern (`background: var(--panel2); border: 1px dashed var(--edge); caption: "(sprite forthcoming)"`).
+- Don't draw stand-in icons (Lucide / Heroicons / emoji). Use the placeholder pattern (`background: var(--panel2); border: 1px dashed var(--edge)`) — the dashed-outline empty box reads as deliberate.
 - Don't recreate UIs from screenshots alone — `aegean-guide.html` is the source of truth.

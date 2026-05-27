@@ -1,6 +1,6 @@
 # UI Kit · In-game (Messinia Guide)
 
-A pixel-faithful React recreation of the in-game UI from `aegean-guide.html`. Mobile-first, single-column, 640px max-width. The visuals are lifted from the source file; the implementation is a thin set of React components meant to be sliced apart and reused for new screens.
+A visually faithful React recreation of the in-game UI from `aegean-guide.html`. Mobile-first, single-column, 640px max-width. The visuals are lifted from the source file; the implementation is a thin set of React components meant to be sliced apart and reused for new screens.
 
 ## Files
 
@@ -37,7 +37,7 @@ The `≡` icon in the appbar opens the bottom-sheet drawer (Summary / Forecast /
 - Game logic is not real — bookings are static and trip results are canned.
 - Saving / `window.storage` is omitted.
 - The shop, certs, hiring, depot, and crisis-radio flows are stubbed (`alert()` placeholders).
-- Pixel sprites (weather, items, portraits) are still the placeholder glow dots — they'll be swapped in when the pixel-art rollout lands.
+- Visual representations for weather, items, and portraits remain the placeholder glow dots from the source build.
 
 ## Adding a new screen
 

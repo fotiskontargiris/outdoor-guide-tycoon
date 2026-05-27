@@ -15,10 +15,12 @@ A text-driven outdoor-guide career game set in the Peloponnese. You graduated fr
 1. **Polish** — gear shortfall, richer logbook, balance. ✓
 2. **Seasons** — April–October days, off‑season cert school, retainers. ✓
 3. **Content depth** — 17 routes (Messinia, Mani, Taygetos, Arcadia, Parnon, Achaia), 10 background characters, equipment quality tiers with lifetime. ✓
-4. **Migrate** to Vite + TypeScript + Phaser 3 for a proper engine.
-5. **Pixel art** rollout per [PIXEL-ART.md](./PIXEL-ART.md).
-6. **More events + NPC arcs** — deeper Phase 1/2 content.
-7. **Phase 3** — water & air activities (kayak, SUP, sailing, snorkel, paragliding).
+4. **Discipline depth** — sea‑kayak, canyon, raft, cycle, SUP, climbing all live; loan system, four‑movement year, demand‑driven hire scene. ✓
+5. **Hometown + transport ladder** — Year 1 Kalamata grind; bus → moped → Hilux → rack / trailer. ✓
+6. **Kitchen intro + 10 fixed heroes + dish mechanic.** ✓
+7. **Deeper hero models** — Alani, Villager, Engineer, Influencer, Soldier each with a real mechanical signature. ✓
+8. **Weather instability** — days can turn mid‑trip; three choices when the sky moves on you. ✓
+9. **Open next**: Phase 2 × disciplines patch · CATASTROPHES.md content · the missing activities (sailing, snorkel, paragliding).
 
 See [CLAUDE.md](./CLAUDE.md) for the working notes and project bible.
 

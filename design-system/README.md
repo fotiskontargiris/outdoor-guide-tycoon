@@ -4,7 +4,7 @@
 
 A design system for **Messinia Guide** (working title *Outdoor Guide Tycoon*), a text‑driven outdoor‑activities tycoon game set in the Peloponnese. You start as a solo hiking guide in Messinia, build a team, and grow into the region's leading outdoor company — eventually expanding into water and air activities in Navarino Bay and over Taygetos.
 
-This folder is **the bible** for anyone designing screens, marketing, slides, or future pixel art for the game. It collects the colour ramp, typography, voice, components, and the lived visual vocabulary in one place.
+This folder is **the bible** for anyone designing screens, marketing, slides, or any other surface for the game. It collects the colour ramp, typography, voice, components, and the lived visual vocabulary in one place.
 
 ---
 
@@ -15,7 +15,6 @@ Everything here was derived from the existing single‑file prototype. If you ha
 - **GitHub repo:** <https://github.com/fotiskontargiris/outdoor-guide-tycoon>
   - `aegean-guide.html` — the entire current game (vanilla HTML/CSS/JS, no build step). Copied locally to `aegean-guide.html`.
   - `CLAUDE.md` — project bible / engineering notes. Copied to `aegean-guide-CLAUDE.md`.
-  - `PIXEL-ART.md` — locked art direction and asset brief for upcoming pixel sprites. Copied to `aegean-guide-PIXEL-ART.md`.
   - `README.md` — game README.
 
 Readers with access can — and should — explore the repo to do a better job mocking or extending interfaces; the prototype is short, self‑contained, and the most reliable ground truth.
@@ -36,7 +35,7 @@ Three pillars that everything else has to serve:
 
 If a design choice doesn't reinforce *Peloponnese*, *instruments vs. prose*, or *dusk calm*, it's wrong for this game.
 
-The future pixel‑art rollout (see `aegean-guide-PIXEL-ART.md`) inherits the same palette and light source — sprites must sit on the panels without vibrating.
+Any future iconography or sprite work should inherit the same palette and light source — the eye is trained on these surfaces, so new visuals must sit on the panels without vibrating.
 
 ---
 
@@ -54,7 +53,6 @@ The future pixel‑art rollout (see `aegean-guide-PIXEL-ART.md`) inherits the sa
 | `ui_kits/marketing/` | A short marketing landing page in the same voice and palette. |
 | `aegean-guide.html` | The original single‑file game (read‑only source of truth). |
 | `aegean-guide-CLAUDE.md` | Engineering bible from the repo. |
-| `aegean-guide-PIXEL-ART.md` | Locked pixel‑art direction for future sprites. |
 
 ---
 
@@ -250,7 +248,7 @@ The current game uses **no icon font and no PNG icons.** Visual labelling happen
 
 ### 1. Spare Unicode dingbats (the *only* glyphs used as icons)
 
-Pulled from the running game and the pixel‑art spec. The full sanctioned set:
+Pulled from the running game. The full sanctioned set:
 
 | Glyph | Meaning | Where it appears |
 |---|---|---|
@@ -276,29 +274,27 @@ Weather is represented today by a coloured dot with a subtle box‑shadow glow:
 <div style="width:10px;height:10px;border-radius:50%;
             background:var(--gold);box-shadow:0 0 8px var(--gold)"></div>
 ```
-This is a *placeholder* — the pixel‑art rollout will replace it with 24×24 pixel sprites (see `aegean-guide-PIXEL-ART.md` §4 Weather). In any new mock, either use the dot or use the placeholder pixel sprites listed in `assets/weather/README.md`.
+In any new mock, use the dot pattern verbatim — the warm‑coloured glow on the deep‑teal panel is the look. There is no icon font or sprite roadmap to swap in; the dot **is** the visual language for weather right now.
 
 ### 3. The topo SVG
 
 The single piece of brand artwork that everything sits on. Stored at `assets/topo-backdrop.svg`. Use it on every full‑bleed surface (in‑game, marketing, slides). It is *the* logo of the game, more than the wordmark is.
 
-### Iconography roadmap
+### Iconography stance
 
-Per `aegean-guide-PIXEL-ART.md`, the planned icon system is **hand‑pixelled sprites** on the locked palette — not a vector icon font. Categories:
+There is currently no icon system beyond the dingbats above and the weather dots. Earlier
+plans for a hand‑pixelled sprite set have been retired; future art direction is open.
 
-- 24×24 weather (5 icons)
-- 24×24 gear items (9 icons: water, snacks, sunscreen, repellent, firstaid, poles, map, shell, lamp)
-- 32×32 certification badges (4: basic, firstaid, gorge, mountain)
-- 16×16 client portraits (4 archetypes)
-- 48×48 guide / player portraits (~6)
-- 320×96 route banner illustrations (6 routes)
-- 640×240 title scene
-
-Until those exist, **do not invent placeholder line icons** (Lucide, Heroicons, Phosphor, etc.). They will clash with the pixel‑art look. If a sprite slot is empty, use a coloured `--terra`/`--gold`/`--sea` dot or a sand‑cream sketch outline — the game already does this and it reads as intentional placeholder.
+**Do not invent placeholder line icons** (Lucide, Heroicons, Phosphor, etc.) for in‑game
+surfaces — they will clash with the contemplative literary tone the game has settled into.
+If a slot needs a visual cue, use a coloured `--terra`/`--gold`/`--sea` dot or a sand‑cream
+sketch outline — the game already does this and it reads as intentional.
 
 ### A note on substitution
 
-If you absolutely must use a CDN icon set for a mock (e.g. a non‑game marketing surface), **the closest match is Lucide's "outline" stroke set at `stroke-width: 1.5px` with stroke colour `--ink`.** Flag the substitution clearly — *"Lucide icons used as temporary stand‑in for the pixel sprite roadmap."*
+If you absolutely must use a CDN icon set for a mock (e.g. a non‑game marketing surface),
+**the closest match is Lucide's "outline" stroke set at `stroke-width: 1.5px` with stroke
+colour `--ink`.** Flag the substitution clearly.
 
 ---
 
@@ -307,7 +303,6 @@ If you absolutely must use a CDN icon set for a mock (e.g. a non‑game marketin
 1. Open `aegean-guide.html` in a browser. Play one in‑game day.
 2. Open `preview/` in the Design System tab and skim the cards.
 3. Read `aegean-guide-CLAUDE.md` §1–3 (what the game is, architecture).
-4. Read `aegean-guide-PIXEL-ART.md` for where the look is going.
-5. Open `ui_kits/game/index.html` and `ui_kits/marketing/index.html` for high‑fidelity templates you can copy from.
+4. Open `ui_kits/game/index.html` and `ui_kits/marketing/index.html` for high‑fidelity templates you can copy from.
 
 When in doubt: **calm, warm, written, Peloponnese.**
