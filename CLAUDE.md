@@ -181,10 +181,23 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
   filename, subject, composition hook, and status. Tiered A–G; pilot trio defined to prove
   the style across all three registers before scaling. Source of truth for what to make next,
   what to call it, and where the file lives.
+- `PROMPT-PACK.md` — the AI‑production tooling. Style anchor (verbatim in every prompt),
+  palette hex lock, per‑tier composition rules, negative prompt mirroring ART §10
+  anti‑patterns, full ready‑to‑paste prompts for the pilot trio, per‑tier templates for the
+  rest, consistency tactics (style reference image lock, seed lock, generation log), and
+  per‑engine notes (MJ / Sora / Nano Banana / Reve).
 - `assets/` — illustration & glyph home (heroes / places / disciplines / weather / title /
   scenes / chrome). Folder skeleton exists; production has not started. SVG for glyphs, PNG
   for illustrated. See `assets/README.md` for the folder map and `ASSET-MANIFEST.md` for the
   asset list.
+
+**Art loader (in `index.html`).** A small `ASSETS` map + `imgFor(id, opts)` helper renders an
+`<img>` (with `.art / .art-hero / .art-place / .art-scene` CSS sizing) or a graceful empty
+string when the id isn't shipped yet. `HERO_ASSET` maps background id → hero asset id;
+`placeAssetFor(routeName)` maps route → place silhouette via regex patterns. Three pilot
+slots are wired live: hero portrait in `renderKitchenReveal`, place silhouette in
+`startTrailhead`, the Hilux pathos still in `renderVehicleScene` for `id==='pickup'`. As
+each asset ships, add its `id → path` to `ASSETS`; nothing else changes.
 - Palette tokens already in `index.html` (`--ink`, `--terra`, `--gold`, `--sea`, `--olive`,
   `--danger`, `--panel`…) match the ART-DIRECTION palette and remain the source of truth for
   in‑game colour. When adding a hue, add it to ART-DIRECTION.md first and the CSS variables

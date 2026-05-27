@@ -200,22 +200,23 @@ All assets are `planned` right now. The pilot trio (§2) is the first to move to
 
 ## 12. Open production questions
 
-These need a decision before we move past the pilot trio.
-
-1. **Production path** — AI‑generated (Midjourney / Sora / Nano Banana / Reve), commissioned
-   illustrator, hand‑drawn by Fotis, or hybrid (e.g. AI for places, commissioned for heroes).
-   *This decides whether the next doc is `PROMPT-PACK.md` (locked AI prompts per asset,
-   with style‑reference image and palette hex) or `COMMISSION-BRIEF.md` (illustrator‑facing
-   moodboard + per‑asset brief sheet).*
-2. **Image loader in `index.html`** — add a small `imgFor(id)` helper that returns an
-   `<img>` element (or graceful nothing) so we can wire assets into existing scenes without
-   surgery later. Lift when the pilot trio ships, not before.
+1. ~~**Production path**~~ — **RESOLVED: AI‑generated.** See `PROMPT-PACK.md` for the locked
+   style anchor, palette hex, per‑tier composition rules, negative prompt, the pilot trio's
+   full ready‑to‑paste prompts, per‑tier templates for the rest, consistency tactics, and
+   engine notes.
+2. ~~**Image loader in `index.html`**~~ — **RESOLVED: shipped.** `ASSETS` map + `imgFor(id,
+   opts)` helper live in `index.html`; `HERO_ASSET` maps background id → hero asset id;
+   `placeAssetFor(routeName)` maps route → place silhouette by regex. Three pilot slots are
+   wired live (hero portrait in `renderKitchenReveal`, place silhouette in `startTrailhead`,
+   the Hilux pathos still in `renderVehicleScene`). As each asset ships, add `id → path` to
+   `ASSETS`; nothing else changes.
 3. **Seasonal accent rotation** — `ART-DIRECTION.md §4` rotates the accent hue by season
    (oleander / noon gold / cypress / rain grey). Decide if `--accent` becomes a seasonal CSS
    variable (`document.documentElement.style.setProperty` at season change) or if each
-   season ships its own asset variant. The first is cheaper; the second is richer.
+   season ships its own asset variant. The first is cheaper; the second is richer. **Defer
+   until the pilot trio is approved.**
 4. **Asset host** — ship in‑repo (current GitHub Pages serves everything from `/assets/`)
-   or move to a CDN once total weight crosses, say, 5MB.
+   or move to a CDN once total weight crosses, say, 5MB. **Defer until Tier B+ ships.**
 
 ---
 

@@ -139,6 +139,15 @@
 
   @keyframes rise{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
   @keyframes slidein{from{opacity:0; transform:translateX(-6px);} to{opacity:1; transform:none;}}
+
+  /* Art assets — see ASSET-MANIFEST.md. .art is the base; per-tier
+     modifiers size and frame for the slot the asset lands in. All
+     assets are matte gouache (see ART-DIRECTION.md) so no shadow,
+     glow, or radius — the picture is the picture. */
+  .art{display:block; max-width:100%; height:auto; margin:0 auto;}
+  .art-hero{width:80%; max-width:280px; margin:6px auto 12px; aspect-ratio:5/4;}
+  .art-place{width:100%; max-width:560px; margin:6px auto 10px; aspect-ratio:8/5;}
+  .art-scene{width:100%; max-width:720px; margin:6px auto 14px; aspect-ratio:16/10;}
 </style>
 </head>
 <body>
@@ -450,6 +459,57 @@ const DISCIPLINES=[
   {id:'climb',    name:'Climbing',         status:'available', blurb:'Premium per client. Gear-light per head. Niche.'},
 ];
 
+/* ---------------- art loader ----------------
+   Asset paths live in ASSETS by stable id (see ASSET-MANIFEST.md +
+   PROMPT-PACK.md). imgFor(id) returns an <img> string for innerHTML,
+   or '' if the id is not in the map yet — so we can wire art slots
+   into the existing scenes today and have the game keep working
+   identically until each asset ships. As you ship an asset, add its
+   entry to ASSETS; broken-image rects (the loud failure case) only
+   appear if a file is listed but missing on disk. */
+const ASSETS = {
+  // Populate as assets ship. Pilot trio first — see ASSET-MANIFEST §2:
+  //   'hero-09-alani':       'assets/heroes/hero-09-alani.png',
+  //   'place-voidokilia':    'assets/places/place-voidokilia.png',
+  //   'scene-hilux-dawn':    'assets/scenes/scene-hilux-dawn.png',
+};
+// Hero background id → asset id (HEROES.md order).
+const HERO_ASSET = {
+  medic:'hero-01-medic', chef:'hero-02-chef', soldier:'hero-03-soldier',
+  sailor:'hero-04-sailor', influencer:'hero-05-influencer', engineer:'hero-06-engineer',
+  scholar:'hero-07-scholar', fasaia:'hero-08-fasaia', alani:'hero-09-alani',
+  villager:'hero-10-villager',
+};
+// Route name → place asset id. Multiple routes share a place
+// (Polylímnio for hike + canyon; Voidokiliá for kayak + SUP + hike).
+// Substring match against the route's display name in ROUTES.
+const PLACE_PATTERNS = [
+  [/Polylimnio|Polylímnio/i,                                  'place-polylimnio'],
+  [/Voidokilia|Voidokiliá|Gialova/i,                          'place-voidokilia'],
+  [/Methoni|Methóni|Pylos|Koroni|Koróni|Finikounda|Finikoúnda/i,'place-pylos-methoni'],
+  [/Messene|Mavromati|Mavromáti/i,                            'place-mavromati'],
+  [/Neda/i,                                                    'place-neda'],
+  [/Lousios|Menalon|Vouraikos|Ladonas|Alfeios/i,              'place-lousios'],
+  [/Taygetos|Profitis|Profítis|Saidona/i,                     'place-taygetos'],
+  [/Mani|Tainaron|Tenaro|Vyros|Ridomo|Areopoli|Vathia|Vathiá/i,'place-mani'],
+  [/Kardamyli|Kardamýli|Stoupa|Stoúpa/i,                      'place-kardamyli'],
+  [/Kalamata|Olive-grove gravel/i,                            'place-kalamata'],
+];
+function placeAssetFor(routeName){
+  if(!routeName) return null;
+  for(let i=0;i<PLACE_PATTERNS.length;i++){
+    if(PLACE_PATTERNS[i][0].test(routeName)) return PLACE_PATTERNS[i][1];
+  }
+  return null;
+}
+function imgFor(id, opts){
+  opts = opts || {};
+  if(!id || !ASSETS[id]) return '';
+  const cls = opts.cls || 'art';
+  const alt = (opts.alt || '').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  return `<img class="${cls}" src="${ASSETS[id]}" alt="${alt}" loading="lazy">`;
+}
+
 /* ---------------- calendar ----------------
    A season is the Greek outdoor-tourism summer: April 1 → October 31, 214
    days played day-by-day. Winter (Nov–March, 22 weeks) is one planning
@@ -578,7 +638,9 @@ function renderKitchenHero(){
 function kitchenHero(id){ if(BACKGROUNDS.find(b=>b.id===id)) pickedBg=id; renderKitchenReveal(); }
 function renderKitchenReveal(){
   const b=BACKGROUNDS.find(x=>x.id===pickedBg)||BACKGROUNDS[0];
+  const portrait = imgFor(HERO_ASSET[b.id], {cls:'art art-hero', alt:b.name});
   setScene(`<div class="day-tag">${b.name}</div>
+    ${portrait}
     <h2>So that’s that, then</h2>
     <p class="verdict">${b.cat}</p>
     <p style="font-family:'Spline Sans Mono',monospace;font-size:12px;color:var(--gold);letter-spacing:.03em;line-height:1.5">▸ ${b.model}</p>
@@ -1190,9 +1252,13 @@ const VEHICLE_SCENES = {
 function renderVehicleScene(id){
   const sc = VEHICLE_SCENES[id]; if(!sc){ openShop(); return; }
   const paras = sc.body.map(p=>`<p>${p}</p>`).join('');
+  // Pathos beat: the Hilux scene gets the locked illustration (when shipped).
+  // Other vehicles (moped/rack/trailer) stay prose-only — only the Hilux is sentimental.
+  const sceneArt = id==='pickup' ? imgFor('scene-hilux-dawn', {cls:'art art-scene', alt:'A battered Hilux at first light'}) : '';
   setScene(`<div class="end">
     <div class="day-tag" style="color:var(--sage)">${dayTag()} · a small freedom</div>
     <h2>${sc.title}</h2>
+    ${sceneArt}
     ${paras}
     <div class="actionbar"><button class="go" onclick="renderMorning()">Back to the day</button></div>
   </div>`);
@@ -1533,7 +1599,9 @@ function startTrailhead(){
   const ev=wpick(pool); S.trip.meet=ev;
   const choices=ev.choices.filter(c=>!c.need || S.loadout.includes(c.need));
   S.trip.meetChoices=choices;
+  const placeArt = imgFor(placeAssetFor(b.route), {cls:'art art-place', alt:b.route});
   setScene(`<div class="day-tag">${dayTag()} · ${b.route} · the trailhead</div>
+    ${placeArt}
     <h2>${ev.title}</h2><p>${ev.text(b,S)}</p>
     <div class="choices">${choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveMeet(${i})">
       <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`);
