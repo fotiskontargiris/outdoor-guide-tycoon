@@ -1686,7 +1686,23 @@ function finishPlayerTrip(){
     prepLine += ` ${broken.length===1?'Your '+ITEMS[broken[0].id].toLowerCase().replace('&amp;','&')+' finally gave up on this trip':'Several pieces of kit gave up on this trip'} — time for a shop run.`;
   }
   S.dayReports.push({line:`You guided the ${b.route}.`, earned});
-  const reviews=makeReviews(t.repDelta||0, tip, 2);
+  // Influencer — volatile fame (HEROES.md → influencer). A great trip spawns
+  // an extra review and a small rep tick (the post takes off); a poor trip
+  // gets a sharper rep hit (the post goes viral too).
+  const isInfluencer = S.you && S.you.heroId==='influencer';
+  const finalTier = tierFor(t.repDelta||0, tip);
+  let reviewCount = 2;
+  if(isInfluencer){
+    if(finalTier >= 5){
+      reviewCount = 3;
+      const r = applyRep(2); t.repDelta = (t.repDelta||0) + r;
+      note('Your trip made the Stories of three different accounts. The booking inbox pinged twice on the drive home.');
+    } else if(finalTier <= 2){
+      const r = applyRep(-3); t.repDelta = (t.repDelta||0) + r;
+      note('Someone posted about you. The wrong someone. The clip got 40k views before lunch.');
+    }
+  }
+  const reviews=makeReviews(t.repDelta||0, tip, reviewCount);
   renderHUD();
   if(checkEnd()) return;
   setScene(`<div class="day-tag">${dayTag()} · Trip complete</div><h2>Back at the trailhead</h2>
