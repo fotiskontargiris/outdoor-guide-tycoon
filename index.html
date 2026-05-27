@@ -144,13 +144,22 @@
      modifiers size and frame for the slot the asset lands in. All
      assets are matte gouache (see ART-DIRECTION.md) so no shadow,
      glow, or radius — the picture is the picture. */
+  /* No forced aspect-ratio — every image renders at its native shape
+     (heroes are 2:3 portrait, places/scenes/title are 16:10, chrome 4:3,
+     glyphs 1:1). Forcing aspect-ratio stretched whichever batch didn't
+     match the assumption. max-width keeps things from overflowing. */
   .art{display:block; max-width:100%; height:auto; margin:0 auto;}
-  .art-hero{width:80%; max-width:280px; margin:6px auto 12px; aspect-ratio:5/4;}
-  .art-place{width:100%; max-width:560px; margin:6px auto 10px; aspect-ratio:8/5;}
-  .art-scene{width:100%; max-width:720px; margin:6px auto 14px; aspect-ratio:16/10;}
-  .art-chrome{width:100%; max-width:480px; margin:6px auto 12px; aspect-ratio:4/3;}
-  .art-title{width:100%; max-width:560px; margin:0 auto 6px; aspect-ratio:16/10;}
+  .art-hero{display:block; width:80%; max-width:280px; height:auto; margin:6px auto 12px;}
+  .art-place{display:block; width:100%; max-width:560px; height:auto; margin:6px auto 10px;}
+  .art-scene{display:block; width:100%; max-width:720px; height:auto; margin:6px auto 14px;}
+  .art-chrome{display:block; width:100%; max-width:480px; height:auto; margin:6px auto 12px;}
+  .art-title{display:block; width:100%; max-width:560px; height:auto; margin:0;}
   .art-wordmark{display:block; max-width:280px; height:auto; margin:0 auto 14px;}
+  /* Title block: wordmark overlaid on the cover image (the cover was
+     painted with mostly empty sky in the upper portion specifically so
+     the wordmark would have room to land). */
+  .title-block{position:relative; max-width:560px; margin:0 auto 14px;}
+  .title-block .art-wordmark{position:absolute; top:32%; left:50%; transform:translate(-50%,-50%); width:62%; max-width:none; margin:0; filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));}
   /* Inline glyphs: discipline picker (~36px) + forecast chip (~22px). */
   .art-glyph{display:inline-block; width:36px; height:36px; vertical-align:middle; margin-right:6px;}
   .art-glyph-sm{display:block; width:22px; height:22px; margin:4px auto 4px;}
@@ -630,9 +639,16 @@ function renderTitle(save, loading){
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('A career in the outdoors and minor catastrophes');
   const canCont=!!save && !loading;
   const sub = loading?'Checking for a saved season…' : save?`Resume — Year ${save.S.year||1} · ${save.S.season==='winter'?'Winter planning':(save.S.seasonDay?summerDate(save.S.seasonDay):'Day '+save.S.day)}, ${save.S.phase===2?'a team to run':'building your name'}` : 'No saved season yet';
+  // Wordmark sits ON TOP of the cover image (the cover was painted with
+  // empty sky in the upper portion specifically so the wordmark would
+  // have room). The .title-block wrapper handles the absolute overlay.
+  const titleCover = imgFor('title-cover', {cls:'art art-title', alt:'Outdoor Guide Life or no Life'});
+  const titleWordmark = imgFor('title-wordmark', {cls:'art art-wordmark', alt:'Outdoor Guide Life or no Life'});
+  const titleBlock = (titleCover || titleWordmark)
+    ? `<div class="title-block">${titleCover}${titleWordmark}</div>`
+    : '';
   setScene(`<div class="end" style="padding-top:4px">
-    ${imgFor('title-cover', {cls:'art art-title', alt:'Outdoor Guide Life or no Life'})}
-    ${imgFor('title-wordmark', {cls:'art art-wordmark', alt:'Outdoor Guide Life or no Life'})}
+    ${titleBlock}
     <div class="day-tag" style="color:var(--gold)">Right then</div>
     <h2>Start a season</h2>
     <p class="verdict">You graduated from your guide course because nothing else worked out. The Peloponnese is now your problem.</p>
