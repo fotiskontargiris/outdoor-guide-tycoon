@@ -181,11 +181,13 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
   filename, subject, composition hook, and status. Tiered A–G; pilot trio defined to prove
   the style across all three registers before scaling. Source of truth for what to make next,
   what to call it, and where the file lives.
-- `PROMPT-PACK.md` — the AI‑production tooling. Style anchor (verbatim in every prompt),
-  palette hex lock, per‑tier composition rules, negative prompt mirroring ART §10
-  anti‑patterns, full ready‑to‑paste prompts for the pilot trio, per‑tier templates for the
-  rest, consistency tactics (style reference image lock, seed lock, generation log), and
-  per‑engine notes (MJ / Sora / Nano Banana / Reve).
+- `PROMPT-PACK.md` — **Midjourney‑specific**, copy‑paste ready. Every prompt is one
+  continuous string with style anchor, palette, references, and `--ar / --style raw / --s /
+  --no / --v` parameters all baked in. 30 ready‑to‑paste prompts (pilot trio + 10 heroes
+  + 10 places + Tier A + Tier F), template prompt for glyphs (with caveat — vector tool is
+  better), full Tier G chrome prompts. Includes the `--sref` style‑reference lock workflow
+  (capture pilot‑01 image URL, append to every subsequent prompt), batch‑seed strategy, a
+  generation log template, and a troubleshooting table.
 - `assets/` — illustration & glyph home (heroes / places / disciplines / weather / title /
   scenes / chrome). Folder skeleton exists; production has not started. SVG for glyphs, PNG
   for illustrated. See `assets/README.md` for the folder map and `ASSET-MANIFEST.md` for the
