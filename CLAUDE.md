@@ -181,13 +181,16 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
   filename, subject, composition hook, and status. Tiered A–G; pilot trio defined to prove
   the style across all three registers before scaling. Source of truth for what to make next,
   what to call it, and where the file lives.
-- `PROMPT-PACK.md` — **Midjourney‑specific**, copy‑paste ready. Every prompt is one
-  continuous string with style anchor, palette, references, and `--ar / --style raw / --s /
-  --no / --v` parameters all baked in. 30 ready‑to‑paste prompts (pilot trio + 10 heroes
-  + 10 places + Tier A + Tier F), template prompt for glyphs (with caveat — vector tool is
-  better), full Tier G chrome prompts. Includes the `--sref` style‑reference lock workflow
-  (capture pilot‑01 image URL, append to every subsequent prompt), batch‑seed strategy, a
-  generation log template, and a troubleshooting table.
+- `PROMPT-PACK.md` — **ChatGPT‑specific** (GPT‑Image / DALL·E surface), copy‑paste ready.
+  Fotis tested Midjourney and preferred ChatGPT's output, so the pack is now ChatGPT‑native:
+  no `--` parameters, aspect ratio in natural language, negative list as explicit "do not
+  include" sentences, locked style‑anchor paragraph at the top of every prompt. 30 ready‑to‑
+  paste prompts (pilot trio + 10 heroes + 10 places + Tier A opening + Tier F set pieces),
+  glyph template with caveat (Figma still recommended for icons), Tier G chrome. The
+  consistency lever is the **in‑conversation reference image lock**: save pilot‑01 locally,
+  attach it to every new batch chat, send the §5 style‑lock preface, then send prompts in
+  sequence — ChatGPT keeps the style anchored across the whole conversation. Includes a
+  generation log template + troubleshooting table.
 - `assets/` — illustration & glyph home (heroes / places / disciplines / weather / title /
   scenes / chrome). Folder skeleton exists; production has not started. SVG for glyphs, PNG
   for illustrated. See `assets/README.md` for the folder map and `ASSET-MANIFEST.md` for the

@@ -1,103 +1,152 @@
-# PROMPT-PACK.md — Midjourney prompts, copy‑paste ready
+# PROMPT-PACK.md — ChatGPT prompts, copy‑paste ready
 
-Every prompt below is a **single continuous string** you can paste straight into Midjourney
-— style anchor, palette, references, and parameters all baked in. No placeholder blocks, no
-manual assembly. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) and
-`ASSET-MANIFEST.md` (the list of what to make and where each file lands).
+Every prompt below is a **single continuous block of natural language**, written for
+ChatGPT's image generation (GPT‑Image / DALL·E / whichever current model the chat surface
+uses). No `--` parameters, no special syntax — paste the whole block into a chat, hit enter,
+get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) and
+`ASSET-MANIFEST.md` (the asset list and filenames).
 
-> **The whole game is style consistency.** Pilot trio first (§4). Once `pilot-01-hero-alani`
-> looks right, capture its image URL and add `--sref <url>` to every subsequent prompt — the
-> reference image is what keeps 43 assets feeling like the same game. The model is allowed
-> to vary the subject; it is not allowed to vary the surface.
+> **The single biggest consistency lever**: once `pilot-01-hero-alani` looks right, **save
+> it locally**. Then, for every subsequent batch (heroes, places, etc.), **start a new
+> ChatGPT conversation**, **upload pilot‑01 as a reference image**, and prefix your prompt
+> with: *"Match the visual style, palette, line weight, and surface of the reference image
+> exactly. Generate the next image in the same illustrated series."* That conversation‑
+> level style lock is ChatGPT's equivalent of Midjourney's `--sref` — and it works.
 
 ---
 
 ## 1. Workflow
 
-1. **Pilot trio (§4)** — generate the three pilots with the prompts below, in order.
-2. **Wall test** — put them side by side. If they feel like the same game, lock the style.
-   If not, tweak the prompt root (§3) and re‑roll *before* moving on.
-3. **Style reference lock (§5)** — upload the approved `pilot-01-hero-alani` to a public URL
-   (Discord pin works) and append `--sref <url>` to every subsequent prompt.
-4. **Batch by tier** — Tier A (cover/opening) → Tier B (heroes, all 10 in one session)
-   → Tier E (places, all 10 in one session) → Tier F (set pieces) → Tier G (chrome) →
-   Tier C/D (glyphs — see §10, MJ is not the ideal tool for these).
-5. **Within a batch**: keep `--seed` constant across the batch for surface uniformity. Use a
-   fresh seed for each new batch.
-6. **Generation log** — record engine version + seed + prompt hash + date for every shipped
-   asset (template at §12). When the model improves and you want to re‑generate, you can.
+1. **Pilot trio (§4)** — three separate ChatGPT conversations, one per pilot. Paste, generate.
+2. **Wall test** — put the three images side by side (download them, drag them into one
+   window). If they feel like the same game, lock the style and move on. If not, tweak the
+   style anchor (§3) and re‑roll the affected pilot.
+3. **Style reference lock (§5)** — save `pilot-01-hero-alani.png` locally. From now on,
+   every new batch starts a new conversation with pilot‑01 uploaded as the first attachment.
+4. **Batch by tier** — Tier A → Tier B (10 heroes, *one conversation*) → Tier E (10 places,
+   *one conversation*) → Tier F → Tier G → Tier C/D (glyphs — see §11, ChatGPT is fine for
+   reference but a vector tool is faster for icons).
+5. **Within a conversation**, just ask for "the next image in the same series" — ChatGPT
+   keeps the style consistent across turns of a single chat much better than across separate
+   chats.
+6. **Save** with the filename from each prompt's header. Drop into the matching
+   `assets/<tier>/` subfolder.
+7. **Wire it up**: add one line `id → path` to the `ASSETS` map in `index.html` (around
+   line ~470). The pre‑wired slots pick it up automatically.
 
 ---
 
-## 2. Parameter cheat sheet
+## 2. What ChatGPT does differently from Midjourney
 
-Every prompt ends with the same parameter block (varied only by aspect ratio + accent).
-
-| Param | Value used here | Why |
+| | Midjourney | ChatGPT |
 |---|---|---|
-| `--ar` | `5:4` heroes · `8:5` places · `16:10` scenes · `1:1` glyphs · `3:4` chrome | Per‑tier aspect locked in `ASSET-MANIFEST.md §10` |
-| `--style raw` | always | Reduces MJ's house aesthetic; gives the editorial illustration room to land |
-| `--s 150` | always | Mid‑stylize — prompt‑faithful but allows enough interpretation for the gouache surface |
-| `--chaos 0` | implicit (default) | Maximum consistency across re‑rolls |
-| `--v 7` | always | Use whatever the current MJ version is (v7 as of writing); keep it constant for the whole pack |
-| `--no …` | one canonical negative list (§3) | Blocks the most likely failure modes |
-| `--sref <url>` | **add after pilot‑01 locks** | The single biggest consistency lever — same surface across all 43 assets |
-| `--cref <url>` | **for heroes only**, after one hero face locks | Keeps hero faces consistent across cards |
-| `--seed <N>` | one per batch | Surface uniformity within heroes / within places / etc. |
+| Aspect ratio | `--ar 5:4` flag | "in portrait orientation, about 4:5 ratio" in the prompt body |
+| Negative prompt | `--no <list>` flag | "Do not include X, Y, Z" sentences in the prompt body |
+| Style reference | `--sref <url>` flag | Upload the reference image into the chat + text instruction |
+| Character reference | `--cref <url>` flag | Upload + "give this person the same face" |
+| Stylization control | `--style raw --s 150` | "Render this in a literal, illustrated style — not stylised toward your house aesthetic" |
+| Consistency within batch | `--seed N` | Stay in the same conversation; ask for "the next image in the same series" |
+| Text in image | Unreliable | Reliable; can ask for legible signs / labels / handwriting |
+
+ChatGPT is **more literal and reverent** than Midjourney. It will follow long, structured,
+detailed prompts faithfully. Lean into specificity — the prompts below are long because
+length is the cost of getting exactly what you want.
 
 ---
 
-## 3. The locked negative list
+## 3. The locked style anchor
 
-This `--no` block appears at the end of every prompt unchanged. Do not paraphrase.
+Every prompt below opens with the same style anchor paragraph, **verbatim**. Do not
+paraphrase or shorten — it is the doctrine compressed to ChatGPT‑ingestible form.
 
-```
---no emoji, drop shadow, glow, gradient, sparkle, motion blur, lens flare, bokeh, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, santorini, whitewash, blue dome, infinity pool, tuscan villa, lavender field, decorative ornament, evil eye, smiling sun, weather face, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border
-```
+> *Render this as an editorial Mediterranean illustration in a matte gouache style — opaque
+> chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use
+> woodcut‑style ink linework: confident ~2px lines on foreground figures, hairline ~1px on
+> mid‑ground structures, and no outlines at all on landscape masses (hills, sea, sky read
+> as flat colour blocks only). Flat lighting from a single warm sun direction; shadows are
+> single blocks of a darker neighbour hue, never pure black. Use only this limited
+> five‑colour palette: warm terracotta clay, sun‑bleached olive sage, deep Ionian sea blue,
+> warm limestone bone cream, and warm near‑black ink — plus exactly one seasonal accent
+> specified per asset. Hand‑made and opinionated, in the spirit of Edward Bawden travel
+> posters, Hugo Pratt's Mediterranean comics, mid‑century New Yorker editorial
+> illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT
+> photographic, NOT 3D rendered, NOT a vector flat‑design graphic.*
 
 ---
 
 ## 4. The pilot trio — DO THESE FIRST
 
-Each block below is one prompt. Copy the **entire** content of the code fence, paste into
-Midjourney, hit enter. If you re‑roll, keep the prompt identical and use the `🎲` re‑roll
-button — do not edit between rolls.
+Each block below is one prompt. Open a new ChatGPT conversation. Paste the **entire** code
+fence content. Generate. If you re‑roll, send: *"Try again — same prompt, same style, just
+a fresh take."*
 
 ### `pilot-01-hero-alani` — comic default register · noon‑gold accent
 Save to: `assets/heroes/hero-09-alani.png`
 
 ```
-A Greek man in his early thirties leaning back against the seat of a cheap two-stroke moped parked outside a village kafeneio in Messinia Greece, faded olive button-down shirt with sleeves rolled to the elbow, worn leather wristband on his right wrist, jeans and dusty boots, an unlit cigarette tucked behind his right ear, half a knowing smirk, eyes glancing off-frame to the left as if greeting someone, the kafeneio doorway in deep Ionian shadow behind him with a hand-painted Greek sign above, late afternoon light, terracotta dust on the road, mid-shot waist-up, single figure composed off-axis, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure and hairline on background structures, flat lighting with a single warm sun direction, shadows are single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the moped tank chrome and the sign lettering, no gradients no glow no drop shadow no airbrush, hand-made and opinionated, in the style of Edward Bawden travel posters, Hugo Pratt Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, motion blur, lens flare, bokeh, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, santorini, whitewash, blue dome, infinity pool, tuscan villa, lavender field, decorative ornament, evil eye, smiling sun, weather face, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border
+Render this as an editorial Mediterranean illustration in a matte gouache style — opaque chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use woodcut-style ink linework: confident ~2px lines on foreground figures, hairline ~1px on mid-ground structures, and no outlines at all on landscape masses (hills, sea, sky read as flat colour blocks only). Flat lighting from a single warm sun direction; shadows are single blocks of a darker neighbour hue, never pure black. Use only this limited five-colour palette: warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, and warm near-black ink — plus exactly one seasonal accent of noon gold. Hand-made and opinionated, in the spirit of Edward Bawden travel posters, Hugo Pratt's Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT photographic, NOT 3D rendered, NOT a vector flat-design graphic.
+
+Frame this in portrait orientation, slightly taller than wide (about 4:5 ratio).
+
+Subject: A Greek man in his early thirties leaning back against the seat of a cheap two-stroke moped parked outside a village kafeneio in Messinia, mainland southern Greece. He wears a faded olive button-down shirt with sleeves rolled to the elbow, jeans, dusty boots, and a worn leather wristband on his right wrist. An unlit cigarette is tucked behind his right ear. He has a half-knowing smirk, and his eyes glance off-frame to the left as if greeting someone just outside the frame. The kafeneio doorway is in deep Ionian shadow behind him, with a hand-painted Greek sign above it (the lettering should be an undecipherable hand-painted shape, not legible text). Late afternoon light, terracotta dust on the road. Compose him as a mid-shot, waist-up, single figure positioned slightly off-axis in the frame. The noon-gold accent should appear in exactly one place: catching the moped tank's chrome and the painted sign's lettering — nothing else.
+
+Do not include: any legible text, captions, labels, watermarks or signatures; no emoji, drop shadow, glow, gradient, sparkle, motion blur, or lens flare; no anime, chibi, mascot, cute, or cartoon styling; no photorealism, 3D render, octane render, or HDR look; no vector or flat-design graphic look; no corporate-Memphis illustration style; no Santorini whitewash, no blue domes; no decorative ornamental borders; no AI artefacts (no extra fingers, no fused limbs, no melted faces). The man should have realistic adult human proportions, not stylised toward cute.
 ```
 
 ### `pilot-02-place-voidokilia` — place silhouette · noon‑gold accent
 Save to: `assets/places/place-voidokilia.png`
 
 ```
-Voidokilia Bay in Messinia Greece, the perfect crescent dune seen from the Pylos fort side at mid-afternoon, the crescent of pale bone-cream sand curving left to right across the lower third of the frame, deep Ionian sea blue filling the bay, sun-bleached olive sage scrub on the dunes, the inland Gialova lagoon visible behind the dune ridge with three small flamingo silhouettes at distance, far right the silhouette of a Venetian fortress on a low promontory, two human-scale figures walking the dune edge mid-frame for scale, mainland Messinia mainland Greece not Cyclades not Santorini, no whitewashed buildings no blue domes, the horizon very slightly sloped right-to-left implying a light meltemi wind off the gulf, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on the landscape masses which read as color blocks only, confident hairline on the fortress and the figures, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the fortress wall and one figure's hat, hand-made and opinionated, in the style of Edward Bawden travel posters, Hugo Pratt Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, motion blur, lens flare, bokeh, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, santorini, whitewash, blue dome, infinity pool, tuscan villa, lavender field, decorative ornament, evil eye, smiling sun, weather face, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border
+Render this as an editorial Mediterranean illustration in a matte gouache style — opaque chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use woodcut-style ink linework: confident ~2px lines on foreground figures, hairline ~1px on mid-ground structures, and no outlines at all on landscape masses (hills, sea, sky read as flat colour blocks only). Flat lighting from a single warm sun direction; shadows are single blocks of a darker neighbour hue, never pure black. Use only this limited five-colour palette: warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, and warm near-black ink — plus exactly one seasonal accent of noon gold. Hand-made and opinionated, in the spirit of Edward Bawden travel posters, Hugo Pratt's Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT photographic, NOT 3D rendered, NOT a vector flat-design graphic.
+
+Frame this in wide landscape orientation (about 8:5 or 16:10 ratio).
+
+Subject: Voidokilia Bay in Messinia, mainland southern Greece — the famous perfect crescent dune, seen from the elevation of the Pylos fort side at mid-afternoon. The crescent of pale bone-cream sand curves left to right across the lower third of the frame. Deep Ionian sea blue fills the bay. Sun-bleached olive sage scrub clings to the dunes. The inland Gialova lagoon is visible behind the dune ridge, with three small flamingo silhouettes far in the distance. On the far right, the silhouette of a Venetian fortress sits on a low promontory. Two small human-scale figures walk the dune edge mid-frame for scale, drawn with ink linework. The horizon is very slightly sloped right-to-left, implying a light meltemi wind off the gulf. The noon-gold accent should appear in exactly two small places: catching the fortress wall in afternoon light, and one of the figures' hats — nothing else.
+
+This is mainland Messinia in southern Greece, NOT the Cycladic islands. Critically important: do not include any whitewashed buildings, no blue-domed churches, no infinity-pool aesthetic, no cruise-port look. Do not include: any legible text, watermarks or signatures; no emoji, drop shadow, glow, gradient, sparkle, or lens flare; no anime, chibi, mascot, cute, or cartoon styling; no photorealism, 3D render, or HDR look; no vector or flat-design graphic look; no decorative ornamental borders; no AI artefacts.
 ```
 
 ### `pilot-03-scene-hilux-dawn` — pathos still · rain‑grey accent · NO FIGURES
 Save to: `assets/scenes/scene-hilux-dawn.png`
 
 ```
-A battered dark-olive Toyota Hilux pickup truck alone in a rural Kalamata village yard at first light, side-on slightly off-centre as the only object in the frame, a working farm vehicle with dust on the headlights and a steel roof rack overhead, a small dent on the rear bumper, an aftermarket tow bar, pale bone-cream pre-dawn sky filling the upper two thirds of the frame, terracotta dust on the dirt yard filling the lower third, a low stone wall behind in rain-grey shadow, absolutely no people no animals no birds no movement, complete stillness, the truck alone, quiet pathos beat, cinematic mid-shot wide composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework on the truck only with confident 2px lines, no outlines on sky or ground which read as flat color blocks, flat lighting with the soft single warm sun direction of dawn, slightly desaturated palette, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of rain grey in the stone wall and the truck's underside shadow, hand-made and opinionated, in the style of Edward Bawden travel posters, Hugo Pratt Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 16:10 --style raw --s 150 --v 7 --no people, figures, person, human, animal, bird, motion, emoji, drop shadow, glow, gradient, sparkle, motion blur, lens flare, bokeh, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, santorini, whitewash, blue dome, decorative ornament, evil eye, smiling sun, weather face, glossy plastic, text, watermark, signature, frame, border
+Render this as an editorial Mediterranean illustration in a matte gouache style — opaque chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use woodcut-style ink linework: confident ~2px lines on the vehicle, no outlines at all on sky or ground (which read as flat colour blocks only). Flat lighting from a single soft warm dawn sun direction; shadows are single blocks of a darker neighbour hue, never pure black. Use only this limited five-colour palette, slightly desaturated for the pathos register: warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, and warm near-black ink — plus exactly one seasonal accent of rain grey. Hand-made and opinionated, in the spirit of Edward Bawden travel posters, Hugo Pratt's Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT photographic, NOT 3D rendered, NOT a vector flat-design graphic.
+
+Frame this as a wide cinematic landscape (about 16:10 ratio).
+
+Subject: A battered dark-olive Toyota Hilux pickup truck, alone in a rural Kalamata village yard at first light. The truck is shown side-on, positioned slightly off-centre, the only object that carries weight in the frame. It is a working farm vehicle: dust on the headlights, a steel roof rack overhead, a small dent on the rear bumper, an aftermarket tow bar. Pale bone-cream pre-dawn sky fills the upper two thirds of the frame. Terracotta dust on the dirt yard fills the lower third. A low fieldstone wall sits behind the truck, rendered in rain-grey shadow. The rain-grey accent appears only in the wall and the truck's underside shadow.
+
+Critically important: this image must be completely empty of any people, any animals, any birds, any movement. No human figures of any kind. No protagonist. No mother in a doorway. No silhouettes in a window. The Hilux is alone. This is a quiet, still, pathos beat — the morning after a mother said "It runs. That is enough." The stillness is the entire point. Do not add any figures.
+
+Also do not include: any legible text or labels (no number plate text, no sign text); no emoji, drop shadow (other than the truck's own ground shadow), glow, gradient, sparkle, lens flare, or motion blur; no anime, chibi, mascot, cute, or cartoon styling; no photorealism, 3D render, octane render, or HDR look; no vector or flat-design graphic look; no decorative ornament; no AI artefacts.
 ```
 
 ---
 
-## 5. Style reference image lock (do this after pilot‑01 approval)
+## 5. The style reference image lock (after pilot‑01 approval)
 
-1. Approve `pilot-01-hero-alani`. Upscale (`U1`–`U4`).
-2. Right‑click the upscaled image in Discord → **Copy Link**. (Or, in the MJ web app, open
-   the image and copy the public URL.)
-3. From this point forward, append to **every** prompt below:
-   `--sref <url-you-just-copied>`
-4. Optional for hero portraits only — also append `--cref <url>` of the same image to keep
-   faces consistent across the 10 heroes.
+This is the most important step for keeping 43 assets feeling like the same game.
 
-The `--sref` lock is the single biggest consistency lever. Without it, MJ will drift toward
-its training average across batches.
+1. Approve `pilot-01-hero-alani`. Right‑click → **Save image as…** to your computer.
+2. For every subsequent batch (heroes, places, scenes), **start a new ChatGPT conversation**.
+3. **Drag pilot‑01 into the chat as an attachment.** Send it as the first message.
+4. With the image attached, send this exact preface:
+
+   > *"Use the visual style of the attached reference image as the locked style for this
+   > entire conversation. Match its palette, line weight, surface texture, lighting
+   > direction, and overall illustrated feel exactly. We are producing a series of
+   > illustrations that all need to feel like the same game. I'll give you a series of
+   > subjects in subsequent messages — each one should be rendered in this same style. Do
+   > not drift toward your default illustration aesthetic; stay anchored to the reference.
+   > Acknowledge and I'll send the first subject."*
+
+5. ChatGPT acknowledges. **Then** paste the next prompt from below.
+6. After that image generates, just send the next prompt — ChatGPT will keep the reference's
+   style locked across the whole conversation.
+
+For **hero portraits** specifically, also append to each prompt: *"Use the same face style
+and rendering approach as the reference image — adult Mediterranean Greek features,
+realistic proportions, illustrated not photorealistic."*
 
 ---
 
@@ -107,86 +156,147 @@ its training average across batches.
 Save to: `assets/scenes/scene-kitchen.png`
 
 ```
-A working-class Greek mother's kitchen in Kalamata, the oilcloth table set with the good plates painted with cheerful yellow lemons, a worn wooden spoon resting on a small saucer, the soft warm glow of an oven mid-bake at the back of the room, the mother visible only from behind at the counter showing apron strings and grey hair pinned up and weathered hands working dough, an open door to a small sun-drenched courtyard at the back, the late afternoon Mediterranean light spilling across the floor in warm bands, four good plates set out, no figures facing the camera, intimate warm domestic atmosphere, cinematic mid-shot wide composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure and objects, flat lighting with a single warm sun direction, shadows are single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of oleander pink in the painted lemons on the oilcloth and the apron ties, hand-made and opinionated, in the style of Edward Bawden travel posters, Hugo Pratt Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 16:10 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, motion blur, lens flare, bokeh, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, santorini, whitewash, blue dome, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, woman facing camera
+Render this as an editorial Mediterranean illustration in a matte gouache style — opaque chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use woodcut-style ink linework: confident ~2px lines on figures and objects, hairline on mid-ground structures, and no outlines on landscape masses (which read as flat colour blocks only). Flat lighting from a single warm sun direction; shadows are single blocks of a darker neighbour hue, never pure black. Use only this limited five-colour palette: warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, and warm near-black ink — plus exactly one seasonal accent of oleander pink. Hand-made and opinionated, in the spirit of Edward Bawden travel posters, Hugo Pratt's Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT photographic, NOT 3D rendered, NOT a vector flat-design graphic.
+
+Frame this as a wide cinematic landscape (about 16:10 ratio).
+
+Subject: The interior of a working-class Greek mother's kitchen in Kalamata, southern Greece. The kitchen table sits in the foreground covered with an oilcloth painted with cheerful yellow lemons, set with the good plates for guests, four place settings out. A worn wooden spoon rests on a small saucer. The soft warm glow of an oven mid-bake lights the back of the room. The mother is visible only from behind, working dough at the counter — we see her apron strings, her grey hair pinned up, her weathered hands at work. We never see her face. An open doorway at the back of the room leads to a small sun-drenched courtyard, with the late afternoon Mediterranean light spilling across the kitchen floor in warm bands. Intimate, warm, domestic atmosphere. The oleander-pink accent appears only in the painted lemons on the oilcloth and in the apron ties — nothing else.
+
+Critically: the mother must be seen from behind only — no face visible to the viewer. Do not include any other people. Do not include: any legible text or labels; no emoji, drop shadow (beyond the natural floor shadow), glow, gradient, sparkle, or lens flare; no anime, chibi, mascot, cute, or cartoon styling; no photorealism, 3D render, or HDR look; no vector or flat-design graphic look; no decorative ornament beyond the painted oilcloth lemons; no AI artefacts.
 ```
 
-### `title-cover` — cover plate background only (composite type in Figma/Affinity)
-Save to: `assets/title/title-cover.png` (background layer; type added separately)
+### `title-cover` — cover plate background only (composite type separately)
+Save to: `assets/title/title-cover.png` (background layer; wordmark added separately)
 
-> **Note**: MJ is unreliable with text. Generate the *background* below — a terracotta
-> Messinian rooftile horizon strip on a bone sky — and composite the wordmark *Outdoor
-> Guide Life* serif + *or no Life* italic noon‑gold in Figma / Affinity Designer / Pixelmator.
+> **Note**: For the actual game title wordmark, generate the background below in ChatGPT
+> and composite the type (*Outdoor Guide Life* in serif, *or no Life* in italic noon gold)
+> in Figma or Affinity Designer. ChatGPT can do legible text in images, but for a
+> brand-critical wordmark, vector typography in a design tool gives sharper results.
 
 ```
-A simple Mediterranean horizon scene with no people no buildings except a single low strip of terracotta-tiled village rooftops occupying the bottom fifth of the frame in soft silhouette, the upper four-fifths a pale bone-cream pre-dawn sky with one band of warmer terracotta-tinged cloud near the horizon, the lower right corner shows a single thin cypress silhouette, a quiet establishing shot for a book cover, absolutely no figures no text no logo no detail in the sky, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework only on the rooftop silhouette and cypress, the sky a flat color block, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, hand-made and opinionated, in the style of Edward Bawden travel posters and Greek folk woodcuts by A. Tassos --ar 16:10 --style raw --s 100 --v 7 --no people, figures, text, watermark, signature, emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, vector, flat design, santorini, whitewash, blue dome, decorative ornament, frame, border
+Render this as an editorial Mediterranean illustration in a matte gouache style — opaque chalky paint, no gradients, no glow, no drop shadows. Use woodcut-style ink linework only on the rooftop silhouette and the cypress, with the sky as a completely flat colour block. Flat lighting. Use only this limited five-colour palette: warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, and warm near-black ink. Hand-made and opinionated, in the spirit of Edward Bawden travel posters and Greek folk woodcuts by A. Tassos.
+
+Frame this as a wide cinematic landscape (about 16:10 ratio).
+
+Subject: A simple, quiet Mediterranean horizon. The bottom fifth of the frame is a single low strip of terracotta-tiled village rooftops in soft silhouette. The upper four-fifths is a pale bone-cream pre-dawn sky, with one band of warmer terracotta-tinged cloud near the horizon. In the lower right corner, a single thin cypress tree silhouette. This is a quiet establishing shot — the background for a book cover, with text to be added separately later. Leave most of the frame as open sky.
+
+Critically: no people, no figures of any kind, no text, no logo, no wordmark, no buildings other than the rooftop silhouette strip. Do not include: any text, watermark, or signature; no emoji, drop shadow, glow, gradient, sparkle; no anime or cartoon styling; no photorealism or 3D render; no vector or flat-design look; no Santorini whitewash, no blue domes; no decorative ornament.
 ```
 
-### `title-wordmark` — SKIP in MJ
+### `title-wordmark` — SKIP in ChatGPT, use a design tool
 Use Affinity Designer / Figma / Illustrator. Two lines: *Outdoor Guide Life* in a serif
-(Fraunces or Spectral) in ink `#1B1B1F`; *or no Life* italic in noon gold `#E0A951`
+(Fraunces or Spectral), in ink `#1B1B1F`; *or no Life* in italic, in noon gold `#E0A951`,
 slightly off‑axis below. Export as SVG to `assets/title/title-wordmark.svg`.
 
 ---
 
 ## 7. Tier B — heroes (10)
 
-Generate as one batch with a single `--seed`. Append `--sref <pilot-01-url>` (and optionally
-`--cref <pilot-01-url>`) to every prompt below. Each portrait is **5:4 vertical waist‑up**.
+Open one chat, attach `pilot-01-hero-alani`, send the style‑lock preface from §5, then send
+each hero prompt in sequence. Each portrait is **portrait orientation, about 4:5 ratio**.
 
 ### `hero-01-medic` — The almost‑doctor (♂) · rain‑grey accent
 Save to: `assets/heroes/hero-01-medic.png`
 
 ```
-A Greek man in his early thirties, the almost-doctor, holding a small green canvas medic kit with white cross taped at one corner, his right thumb running along a kit strap checking and re-checking, wearing a worn faded outdoor button-down and trekking trousers, kind concerned eyes glancing down at the kit, short dark hair, mid-shot waist-up, single figure off-axis on a bone-cream background with a hint of cloud and a hospital corridor's quiet light, gentle cautious posture, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of rain grey in the medic kit's webbing and the corridor shadow, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, scrubs, hospital uniform
+Same editorial Mediterranean illustration style as the reference image — matte gouache, woodcut linework, flat lighting, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is rain grey.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek man in his early thirties, the almost-doctor. He holds a small green canvas medic kit with a white cross, taped at one corner where the seam is wearing. His right thumb runs along a kit strap, checking and re-checking. He wears a worn faded outdoor button-down and trekking trousers. Short dark hair. Kind, concerned eyes glancing down at the kit. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of cloud and the quiet light of a hospital corridor at the edge. Gentle, cautious posture. The rain-grey accent appears only in the medic kit's webbing straps and in the corridor shadow behind him.
+
+Greek man, adult realistic proportions, illustrated not photographic. Do not include scrubs, hospital uniform, surgical mask, or stethoscope around the neck. Do not include any text or labels on the kit. No emoji, drop shadow, glow, gradient, sparkle. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts (no extra fingers, no fused limbs, no melted face).
 ```
 
 ### `hero-02-chef` — The Mykonos chef (♂) · noon‑gold accent
 Save to: `assets/heroes/hero-02-chef.png`
 
 ```
-A Greek man in his early thirties, the Mykonos chef, passing a foil-wrapped parcel of food forward to someone off-frame with both hands, a sea bream fish tattoo on his right forearm, a weathered chef's apron tied loose over a faded t-shirt, slight half-smile not quite hungry himself, dark hair pushed back, mid-shot waist-up, single figure off-axis on a bone-cream background with a hint of taverna kitchen warmth behind, generous welcoming gesture, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the foil parcel and the apron stitching, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, chef hat, toque
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek man in his early thirties, the once-celebrated Mykonos chef. He is passing a foil-wrapped parcel of food forward with both hands to someone just off-frame. A small sea bream fish tattoo on his right forearm. A weathered chef's apron tied loose over a faded t-shirt. A slight half-smile — not quite hungry himself, the kind who feeds others first. Dark hair pushed back from his forehead. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of warm taverna kitchen depth behind him. Generous, welcoming gesture. The noon-gold accent appears only in the foil of the food parcel and in the apron's stitching.
+
+Greek man, adult realistic proportions, illustrated not photographic. Do not include a tall white chef's toque or restaurant uniform. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-03-soldier` — The army washout (♀) · rain‑grey accent
 Save to: `assets/heroes/hero-03-soldier.png`
 
 ```
-A Greek woman in her early thirties, the army washout, holding a windworn topographic map with curled edges in both hands but looking off-frame upward reading the sky like a sentence, short pragmatic dark hair, a technical olive softshell jacket, alert calm posture with the wind in her clothes, mid-shot waist-up, single figure off-axis on a bone-cream sky with bruise-coloured weather forming in the upper right corner, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of rain grey in the gathering storm and the map's creases, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, military uniform, camouflage, weapon
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is rain grey.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek woman in her early thirties, cut on the final day of special-forces selection. She holds a windworn topographic map with curled edges in both hands, but her eyes are off-frame upward, reading the sky like a sentence. Short, pragmatic dark hair. A technical olive softshell jacket. Alert, calm posture with the wind moving in her clothes. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream sky background with bruise-coloured weather forming in the upper right corner. The rain-grey accent appears only in the gathering storm clouds and in the map's well-worn creases.
+
+Greek woman, adult realistic proportions, illustrated not photographic. Do not include military uniform, camouflage, or any weapon. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-04-sailor` — The deckhand (♀) · noon‑gold accent
 Save to: `assets/heroes/hero-04-sailor.png`
 
 ```
-A Greek woman in her early thirties, the deckhand, coiling a thick wet bow line in calloused hands, one hand resting on the bow of a sit-on-top sea kayak beached on flat rocks, a dry bag at her feet, eyeing a calm bay off-frame to her right, salt-bleached t-shirt and rolled cargo shorts, hair tied back, sun-tanned forearms, mid-shot waist-up, single figure off-axis on a bone-cream background with the calm deep Ionian sea visible behind, working unhurried posture, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure and the kayak hull, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the wet rope and the kayak deck rigging, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek woman in her early thirties, years on cargo ships and caïques now over. She is coiling a thick wet bow line in calloused, capable hands. One hand rests on the bow of a sit-on-top sea kayak beached on flat rocks. A dry bag at her feet. She is eyeing a calm bay off-frame to her right. Salt-bleached t-shirt, rolled cargo shorts, hair tied back, sun-tanned forearms. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with the calm deep Ionian sea visible behind. Working, unhurried posture. The noon-gold accent appears only on the wet rope catching the sun and on the kayak's deck rigging.
+
+Greek woman, adult realistic proportions, illustrated not photographic. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-05-influencer` — The influencer (♀) · oleander‑pink accent
 Save to: `assets/heroes/hero-05-influencer.png`
 
 ```
-A Greek woman in her late twenties, the influencer, half a step ahead of an unseen group framing a shot with her phone on a small handheld tripod gimbal, a folded ring light clipped to her small pack, a light breeze in her hair, golden afternoon light, the trail visible a step behind her, focused expression chasing the shot, fashionable but practical outdoor clothing, mid-shot waist-up, single figure off-axis on a bone-cream background with a hint of golden coast behind, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of oleander pink in her scarf and the phone case, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, selfie pose
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is oleander pink.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek woman in her late twenties. She is half a step ahead of an unseen group, framing a shot with her phone mounted on a small handheld tripod gimbal. A folded ring light is clipped to her small pack. A light breeze in her hair. Golden afternoon light. The trail is visible a step behind her. Focused expression, chasing the shot. Fashionable but practical outdoor clothing. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of golden coast visible behind. The oleander-pink accent appears only in her scarf and on her phone case.
+
+Greek woman, adult realistic proportions, illustrated not photographic. Do not show her taking a selfie — she is framing a shot of the scene ahead of her, the phone is pointed away from her face. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-06-engineer` — The startup engineer (♂) · noon‑gold accent
 Save to: `assets/heroes/hero-06-engineer.png`
 
 ```
-A Greek man in his early thirties, the startup engineer, holding a small clipboard with careful pencil notes, a Leatherman multi-tool clipped to his belt, simple wire-frame glasses, focused counting expression as if mentally calculating throughput, a casual button-down rolled to the forearms, dark hair, the corner of a taverna in the background, mid-shot waist-up, single figure off-axis on a bone-cream background, methodical careful posture, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the multi-tool casing and the clipboard clip, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, laptop, hoodie
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek man in his early thirties, the startup engineer whose company ran out of runway at eleven users. He holds a small clipboard with careful pencil notes. A Leatherman multi-tool is clipped to his belt. Simple wire-frame glasses. A focused, counting expression — as if mentally calculating the throughput of something. A casual button-down rolled to the forearms. Dark hair. The corner of a taverna is visible in the background. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background. Methodical, careful posture. The noon-gold accent appears only on the multi-tool's casing and on the clipboard's metal clip.
+
+Greek man, adult realistic proportions, illustrated not photographic. Do not include a laptop, a startup hoodie, or any tech-bro signifier — he is past that life now. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-07-scholar` — The philologist (♀) · cypress‑green accent
 Save to: `assets/heroes/hero-07-scholar.png`
 
 ```
-A Greek woman in her early thirties, the philologist, mid-sentence with a slim leather notebook open in one hand showing handwritten lines in four different scripts, the other hand making a gentle didactic gesture, a small group of unseen listeners implied just out of frame leaning in, library-warm afternoon light, simple linen dress, hair tied with a ribbon, intelligent warm expression, mid-shot waist-up, single figure off-axis on a bone-cream background with a hint of book spines behind, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure and the notebook, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of cypress green-black in her hair ribbon and the book spines, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, glasses chain, owl
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek woman in her early thirties, the philologist with four languages and no permanent post. She is mid-sentence, holding a slim leather notebook open in one hand showing handwritten lines in four different scripts (Greek, Latin, Arabic, and a Cyrillic script). Her other hand makes a gentle didactic gesture. A small group of unseen listeners is implied just out of frame, leaning in to hear her. Library-warm afternoon light. Simple linen dress, hair tied with a ribbon, intelligent warm expression. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of book spines behind. The cypress-green accent appears only in her hair ribbon and the book spines behind her.
+
+Greek woman, adult realistic proportions, illustrated not photographic. Do not include glasses on a chain, an owl, an academic gown, or any "wise teacher" cliché props. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-08-fasaia` — The Fasaia (♀) · oleander‑pink accent
 Save to: `assets/heroes/hero-08-fasaia.png`
 
 ```
-A Greek woman in her late twenties, the Fasaia returned from Goa, breath drawn in with eyes half-closed and a small composed half-smile, a hand-woven shawl scarf over her shoulders in earthy patterns, beaded jewelry at her wrists, the warm blurred strung-bulb lights of a distant August panigiri village festival behind her at far depth, hair loose and full, calm centred posture, mid-shot waist-up, single figure off-axis on a bone-cream background, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figure, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of oleander pink in the scarf pattern and the festival lights, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, halo, aura, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, lotus pose, yoga mat
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is oleander pink.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek woman in her late twenties, returned from Goa speaking of "energy" and "alignment". Her breath is drawn in, eyes half-closed, a small composed half-smile. A hand-woven shawl-scarf over her shoulders in earthy patterns. Beaded jewelry at her wrists. The warm blurred strung-bulb lights of a distant August panigiri village festival glow behind her at far depth. Her hair is loose and full. Calm, centred posture. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background. The oleander-pink accent appears only in the scarf's pattern and in the festival lights behind her.
+
+Greek woman, adult realistic proportions, illustrated not photographic. Do not include a lotus pose, a yoga mat, mandala motifs, or visible halo / aura — she is a person, not an icon. No emoji, drop shadow, glow, gradient (other than the soft blurred lights behind her). No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `hero-09-alani` — covered by pilot‑01 above.
@@ -195,28 +305,47 @@ A Greek woman in her late twenties, the Fasaia returned from Goa, breath drawn i
 Save to: `assets/heroes/hero-10-villager.png`
 
 ```
-A Greek man in his mid forties, the village man who lost the family land, one hand resting flat on a fieldstone wall that used to be his, a worn olive-pruning curved blade slung at his belt, a younger cousin half-visible in the frame behind him also working the wall, an old olive grove fading inland under afternoon light, sun-darkened weathered face, square stoic posture, simple work shirt and old trousers, mid-shot waist-up, single foreground figure off-axis on a bone-cream sky background, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figures and the wall, flat lighting with a single warm sun direction, shadows as single blocks of a darker neighbor color never pure black, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of cypress green-black in the distant grove and the blade's handle, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 5:4 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, traditional costume, fustanella
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
+
+Frame in portrait orientation (about 4:5 ratio).
+
+Subject: A Greek man in his mid forties, the villager who ran the family flock and olive grove until a subsidy cut and a beach bar finished it off. One hand rests flat on a fieldstone wall that used to be his. A worn, curved olive-pruning blade hangs at his belt. A younger cousin is half-visible in the frame behind him, also working at the wall. An old olive grove fades inland under afternoon light. His sun-darkened, weathered face. Square, stoic posture. A simple work shirt and old trousers. Mid-shot, waist-up, single foreground figure positioned off-axis on a bone-cream sky background. The cypress-green accent appears only in the distant olive grove and on the pruning blade's wooden handle.
+
+Greek man, adult realistic proportions, illustrated not photographic. Do not include any traditional Greek costume (no fustanella, no folk dress) — this is a working modern villager. No emoji, drop shadow, glow, gradient. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ---
 
 ## 8. Tier E — places (10)
 
-Batch with one `--seed`. Append `--sref <pilot-01-url>` to every prompt. Each is **8:5
-landscape**. The locked compositions come from `ART-DIRECTION.md §6B`.
+Open a new chat, attach `pilot-01-hero-alani` (or `pilot-02-place-voidokilia` if you prefer
+a place reference), send the style‑lock preface from §5, then send each place prompt. Each
+is **wide landscape, about 8:5 ratio**.
 
 ### `place-kalamata` — Kalamata harbour · noon‑gold accent
 Save to: `assets/places/place-kalamata.png`
 
 ```
-The stone quay harbour of Kalamata in southern Greece at golden afternoon, a curved line of small waterfront cafes with chairs out on the pavement, a single working caïque Greek fishing boat tied up against the quay, the distant inland silhouette of the Taygetos mountain range fading purple-blue in the far background, two small human-scale figures walking the quay mid-frame, a kafeneio table with two coffee glasses in the near right corner, mainland Messinia mainland Greece not Cyclades not Santorini, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on the boat and figures, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the boat's mast and the cafe tablecloths, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, santorini, whitewash, blue dome, infinity pool, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, cruise ship, yacht
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The stone quay harbour of Kalamata in southern Greece at golden afternoon. A curved line of small waterfront cafés with chairs out on the pavement. A single working caïque (Greek fishing boat) tied up against the quay. The distant inland silhouette of the Taygetos mountain range fading purple-blue in the far background. Two small human-scale figures walking the quay mid-frame. A café table with two coffee glasses in the near right corner. Mid-distance landscape composition. The noon-gold accent appears only on the boat's mast and on a cluster of the café tablecloths.
+
+This is mainland Messinia in southern Greece, NOT the Cycladic islands — no whitewashed buildings, no blue domes, no cruise ships, no yachts. Do not include any legible text or signage. No emoji, drop shadow, glow, gradient, sparkle, lens flare. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-polylimnio` — Polylimnio waterfalls · cypress‑green accent
 Save to: `assets/places/place-polylimnio.png`
 
 ```
-The Polylimnio tiered waterfall pools in Messinia Greece, multiple stacked emerald pools cascading down slick green stone in deep forested shade, viewed from mid-slope above one of the lower pools, dense fig and plane tree canopy above, one single human-scale figure swimming in the lowest pool for scale, dappled forest light, cool water atmosphere, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on water or rock masses which read as color blocks, confident hairline on the figure and tree trunks, flat lighting with a single warm sun direction filtering through canopy, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of cypress green-black in the deep forest shadows and the pool depths, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, santorini, whitewash, blue dome, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, tropical, jungle, exotic flowers
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The Polylimnio tiered waterfall pools in Messinia, southern Greece. Multiple stacked emerald pools cascade down slick green stone in deep forested shade, viewed from mid-slope above one of the lower pools. Dense fig and plane tree canopy above. One single human-scale figure swimming in the lowest pool for scale. Dappled forest light. Cool water atmosphere. Mid-distance landscape composition. The cypress-green accent appears only in the deepest forest shadows and in the pool depths.
+
+This is the Greek mainland, not a tropical jungle. Do not include exotic tropical plants, bright flowers, or rainforest density — it is a Mediterranean canyon forest of figs, planes, and oleander. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-voidokilia` — covered by pilot‑02 above.
@@ -225,49 +354,91 @@ The Polylimnio tiered waterfall pools in Messinia Greece, multiple stacked emera
 Save to: `assets/places/place-pylos-methoni.png`
 
 ```
-The Venetian fortress of Methoni in Messinia Greece seen from sea level, a low promontory of weathered stone walls and a single square tower projecting into the deep Ionian, a small mainland Greek fishing harbour at the foot of the fortress with two or three caiques tied up, the bay opening wide to the right, late afternoon warm light, two small figures fishing from the harbour mole for scale, mainland Greece not Cyclades not Santorini no whitewashed buildings no blue domes, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on the fortress walls and figures, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the fortress wall and the boat masts, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, santorini, whitewash, blue dome, infinity pool, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The Venetian fortress of Methoni in Messinia, southern Greece, seen from sea level. A low promontory of weathered stone walls and a single square tower projects into the deep Ionian. A small mainland Greek fishing harbour at the foot of the fortress, with two or three caïques tied up. The bay opens wide to the right. Late afternoon warm light. Two small figures fishing from the harbour mole for scale. Mid-distance landscape composition. The noon-gold accent appears only on the fortress wall at golden hour and on the boat masts.
+
+This is mainland Greece, not the Cyclades. Do not include any whitewashed buildings, blue domes, infinity-pool aesthetic, or cruise port — this is a working historic Venetian-era fortress harbour. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-mavromati` — Ancient Messene at Mavromáti · noon‑gold accent
 Save to: `assets/places/place-mavromati.png`
 
 ```
-The archaeological site of Ancient Messene at Mavromati village in the Peloponnese Greece, broken Greek classical columns and tumbled stone blocks at low golden-hour afternoon light, the village spring at the edge of the site with a stone basin, one small human-scale figure standing among the columns for scale, ancient olive trees framing the scene, open countryside opening toward distant mountains, the deep timelessness of a Greek archaeological site, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on columns and figure, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the column tops at golden hour, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, santorini, whitewash, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, fantasy ruins, dramatic clouds
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The archaeological site of Ancient Messene at Mavromati village in the Peloponnese, Greece. Broken Greek classical columns and tumbled stone blocks under low golden-hour afternoon light. The village spring at the edge of the site with a small stone basin. One small human-scale figure standing among the columns for scale. Ancient olive trees framing the scene. Open countryside opening toward distant mountains. The deep timelessness of a Greek archaeological site, but rendered as a quiet illustrated scene — not fantasy ruins. The noon-gold accent appears only on the column tops catching the golden-hour light.
+
+Do not include dramatic clouds, lightning, mythological figures, or any "fantasy ruins" aesthetic. This is a real, quiet, archaeological site. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-neda` — Neda gorge · cypress‑green accent
 Save to: `assets/places/place-neda.png`
 
 ```
-The Neda gorge in the Peloponnese Greece, narrow ribs of cold grey limestone closing in to form a deep slot canyon, a single emerald pool at the canyon floor below, a hairline human figure traversing the high rim for scale, deep cool blue-green shade with one shaft of warm light reaching the pool, mossy wet rock walls, the sound of water implied, vertical and narrow composition, mid-distance landscape, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on rock masses which read as color blocks, confident hairline on the figure, flat lighting with a single shaft of warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of cypress green-black in the deepest canyon shadows and the moss, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, american southwest, antelope canyon
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The Neda gorge in the Peloponnese, Greece. Narrow ribs of cold grey limestone close in to form a deep slot canyon. A single emerald pool sits at the canyon floor below. A hairline human figure traverses the high rim for scale. Deep cool blue-green shade with one shaft of warm light reaching the pool. Mossy wet rock walls. The sound of water implied. Vertical, narrow, mid-distance landscape composition. The cypress-green accent appears only in the deepest canyon shadows and on the mossy rock.
+
+This is southern Greece, not the American Southwest — no Antelope Canyon sandstone red, no desert palette. The stone is cold grey limestone, the moss is European green. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-lousios` — Lousios gorge with monastery · cypress‑green accent
 Save to: `assets/places/place-lousios.png`
 
 ```
-The Lousios gorge in Arcadia Greece, a forested gorge with a small medieval Byzantine Orthodox monastery clinging to a ledge midway up the cliff face, a wooden suspension bridge crossing the gorge at the bottom over a green river, two small human-scale figures crossing the bridge for scale, dense fir and chestnut canopy on both sides, the deep cool shadow of the gorge below, the monastery painted white-and-red with a small dome roof, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on the monastery and bridge and figures, flat lighting with a single warm sun direction reaching the upper canopy, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of cypress green-black in the gorge shadows and the forest, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, tropical, fantasy castle
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The Lousios gorge in Arcadia, mainland Greece. A forested gorge with a small medieval Byzantine Orthodox monastery clinging to a ledge midway up the cliff face. A wooden suspension bridge crosses the gorge at the bottom over a green river. Two small human-scale figures cross the bridge for scale. Dense fir and chestnut canopy on both sides. The deep cool shadow of the gorge below. The monastery is painted in white-and-red with a small dome roof. Mid-distance landscape composition. The cypress-green accent appears only in the gorge shadows and in the forest depth.
+
+This is a real Greek Byzantine monastery, not a fantasy castle or a tropical scene. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-taygetos` — Taygetos alpine ridge · noon‑gold accent
 Save to: `assets/places/place-taygetos.png`
 
 ```
-The alpine summit ridge of Mount Taygetos in the Peloponnese Greece in mid-summer with streaks of unmelted snow in the north-facing couloirs, the tiny stone cell-chapel of Profitis Ilias silhouetted on the highest peak, a single human-scale figure standing on the ridge below the summit for scale, cold thin clear high-altitude light, the Peloponnese opening below in fading olive and sea blue toward the horizon, austere alpine atmosphere, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on the chapel and figure, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the chapel walls at altitude, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, alps, swiss
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The alpine summit ridge of Mount Taygetos in the Peloponnese, Greece, in mid-summer with streaks of unmelted snow in the north-facing couloirs. The tiny stone cell-chapel of Profitis Ilias is silhouetted on the highest peak. A single human-scale figure stands on the ridge below the summit for scale. Cold, thin, clear high-altitude light. The Peloponnese opens below in fading olive and sea blue toward the horizon. Austere alpine atmosphere. Mid-distance landscape composition. The noon-gold accent appears only on the chapel walls catching altitude light.
+
+This is the Greek Peloponnese — not the Swiss Alps. The mountain is rocky and exposed, not Alpine-meadow lush. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-mani` — Mani peninsula tower houses · rain‑grey accent
 Save to: `assets/places/place-mani.png`
 
 ```
-The Mani peninsula in the southern Peloponnese Greece, a cluster of austere slate-grey stone tower houses (the famous Maniote pyrgoi defensive towers) rising vertically up a barren rocky hillside, salt-scoured prickly scrub and aloe in the foreground, an empty unpaved road bending south toward distant Cape Tainaron, no trees no greenery, hard austere afternoon light, the sea barely visible far right as a thin blue band, one single human-scale figure walking the road for scale, the wind in the scrub implied by a sloped horizon, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on the tower silhouettes and figure, flat lighting with a single hard warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of rain grey in the tower stone and the road, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, santorini, whitewash, blue dome, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border, lush vegetation, tropical
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is rain grey.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The Mani peninsula in the southern Peloponnese, Greece. A cluster of austere slate-grey stone tower houses (the famous Maniote pyrgoi defensive towers) rises vertically up a barren rocky hillside. Salt-scoured prickly scrub and aloe in the foreground. An empty unpaved road bends south toward distant Cape Tainaron. No trees, no greenery — this is the dry, hard, austere Mani. Hard afternoon light. The sea barely visible far right as a thin blue band. One single human-scale figure walks the road for scale. The wind in the scrub is implied by a slightly sloped horizon. Mid-distance landscape composition. The rain-grey accent appears only in the tower stone and in the road.
+
+This is the dry austere Mani — no lush vegetation, no tropical look, no Santorini whitewash, no blue domes. The towers are slate-grey stone, sun-bleached, severe. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `place-kardamyli` — Kardamyli stone harbour · noon‑gold accent
 Save to: `assets/places/place-kardamyli.png`
 
 ```
-The small stone fishing harbour of Kardamyli on the Messinian Mani coast Greece, ancient plane trees shading a stone-paved waterfront, a stone-built quay with one or two caiques tied up, the old cobbled mule path turning uphill behind the village toward the Taygetos foothills, two figures sharing afternoon coffee at a cafe table under the plane trees, warm late golden light, mainland Greece not Cyclades not Santorini, mid-distance landscape composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, no outlines on landscape masses which read as color blocks, confident hairline on the boats trees and figures, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold catching the boat masts and the cafe lanterns, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 8:5 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, photorealistic, 3d render, octane, hdr, vector, flat design, santorini, whitewash, blue dome, decorative ornament, evil eye, glossy plastic, text, watermark, signature, frame, border
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame in wide landscape orientation (about 8:5 ratio).
+
+Subject: The small stone fishing harbour of Kardamyli on the Messinian Mani coast, Greece. Ancient plane trees shade a stone-paved waterfront. A stone-built quay with one or two caïques tied up. The old cobbled mule path turns uphill behind the village toward the Taygetos foothills. Two figures share afternoon coffee at a café table under the plane trees. Warm late golden light. Mid-distance landscape composition. The noon-gold accent appears only on the boat masts and on the café lanterns above the tables.
+
+This is mainland Greece, not the Cyclades — no whitewashed buildings, no blue domes. Kardamyli is honey-coloured stone and plane-tree green. No emoji, drop shadow, glow, gradient, sparkle. No anime, photorealism, 3D, vector, or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ---
@@ -280,61 +451,83 @@ The small stone fishing harbour of Kardamyli on the Messinian Mani coast Greece,
 Save to: `assets/scenes/scene-panigiri.png`
 
 ```
-A Greek village panigiri summer festival at full swing in the village square at evening, a long communal table laden with shared bottles of tsipouro and ouzo and plates of food, strung bulb lights overhead criss-crossing the square, a small wooden stage in the back with a three-piece band mid-song with bouzouki violin and laouto, the village dancers in a half-circle hand-in-hand mid-step, an old man pouring for a stranger, a small child running between legs, three or four villagers in their seventies seated at the table, an unlit church lantern at the side, the silhouette of terracotta-tiled village rooftops behind, max comic density the crowd is the protagonist, joyful warm chaos, cinematic wide composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on figures and instruments, flat lighting from the bulb lights and a single warm sun direction at sunset, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of noon gold throughout the bulb lights and the brass instruments, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 16:10 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, electric guitar, modern instruments
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
+
+Frame as a wide cinematic landscape (about 16:10 ratio).
+
+Subject: A Greek village panigiri summer festival at full swing in the village square at evening. A long communal table runs through the foreground, laden with shared bottles of tsipouro and ouzo and plates of food. Strung bulb lights criss-cross the square overhead. A small wooden stage stands in the back with a three-piece band mid-song — bouzouki, violin, and laouto. The village dancers form a half-circle, hand-in-hand, mid-step. An old man pours tsipouro for a stranger. A small child runs between legs. Three or four villagers in their seventies are seated at the table. An unlit church lantern stands at the side. The silhouette of terracotta-tiled village rooftops sits behind. Maximum comic density — the crowd is the protagonist. Joyful, warm, slightly chaotic. The noon-gold accent appears throughout the strung bulb lights and on the brass instruments.
+
+This is a real Greek panigiri — traditional acoustic instruments only, no electric guitar, no modern band setup. Do not include: any legible text (no readable signs, no band name); no emoji; no drop shadow, glow, gradient (other than the natural glow from the strung bulbs); no anime, chibi, mascot, or cute styling; no photorealism, 3D, or HDR; no vector or flat-design look; no decorative ornament; no AI artefacts.
 ```
 
 ### `scene-radio-crisis` — Phase 2 management beat · rain‑grey accent
 Save to: `assets/scenes/scene-radio-crisis.png`
 
 ```
-A Greek woman guide on a high mountain trail in the Peloponnese mid-shot, holding a black plastic two-way handheld radio handset to her ear with one hand, her other hand pointing off to the bruise-coloured weather closing in behind her in the upper third of the frame, a small group of four clients twenty meters behind her on the trail waiting and looking up at her, her face calm but reading the sky, a technical jacket and a small pack, single protagonist figure off-axis with the storm and the clients as supporting cast, decision moment, cinematic mid-shot wide composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figures and the radio, flat lighting with diffuse pre-storm warm sun, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of rain grey in the gathering storm clouds, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 16:10 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, lightning, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, smartphone, modern phone
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is rain grey.
+
+Frame as a wide cinematic landscape (about 16:10 ratio).
+
+Subject: A Greek woman guide stands on a high mountain trail in the Peloponnese, shown mid-shot. She holds a black plastic two-way handheld radio handset to her ear with one hand. Her other hand points off-frame to the bruise-coloured weather closing in behind her in the upper third of the frame. A small group of four clients waits twenty meters behind her on the trail, looking up at her. Her face is calm but reading the sky. A technical jacket and a small pack. Single protagonist figure off-axis, with the storm and the clients as supporting cast. A decision moment. The rain-grey accent appears only in the gathering storm clouds.
+
+Critically: she is using an analogue two-way radio handset — not a modern smartphone, not a smartwatch. The technology should look professional and slightly worn. Do not include lightning bolts, dramatic rain streaks, or weather drama beyond the cloud colour. No emoji, drop shadow, glow, gradient, sparkle. No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ### `scene-first-hire` — phase transition pathos · oleander‑pink accent
 Save to: `assets/scenes/scene-first-hire.png`
 
 ```
-Two figures standing side by side at the doorstep of an old Kalamata family stone house at first light, the protagonist and a new young woman hire named Maria, both holding small ceramic mugs of coffee, both looking off into the next day to the right of frame, the kitchen door behind them ajar with the silhouette of an older woman the protagonist's mother glimpsed inside still working at the stove with the warm orange oven glow behind her, the soft pale dawn light catching the door frame and the worn flagstone step, two figures in shared quiet companionship pathos beat, no faces visible to camera both looking away, cinematic mid-shot wide composition, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework, confident 2px lines on the figures and door frame, flat lighting with the soft single warm sun direction of dawn, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of oleander pink in the dawn sky and the mug rim, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 16:10 --style raw --s 150 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, mascot, cute, photorealistic, 3d render, octane, hdr, vector, flat design, corporate memphis, decorative ornament, evil eye, six fingers, fused limbs, melted face, glossy plastic, text, watermark, signature, frame, border, hugging, faces to camera
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is oleander pink. This is a pathos beat — drop saturation a notch, hold the frame still.
+
+Frame as a wide cinematic landscape (about 16:10 ratio).
+
+Subject: Two figures stand side by side at the doorstep of an old Kalamata family stone house at first light — the protagonist and the new young woman hire named Maria. Both hold small ceramic mugs of coffee. Both look off into the next day, to the right of frame. We do not see either of their faces — they are both looking away. The kitchen door behind them is ajar, with the silhouette of an older woman (the protagonist's mother) glimpsed inside, still working at the stove with the warm orange oven glow behind her. The soft pale dawn light catches the door frame and the worn flagstone step. Two figures in shared quiet companionship — a pathos beat. The oleander-pink accent appears only in the dawn sky and on the rim of one of the coffee mugs.
+
+Critically: no faces visible to the camera — both foreground figures look away, the mother is a silhouette inside. No hugging, no embrace, no overt emotion — this is restrained quiet. No emoji, drop shadow (other than the natural step shadow), glow, gradient (other than the soft dawn sky). No anime, chibi, mascot, or cute styling. No 3D, no photorealism. No AI artefacts.
 ```
 
 ---
 
 ## 10. Tier C / D — glyphs (7 disciplines + 6 weather)
 
-**Honest caveat**: Midjourney generates raster images and is not ideal for the diagrammatic
-single‑colour SVG glyphs the manifest calls for. Three paths:
+**Honest caveat**: ChatGPT can generate icon‑like images, but the result is rasterised
+and won't match the cleanliness of a hand‑drawn vector glyph. Three paths:
 
-1. **Best**: hand‑draw the 13 glyphs in Figma or Affinity Designer using the woodcut style.
-   Faster than MJ for icons; vector‑native; exports clean SVG.
-2. **Hybrid**: use MJ to generate a *reference* rendering, then trace into SVG in Figma.
-3. **MJ‑only**: prompt as a "vintage brass plaque etched icon" and accept raster PNG output.
-   Use at small size (32px display) where the rasterisation won't show.
+1. **Best**: hand‑draw the 13 glyphs in Figma or Affinity Designer in the woodcut style.
+   Twenty minutes of vector work beats fifty ChatGPT rolls for diagrammatic icons.
+2. **Hybrid**: use ChatGPT to generate a reference, trace it into SVG in Figma.
+3. **ChatGPT only**: accept raster PNG at small display size (32px), use the template below.
 
-If going path 3, use this prompt template — change only the `{ICON SUBJECT}`:
+If going path 3, use this template — change only the `{ICON SUBJECT}`:
 
 ```
-A vintage etched brass plaque icon of {ICON SUBJECT}, single warm-near-black ink line on warm limestone bone cream background, single confident woodcut-style line weight throughout, diagrammatic and reduced, no text no label no border, centred composition, hand-drawn and opinionated, in the style of A. Tassos Greek folk woodcuts and mid-century European travel pictogram, no shading no gradient no fill --ar 1:1 --style raw --s 50 --v 7 --no text, label, frame, border, color, multiple icons, photorealistic, 3d, gradient, shadow, glow, watermark, signature
+Render a small icon in the style of a vintage etched brass plaque — a single warm-near-black ink line drawing on a warm limestone bone cream background. Single confident woodcut-style line weight throughout. Diagrammatic and reduced — like a mid-century European travel pictogram or a Greek folk woodcut by A. Tassos. Centred composition. Square 1:1 framing. No text, no label, no border, no shading, no gradient, no colour fill — just the line drawing on the bone background.
+
+Subject: {ICON SUBJECT}
+
+Do not include: any text or label; any other icons in the frame; any colour beyond the ink line on the bone background; any photorealism, 3D, or rendered look; any shading, gradient, drop shadow, or glow; any decorative frame or border; any watermark or signature.
 ```
 
 Substitute `{ICON SUBJECT}`:
+
 | ID | Subject |
 |---|---|
 | `glyph-discipline-hike` | a single hiking boot in profile resting on a contour line |
-| `glyph-discipline-seakayak` | a kayak paddle blade with a single water drop falling |
+| `glyph-discipline-seakayak` | a kayak paddle blade with a single water drop falling beneath it |
 | `glyph-discipline-canyon` | a coiled climbing rope with a figure-eight knot at the centre |
 | `glyph-discipline-raft` | a rafting oar with a single water curl at the blade |
 | `glyph-discipline-cycle` | a bicycle pedal crank in side profile |
-| `glyph-discipline-sup` | a stand-up paddleboard edge with a T-grip paddle above |
+| `glyph-discipline-sup` | a stand-up paddleboard edge with a T-grip paddle above it |
 | `glyph-discipline-climb` | a spring-loaded climbing cam clipped to a karabiner |
 | `glyph-weather-clear` | a simple rayed sun disc with eight straight rays |
-| `glyph-weather-hot` | a heavier sun with three short horizontal heat waves beneath |
-| `glyph-weather-wind` | a single bent blade of grass on a sloped ground line, a small flag pulled tight |
+| `glyph-weather-hot` | a heavier sun disc with three short horizontal heat waves beneath it |
+| `glyph-weather-wind` | a single bent blade of grass on a sloped ground line, and a small flag pulled tight in the wind |
 | `glyph-weather-mist` | three horizontal bands suggesting a low cloud ceiling over a ridge silhouette |
-| `glyph-weather-storm` | a stylised storm cloud with a single zigzag bolt, restrained not cartoonish |
-| `glyph-weather-unstable` | half a sun on the left side and half a cloud on the right side, vertically split composition |
+| `glyph-weather-storm` | a stylised storm cloud with a single restrained zigzag bolt beneath |
+| `glyph-weather-unstable` | half a sun on the left side of the frame and half a cloud on the right side, vertically split composition |
 
-**Recommendation**: do glyphs in Figma. Twenty minutes of vector work beats forty rolls of
-MJ for diagrammatic icons.
+**Recommendation**: do the glyphs in Figma. Faster, cleaner, vector‑native, and they'll scale
+from 16px to 64px without artefacts.
 
 ---
 
@@ -344,21 +537,39 @@ MJ for diagrammatic icons.
 Save to: `assets/chrome/chrome-logbook.png`
 
 ```
-A linen-bound notebook slightly open lying flat on an old wooden taverna table, the day's handwritten entry visible in dark serif ink, a fountain pen resting beside it, three-quarter slightly top-down view, soft warm late-afternoon window light from upper left, bone-cream linen of the notebook fabric, no other objects in frame, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework on the notebook and pen, confident 2px lines, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos --ar 4:3 --style raw --s 100 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, photorealistic, 3d render, octane, hdr, vector, flat design, decorative ornament, evil eye, glossy plastic, watermark, signature, frame, border, readable handwriting, legible text
+Same editorial Mediterranean illustration style as the reference image. No seasonal accent — keep this in the core five colours only.
+
+Frame in landscape orientation (about 4:3 ratio).
+
+Subject: A linen-bound notebook lying slightly open on an old wooden taverna table, viewed from a three-quarter slightly top-down angle. The day's entry is handwritten in dark serif ink on the visible page (the handwriting itself should be indecipherable hand-drawn shapes rather than legible text). A fountain pen rests beside it. Soft warm late-afternoon window light from the upper left. The notebook's linen cover is bone-cream. No other objects in frame. Quiet, intimate, object-as-subject composition.
+
+Do not make the handwriting legible — it should suggest text without being readable. No emoji, drop shadow, glow, gradient, sparkle. No anime, chibi, or cute styling. No 3D, no photorealism. No vector or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ### `chrome-certificate`
 Save to: `assets/chrome/chrome-certificate.png`
 
 ```
-An official Greek HATEOA Hellenic Outdoor Trainers and Educators Association hiking guide certificate document on cream paper, a red rubber wax-style stamp in the lower right corner, signed in serif ink on the signature line, simple official border in ink, three-quarter slightly top-down view on a plain bone-cream background, deadpan official look, simulated illegible serif text body, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework on the certificate edges and stamp, confident 2px lines, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of terra red in the stamp, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration --ar 4:3 --style raw --s 100 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, photorealistic, 3d render, octane, hdr, vector, flat design, decorative ornament, evil eye, glossy plastic, watermark, signature, frame, border, readable text, legible text, modern fonts
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is terra red (used only in the wax stamp).
+
+Frame in landscape orientation (about 4:3 ratio).
+
+Subject: An official Greek HATEOA (Hellenic Outdoor Trainers and Educators Association) hiking guide certificate document on cream paper. A red rubber wax-style stamp is in the lower right corner. A signature line in ink at the bottom. A simple official border line in ink around the document edge. Viewed from a three-quarter slightly top-down angle on a plain bone-cream background. A deadpan, official, period-correct look. The body text should be simulated illegible serif text (shapes that look like type, not actually legible). Three-quarter view, single object as subject.
+
+Do not make the body text legible. Do not include any modern logos, modern fonts, or contemporary corporate-association look — this should feel like a real, slightly old-fashioned Greek hiking certification. No emoji, drop shadow, glow, gradient, sparkle. No anime, chibi, or cute styling. No 3D, no photorealism. No vector or flat-design look. No decorative ornament beyond a simple official border. No AI artefacts.
 ```
 
 ### `chrome-loan-papers`
 Save to: `assets/chrome/chrome-loan-papers.png`
 
 ```
-Three different financial documents laid out side by side on a wooden table top-down, left a formal bank loan form on white paper with a red rubber stamp, centre a handwritten note on torn lined yellow notepaper from a friend, right a small printed receipt-style document on cheap brown paper from a less-official lender with no header, three financing sources made physical, top-down slightly three-quarter view, soft window light from upper left, plain wooden background, simulated illegible text on all three, editorial Mediterranean illustration, matte gouache style with opaque chalky surface, woodcut ink linework on the paper edges and stamps, confident 2px lines, flat lighting with a single warm sun direction, limited five-color palette of warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, warm near-black ink, plus one accent of terra red on the bank stamp, hand-made and opinionated, in the style of Edward Bawden, Hugo Pratt, mid-century New Yorker editorial illustration --ar 4:3 --style raw --s 100 --v 7 --no emoji, drop shadow, glow, gradient, sparkle, anime, chibi, photorealistic, 3d render, octane, hdr, vector, flat design, decorative ornament, evil eye, glossy plastic, watermark, signature, frame, border, readable handwriting, legible text, modern logos
+Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is terra red (only in the bank stamp).
+
+Frame in landscape orientation (about 4:3 ratio).
+
+Subject: Three different financial documents laid out side by side on a wooden table top-down. Left: a formal bank loan form on white paper with a red rubber stamp. Centre: a handwritten note on torn lined yellow notepaper from a friend. Right: a small printed-receipt-style document on cheap brown paper from a less-official lender, no header. Three financing sources made physical objects. Top-down, slightly three-quarter view. Soft window light from upper left. Plain wooden background. All text on all three documents should be simulated illegible (shapes that look like writing, not actually legible).
+
+Do not make any text legible. Do not include any modern brand logos. No emoji, drop shadow, glow, gradient, sparkle. No anime, chibi, or cute styling. No 3D, no photorealism. No vector or flat-design look. No decorative ornament. No AI artefacts.
 ```
 
 ---
@@ -369,27 +580,32 @@ Record each shipped asset so you can re‑generate cleanly when the model improv
 location: append a small table at the bottom of `ASSET-MANIFEST.md` once production starts.
 
 ```
-| asset id              | engine    | seed       | sref url                  | date       | notes |
-|-----------------------|-----------|------------|---------------------------|------------|-------|
-| pilot-01-hero-alani   | MJ v7     | 3847291    | (pilot-01 itself)         | 2026-05-28 | locked the style |
-| pilot-02-place-voidokilia | MJ v7 | 3847291    | https://cdn.midj/...alani | 2026-05-28 | sref locked from pilot-01 |
-| pilot-03-scene-hilux-dawn | MJ v7 | 3847291    | https://cdn.midj/...alani | 2026-05-28 | no figures held |
+| asset id              | model        | conversation        | reference image used     | date       | notes |
+|-----------------------|--------------|---------------------|--------------------------|------------|-------|
+| pilot-01-hero-alani   | ChatGPT GPT-Image | new                 | (this image itself)      | 2026-05-28 | locked the style |
+| pilot-02-place-voidokilia | ChatGPT GPT-Image | new                 | pilot-01 attached        | 2026-05-28 | place lock |
+| pilot-03-scene-hilux-dawn | ChatGPT GPT-Image | new                 | pilot-01 attached        | 2026-05-28 | no figures held |
+| hero-01-medic         | ChatGPT GPT-Image | "heroes batch 1"    | pilot-01 attached        | 2026-05-29 | seq 1 of 9 in single chat |
 ```
 
 ---
 
-## 13. Quick troubleshooting
+## 13. Troubleshooting
 
 | Problem | Fix |
 |---|---|
-| Drift toward "Mediterranean stock photography" | Drop `--s` to 100; reinforce "editorial illustration" earlier in prompt |
-| Faces look mascot/cute | Push the Pratt + Bawden + Tassos references earlier; add "adult proportions not cute" |
-| Outlines on landscape (should be none) | Be explicit: "landscape masses read as color blocks only, no outlines on hills sea or sky" |
-| Six+ colours leaking in | Trim accent description to one specific object only; reinforce "limited five-color palette" |
-| Santorini whitewash leaking | Add the place name (Messinia / Mani / Kardamyli) twice in the subject line; keep `santorini, whitewash, blue dome` in `--no` |
-| Text appearing in image (signs, captions) | Add `--no text, label` more aggressively; for signs say "an indecipherable hand-painted shape" |
-| Hilux scene gets people anyway | Strengthen "absolutely no people no animals" in subject AND `--no people, figures, person, human, animal, bird` |
-| Hero faces inconsistent across batch | After hero‑01 locks, add `--cref <hero-01-url>` to the other 9 hero prompts |
+| Drift toward "stock illustration" / vector flat-design | Re-emphasise "matte gouache, hand-made, illustrated NOT vector" earlier in the prompt; cite Bawden + Tassos again at the end |
+| Faces look generic / not specifically Greek | Add "Greek Mediterranean features, dark hair, olive skin" explicitly in the subject line |
+| Faces look like mascots / cute | Add "adult realistic proportions, serious illustrated portrait, not stylised toward cute"; never say "character" — say "figure" or "person" |
+| Outlines appearing on hills/sea/sky | Re-emphasise "landscape masses read as flat colour blocks ONLY, no outlines on hills sea or sky" |
+| Six+ colours leaking in | Trim the accent description to one or two specific objects only; reinforce "limited five-colour palette of ONLY terracotta, olive, sea blue, bone, and ink" |
+| Santorini whitewash leaking | Add place name twice; explicitly call out "this is mainland Messinia, NOT the Cycladic islands" |
+| Hilux scene grows people anyway | Restate "completely empty of any people, animals, or birds — the truck must be alone in the frame. Do not add any figures." three times if needed |
+| Text appearing where it shouldn't | Say "no readable text — any signs or papers should show indecipherable hand-painted shapes only" |
+| Style drift across batch | Always upload pilot-01 as reference, always send the §5 style-lock preface, always stay in the same conversation for a whole batch |
+| Hero faces inconsistent across batch | After hero-01 generates well, upload IT also as a second reference for the rest of the heroes batch |
+| Aspect ratio not respected | Re-send the prompt with the aspect line at the very TOP, then re-state at the bottom: "Final reminder: portrait orientation, about 4:5 ratio" |
+| Image too dark / desaturated overall | Drop the words "shadow" and "dust" by one each; emphasise "warm afternoon light" |
 
 ---
 
