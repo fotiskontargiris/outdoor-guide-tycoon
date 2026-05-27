@@ -56,58 +56,24 @@ Any future iconography or sprite work should inherit the same palette and light 
 
 ---
 
-## CONTENT FUNDAMENTALS
+## CONTENT FUNDAMENTALS — see `../LANGUAGE.md`
 
-The single most distinctive thing about this game is its **voice**. Copy is half the design.
+The voice / tone / Greek diction / typography & punctuation doctrine now lives in the
+repo root file **`LANGUAGE.md`**. Read that before writing copy.
 
-### Voice & person
+The short version (kept here only as a flag — not a substitute):
 
-- **Second person, always.** *"You hand over spare bottles. A crisis solved before it started."* The player is the guide; the game narrates their day back to them.
-- **Literary, terse, complete sentences.** No telegraphic UI fragments (*"Water +2"*). Information is woven into prose: *"The cicadas are screaming. The Messinian sun will test everyone today."*
-- **Past‑tense for resolved actions; present for the world.** *"You wait while they stock up."* / *"The wind is up off the gulf."*
-
-### Tone
-
-| Quality | Example |
-|---|---|
-| **Quiet authority** | *"The high routes are no place to be."* |
-| **Geographic specificity** | *"A soft grey ceiling sits over Taygetos."* |
-| **Wry warmth** | *"a coachload of cruise tourists"*, *"two thrill‑seeking climbers"* |
-| **Verdicts, not metrics** | *"a good day's work"*, *"the clients left glowing"*, *"a complaint or two came back"* |
-
-### Casing & punctuation
-
-- **Sentence case** everywhere narrative — *"Begin a season"*, *"Build your guide"*.
-- **ALL CAPS, wide‑tracked monospace** for *instrument* labels: `DAY · CASH · REPUTE · ENERGY · FORECAST · DAY 1`. These are the dials on the dashboard; they're meant to feel laser‑etched into brass.
-- **Em dashes (—)** are the workhorse — both for narrative pauses (*"Mountain Leader — the hardest summits"*) and for kicker punctuation. Use the real character, never `--`.
-- **Middle dots (·)** separate metadata atoms in instrument lines: `Day 4 · Forecast`.
-- **Curly quotes**, never straight. Watch apostrophes inside JS strings — *"today's"* once broke a build (see engineering notes).
-- **Currency is `€`**, prefix, no space: `€1500`. Negative money uses minus sign: `−€60` (Unicode minus, not hyphen).
-
-### Person & address
-
-- **"You"**, never "the player". Never "I". The game never addresses itself ("I" / "we").
-- Guides are **named individuals**: *Maria*, *Nikos*, *Alexios*, *Thalia*. They get **specs**: *"sure‑footed on scree"*, *"calm in foul weather"*, *"wonderful with families"*.
-- Clients are described in noun phrases, not types: *"a family with two young children"*, *"a corporate team‑building group"*.
-
-### Vibe checks
-
-- **Emoji are forbidden.** The only allowed glyphs are spare dingbats used as section marks: `▸ ▶ ◂ ✓ ✦ ▦ ☼ ❧ ⌂ ✕ · ≡`. Use sparingly — one per actionable item, never decoratively.
-- **No exclamation marks** in narration. Surprise comes from word choice, not punctuation.
-- **No marketing speak.** Avoid: *"epic", "amazing", "unlock", "level up", "achievements", "rewards"*. Prefer: *certifications, reputation, a season's earnings, a name in Messinia*.
-
-### Worked examples (copy as‑is when in doubt)
-
-> **Title:** *Begin a season*
-> **Subtitle:** *Build the finest outdoor company in the Peloponnese.*
-
-> **Weather entry:** *"A storm is gathering. The horizon has gone the colour of a bruise. The high routes are no place to be."*
-
-> **Trip result (success):** *"Maria ran the Polylimnio waterfalls beautifully — the clients left glowing."*
-
-> **Trip result (failure):** *"Sent out short on kit, Nikos had a rough outing on the Taygetos summit — a complaint or two came back."*
-
-> **Goal line:** *Goal — reach €1500 & 70 reputation · gear 90% · pack 4 slots*
+- **Comic‑heightened with an earned ache.** Comedy is the default register; pathos rationed,
+  always earned. Parody is allowed on non‑pathos beats.
+- **Second person, present tense for the world, past tense for resolved actions.** Literary,
+  terse, complete sentences. No telegraphic UI fragments.
+- **Greek specificity** is a comedy *and* a credibility engine — real places, real textures,
+  real words (panigíri, kafeneío, gemistá, meltémi).
+- **Typography**: sentence case in prose, ALL CAPS mono for instrument labels, em dashes
+  not double hyphens, middle dots between metadata atoms, curly quotes, `€` prefix no space,
+  Unicode minus for negatives. No emoji.
+- **People** are named individuals with specs; clients are noun phrases ("a family with two
+  young children"), never types.
 
 ---
 

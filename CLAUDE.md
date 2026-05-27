@@ -150,6 +150,8 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
 - `index.html` — the entire game (the live, ground-truth build).
 - `CLAUDE.md` — this document (engine, conventions, gotchas).
 - `scripts/` — the test harness (`harness.mjs`, `trace.mjs`, `winter-test.mjs`).
+- `LANGUAGE.md` — the canonical voice doctrine (tone, register, Greek diction, typography,
+  locked decisions, worked examples). Read before writing any in-game copy.
 
 **The design (read before building Phase 1 — written 2026-05)**
 - `OUTLINE.md` — the six-phase map (the skeleton).

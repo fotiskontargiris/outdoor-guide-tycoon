@@ -186,47 +186,22 @@ like staying true.** That is the entire design in one sentence.
 
 ---
 
-## 6. Tone doctrine — comic-heightened with an earned ache
+## 6. Tone doctrine — see `LANGUAGE.md`
 
-### 6.1 The marriage
+The full canonical treatment now lives in **`LANGUAGE.md`** (root). It carries the
+comic‑heightened thesis, the ratio rule with the playtest "almost parody sometimes" lift,
+the voice rules, the Greek diction glossary, typography & punctuation, the locked decisions
+(title, kicker, slacker register, hero diminutives), worked examples up the comedy register,
+and the anti‑patterns. Read that before writing a single line of game copy.
 
-The surface is **Greek-village farce**: the disgraced TV chef and the goat incident, the
-bouzouki busker whose instrument eats a pack slot, the cruise-ship coachloads, the team-lead
-who wants to scramble up an unmarked cliff "because we're on a schedule." The substrate is
-the genuine ache of "or no Life." The comedy is not decoration on top of the sadness — **the
-comedy is what earns the sadness.** A game that's sad for two hours is a chore; a game that's
-funny for two hours and then, once, quietly devastating, is unforgettable.
+Brief stub kept here so this doc still scans cleanly:
 
-### 6.2 The ratio rule
-
-Roughly: **comedy is the default register; pathos is rationed and always earned.** Most
-beats are warm, dry, or outright funny. The ache is allowed to surface (a) at phase
-transitions, (b) when a named guide's arc pays off or breaks, (c) when the trail-days drift
-becomes visible, and (d) at the ending. The rest of the time we keep it light. When we *do*
-let it hurt, we do it without a single joke in the passage and then we get out — the contrast
-is the whole effect. Never milk it.
-
-### 6.3 Voice rules (carried + sharpened from CLAUDE.md)
-
-- Second person, present tense, literary, concise. The craft does not drop just because the
-  content got funnier — comic-heightened means *better* writing, not sloppier.
-- No emojis. Dingbats (▸ ▶ ✓ ☾) are fine.
-- Humour comes from **character and situation**, not from winking at the player. The game is
-  never sarcastic *about itself*.
-- Greek specificity is a comedy engine and a credibility engine at once — real places, real
-  textures (cicadas, thyme, the bruise-coloured storm horizon, the kiosk, the taverna).
-
-### 6.4 Worked example — tuning an existing line
-
-Current (good, but reverent):
-> *"You wait while phones come out and shoulders relax. This is why they came."*
-
-Comic-heightened (same beat, more alive, ache still intact):
-> *"You wait. Out come the phones. A German couple weeps, gently, at a goat. This — the
-> weeping, the goat, the fact that you get paid for it — is why you came. You think."*
-
-The "You think." is the ache, rationed and earned, landing on a laugh. That ratio is the
-target everywhere.
+- Surface: **Greek‑village farce**. Substrate: the genuine ache of *or no Life*.
+- **Comedy is the default register; pathos is rationed and always earned.** Lean into
+  parody where the line carries it; pull back at the four pathos spots (phase transitions,
+  named‑guide arcs, the trail‑days drift, the ending).
+- Second person, present tense for the world, past tense for resolved actions. No emojis.
+  Greek specificity is a comedy engine and a credibility engine at once.
 
 ---
 
