@@ -637,7 +637,13 @@ function initGame(name, bgId, kit, discipline, loanSourceId, dishId){
   // Hero start-grants (the simple, safe part of each model; deeper hooks live in events via perkIs).
   if(bg.id==='medic'  && !ownsItem('firstaid')) S.owned.firstaid=freshOwned('firstaid','standard');
   if(bg.id==='chef'   && !ownsItem('snacks'))   S.owned.snacks=freshOwned('snacks','standard');
-  if(bg.id==='engineer'){ S.packSize=6; ['map','firstaid'].forEach(id=>{ if(!ownsItem(id)) S.owned[id]=freshOwned(id,'standard'); }); }
+  if(bg.id==='engineer'){
+    S.packSize=6;
+    ['map','firstaid'].forEach(id=>{ if(!ownsItem(id)) S.owned[id]=freshOwned(id,'standard'); });
+    // Engineer kit lasts +50% — applied to whatever's already on hand. Future
+    // purchases (via buyItem) pick this up at the runtime hook below.
+    for(const id in S.owned){ S.owned[id].trips = Math.round(S.owned[id].trips * 1.5); }
+  }
   if(bg.id==='alani')    S.cash+=150;   // knows a guy — cheaper start
   if(bg.id==='villager') S.cash+=100;   // the cousins look after their own
   // Mum's favourite dish — a small, warm opening bonus.
@@ -1149,7 +1155,10 @@ function renderVehicleScene(id){
 function buyItem(id, tier){
   tier=tier||'standard'; const c=itemCost(id,tier);
   if(S.cash<c) return;
-  S.cash-=c; const fresh=freshOwned(id,tier); S.owned[id]=fresh;
+  S.cash-=c; const fresh=freshOwned(id,tier);
+  // Engineer kit lasts +50% — picks at every buy, not just the starter set.
+  if(S.you && S.you.heroId==='engineer') fresh.trips = Math.round(fresh.trips * 1.5);
+  S.owned[id]=fresh;
   // Alani's gear is cheap because Alani's guy in Stoupa doesn't ask questions
   const isAlani = S.you && S.you.heroId==='alani';
   if(isAlani && chance(ALANI_DODGY_CHANCE)){
@@ -1161,12 +1170,16 @@ function buyItem(id, tier){
   saveGame(); openShop();
 }
 function serviceGear(){
-  // Villager — the cousin does it on a Saturday morning for half what Geo charges
+  // Villager — the cousin does it on a Saturday morning for half what Geo charges.
+  // Engineer — you bench-service half the kit yourself with proper tools.
   let c = alaniPrice(40);
-  if(S.you && S.you.heroId==='villager') c = Math.round(c * 0.5);
+  const heroId = S.you && S.you.heroId;
+  if(heroId==='villager' || heroId==='engineer') c = Math.round(c * 0.5);
   if(S.cash<c||S.gear>=100) return;
   S.cash-=c; S.gear=clamp(S.gear+35,0,100);
-  const who = (S.you && S.you.heroId==='villager') ? 'Cousin Mitsos serviced everything in his yard' : 'Serviced your equipment';
+  const who = heroId==='villager' ? 'Cousin Mitsos serviced everything in his yard'
+            : heroId==='engineer' ? 'You stripped and serviced the kit yourself, properly'
+            : 'Serviced your equipment';
   note(`${who} (−€${c}).`); saveGame(); openShop();
 }
 function openCerts(){
@@ -1226,11 +1239,16 @@ function enrollCertSchool(id){
 function enrollInfra(id){
   const it=INFRA.find(x=>x.id===id); if(!it||hasInfra(id)) return;
   const weeksLeft=WINTER_WEEKS-(S.winterWeeksUsed||0);
-  if(S.cash<it.cost || it.weeks>weeksLeft) return;
-  S.cash-=it.cost; S.infra.push(id);
+  // Engineer — off-season projects come cheaper, because half the build is
+  // your spreadsheet (HEROES.md → engineer: "compounding systems").
+  // Transport (moped/Hilux/rack/trailer) is handled via buyVehicle, not here.
+  let cost = it.cost;
+  if(S.you && S.you.heroId==='engineer' && it.scope!=='transport') cost = Math.round(cost * 0.75);
+  if(S.cash<cost || it.weeks>weeksLeft) return;
+  S.cash-=cost; S.infra.push(id);
   S.winterWeeksUsed=(S.winterWeeksUsed||0)+it.weeks;
   if(S.yearStats) S.yearStats.infra++;
-  note(`Set up — ${it.name} (−€${it.cost}, ${it.weeks} weeks).`);
+  note(`Set up — ${it.name} (−€${cost}, ${it.weeks} weeks).`);
   renderOffSeason();
 }
 function releaseGuide(id){
@@ -1616,9 +1634,20 @@ function finishPlayerTrip(){
   }
   let hotelBonus=0;
   if(hasInfra('hotelDeal') && (b.ctype==='tourist' || b.ctype==='family')) hotelBonus=20;
+  // Engineer — your infra projects pay more (you built them properly: the
+  // truck is reliable, the hotel deal is automated, the website upsells).
+  // HEROES.md → engineer: "off-season infrastructure projects pay more".
+  const isEngineer = S.you && S.you.heroId==='engineer';
+  const pickupBonus = hasInfra('pickup') ? (isEngineer ? 18 : 10) : 0;
+  if(isEngineer && hotelBonus>0) hotelBonus = Math.round(hotelBonus * 1.6); // 20 → 32
+  // Engineer — tips lag until reputation builds: people skills come later.
+  if(isEngineer && S.rep < 60 && t.tips){
+    t.tips = Math.round(t.tips * 0.6);
+    t.logs && t.logs.push('Strangers are not yet sure about you; the tip is polite, not generous.');
+  }
   // Bus fare — only bites on near-region trips when you haven't bought a moped or Hilux yet
   const bus = busFee(b);
-  const fee=Math.round(b.pay*t.payMul)+(hasInfra('pickup')?10:0)+coastBonus+hotelBonus+villagerBonus-bus, tip=t.tips, earned=fee+tip;
+  const fee=Math.round(b.pay*t.payMul)+pickupBonus+coastBonus+hotelBonus+villagerBonus-bus, tip=t.tips, earned=fee+tip;
   if(bus>0) t.logs && t.logs.push(`The bus to the trailhead and back took €${bus} off the day.`);
   S.cash+=earned;
   S.energy=clamp(S.energy-(b.diff===3?36:b.diff===2?28:20)-(S.weather.drain||0),0,100);
