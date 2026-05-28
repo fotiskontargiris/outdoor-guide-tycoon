@@ -15,10 +15,11 @@ it.* It does not relitigate style.
 **43 assets shipped** under the earlier *"editorial gouache + woodcut bones"* direction.
 They live in‑game and work. Folders + filenames are stable.
 
-**The doctrine evolved** on 2026-05-28 — `ART-DIRECTION.md` now locks *"the changing
-guide's desk + stylized illustrated realism."* The canonical reference is *The First
-Booking* (`assets/title/title-cover.webp`). Every **new** asset is judged against that
-image; existing assets stay until/unless re‑rendered.
+**The doctrine evolved** on 2026-05-28 — `ART-DIRECTION.md` adds the **"changing guide's
+desk"** metaphor (what we draw) and the **speech‑bubble flow** pattern (how scenes are
+used). The **style register** stays *"editorial gouache + woodcut bones"* — unchanged
+since launch. The canonical reference is *The First Booking* (`assets/title/title-cover.webp`),
+in that same style applied to a desk subject. Every new asset is judged against it.
 
 **The remaining production** (Phases ↓) covers the surfaces the doctrine added that
 weren't shipped yet — Phase 2/3/4 desks, the backpack screen variants, client cards, and

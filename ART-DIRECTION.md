@@ -8,10 +8,15 @@ asset.
 LANGUAGE sets the voice; ART-DIRECTION sets the surface. They are written to be cross‑
 referenced: prose and picture written to feel like the same world.
 
-> **Doctrine version**: locked 2026-05-28 ("the changing guide's desk" + stylized
-> illustrated realism). Replaces the earlier "editorial gouache + woodcut bones" direction.
-> The 43 already-shipped assets generated under the earlier direction remain in‑game and
-> work; the doctrine below governs every new asset.
+> **Doctrine versioning**:
+> - The **style register** is and remains **"editorial Mediterranean — gouache colour,
+>   woodcut bones"** (locked at launch; never changed). Every shipped asset and every new
+>   asset uses the same matte gouache surface + woodcut linework + flat lighting + five‑
+>   colour palette. See §4 below.
+> - The **visual metaphor** evolved on 2026-05-28 to **"the changing guide's desk"** with
+>   five locked UI surfaces. That governs *what we draw and where it sits*. See §1–§3.
+> - The **scene‑use pattern** evolved on the same date to **persistent scene image with
+>   overlaid speech bubbles** for any moment a character speaks. See §12.
 
 ---
 
@@ -151,30 +156,34 @@ This is where `LANGUAGE.md §3 Verdicts, not metrics` shows up most.
 
 ---
 
-## 4. Style direction — *stylized illustrated realism*
+## 4. Style register — *editorial gouache + woodcut bones* (locked at launch — unchanged)
 
-The rendering register for every new image.
+The rendering register that has always governed how images are made, and continues to.
+The **desk metaphor** (§1–§3) changed *what we draw*; this section keeps locking *how
+we draw it*.
 
-- **Stylized illustrated realism.** Not photorealistic, not pixel art, not flat
-  corporate, not childish cartoon, not 3D render. Closer to high‑quality indie‑game
-  editorial illustration — paper, sun, sea, stone, old gear, warm shadows, hand‑made
-  depth.
-- **Warm, Mediterranean, slightly textured, readable, illustrated, human, grounded.**
-- **Object‑on‑table physicality.** When the metaphor is the desk, the picture is *real
-  objects on a real surface*: the folded paper map has paper texture, the phone is a
-  recognisable phone with a screen on it, the foiled food parcel reflects light, the
-  coins are coins. The interface looks like *things you could touch*.
-- **Mediterranean atmosphere.** Open windows onto Kalamáta harbour or the Mani coast.
-  Olive trees, evening light, distant mountains, sea air. The world *outside* is always
-  visible past the desk.
-- **Clean enough for mobile.** This is a phone game. Surfaces are detailed but
-  uncluttered; reading is never blocked by texture or decoration.
+- **Matte gouache surface** — opaque colour blocks, chalky paper texture, no gradients,
+  no airbrush, no drop shadow, no glow.
+- **Woodcut bones underneath.** Every silhouette reads at 24px. Confident ~2px line on
+  foreground figures, ~1.25px on mid‑ground structures, no outlines at all on landscape
+  masses (hills, sea, sky read as colour blocks only). The line is the spine; the colour
+  is the warmth. Reference family: A. Tassos folk woodcuts, Edward Bawden travel posters,
+  Hugo Pratt Mediterranean panels, mid‑century New Yorker editorial illustration.
+- **Flat lighting, directional shade.** Single warm sun source; shadows are single blocks
+  of a darker neighbour hue, never pure black.
+- **Limited five‑hue palette + one seasonal accent.** See §5.
+- **Hand‑made, opinionated, illustrated.** Never photographic, never 3D rendered, never
+  vector flat‑design.
+- **Stylised, never cute.** Adult proportions, never chibi / anime / mascot.
+- **Composed asymmetry, mid‑close camera.** Slightly off‑axis, not stagey symmetry.
 
 The **canonical reference image** is *The First Booking* (`assets/title/title-cover.webp`)
 — a kitchen table at dusk, foiled food parcel from mum, folded Messinia map, old phone
 with a `NEW BOOKING — Sea Kayaking — Voidokilia & the Lagoon` notification, coins,
 notebook, backpack strap, water bottle with a *Taygetos* sticker, Kalamáta olive tin, an
-open window onto the harbour at sunset. Every future asset is judged against this image.
+open window onto the harbour at sunset. The image is in editorial gouache + woodcut
+bones, applied to the *desk subject* — same surface as the earlier hero and place
+batches, just a new compositional subject. Judge new assets against it.
 
 ---
 
@@ -325,7 +334,7 @@ These are settled. Do not reopen without flagging.
 - **Visual metaphor**: *the changing guide's desk.* Every UI surface is something on or
   about the desk.
 - **Core sentence**: *You are at the table where outdoor life becomes a business.*
-- **Style register**: *stylized illustrated realism.* Warm Mediterranean. Paper, sun,
+- **Style register**: *editorial gouache + woodcut bones.* Locked at launch, unchanged. Warm Mediterranean. Paper, sun,
   sea, stone, old gear, warm shadows. Closer to indie‑game editorial illustration than
   to photographic, vector, 3D, or cartoon.
 - **Canonical reference image**: *The First Booking* at `assets/title/title-cover.webp`.
@@ -409,7 +418,80 @@ Things that have been tried in adjacent genres and would visibly clash here.
 
 ---
 
-## 12. When in doubt
+## 12. Scene flow + speech bubbles
+
+How images are *used* in the live game. Pictures aren't decoration with text underneath
+— pictures are the stage, and characters speak inside them. This section locks the
+narrative pattern that makes the intro (and any character‑speaks moment) flow.
+
+### The persistent‑scene pattern
+
+Whenever a moment is **a conversation** rather than a single‑frame illustration:
+
+1. **The scene image stays put** as the visual anchor across the full conversation.
+   The kitchen image holds across Beat 0 → Beat 4 of the intro. The panigíri image
+   holds across the discipline / loan / kit pick. The doorstep image holds across the
+   first‑hire conversation. *One stage, many beats.*
+2. **Characters speak in speech bubbles overlaid on the scene** — never in paragraphs
+   below the image. Where the character stands in the painting is where their bubble
+   points. Mum's bubbles emerge from her counter; the radio handset's bubbles emerge
+   from the device; the panigíri elder's bubbles emerge from the long table.
+3. **The narrator speaks in italic below the image** — short, low‑contrast, atmospheric.
+   The narrator handles what cannot be in a bubble (mood, what the player‑character is
+   thinking, what is unsaid).
+4. **Choices and inputs sit below the narrator** — same button styling as everywhere
+   else. The choice is the player's voice in the conversation.
+5. **Beats advance by replacing the bubbles** — not by replacing the image. The scene
+   image is cached; only the overlay text changes between beats. Visually this reads as
+   *the conversation moving forward in the same room.*
+
+### Speech bubble visual style
+
+Every bubble is editorial gouache + woodcut bones (§4), applied at small scale.
+
+- **Shape**: rounded rectangle (12–18px radius). Slight imperfection is OK; computed
+  perfection is not — these are *hand‑painted speech bubbles*, not chat UI.
+- **Fill**: bone cream `#EEE5D2` (or `var(--bone)` token if we add it). Slightly
+  translucent (≈92% opacity) so the scene shows faintly behind.
+- **Outline**: ink `#1B1B1F` (`var(--ink-dark)` token), ~2px confident line — the
+  woodcut bone. Never a thin grey hairline.
+- **Tail**: a short 8–10px ink line pointing to the speaker's position in the image.
+  Geometric, woodcut‑clean — not the cartoon "wobbly oval tail."
+- **Type inside**: serif (Fraunces or Spectral), ink, 14–16px, line‑height ~1.35.
+  Greek diction renders here (§4 of `LANGUAGE.md` glossary), including curly quotes,
+  em dashes, italics for emphasis.
+- **No drop shadow, no glow, no gradient, no glass.** Same anti‑patterns as §11.
+
+### Bubble variants
+
+| Variant | When | Style delta |
+|---|---|---|
+| **Speech** (default) | A character speaks aloud — mum, a guide, a client | as above |
+| **Thought** | A character's inner voice — the player‑character noticing, hesitating | bubble outline becomes dashed 2px ink; type italic |
+| **Off‑frame** | Speaker isn't visible in the scene (a phone call, mum from the kitchen behind a door) | bubble has no tail, sits in the upper‑right of the frame, slightly smaller |
+| **Icon** | The icon over the door, the radio handset, the phone notification — non‑human speakers | bubble fill stays bone but type is mono (Spline Sans Mono), small caps |
+
+### When NOT to use the bubble pattern
+
+- **Pure narration scenes** — no character speaking aloud, just the world being
+  described. (E.g. the day's weather rolling in mid‑trip — narrator italic over the
+  scene, no bubbles.)
+- **The day report** — concrete results, no live dialogue.
+- **The desk screen** — a working surface, not a conversation.
+- **The trailhead event with a single decision** — if it's "you / the situation"
+  prose, narrator is the right voice; bubbles would feel staged.
+
+### Implementation note
+
+In `index.html`: the `sceneStage(assetId, bubbles, opts)` helper renders the scene image
+with bubble overlays positioned via the `kind` field (mum / mum-2 / thought / off-frame
+/ icon). CSS classes `.scene-stage` (the wrapper), `.bubble`, `.bubble.mum`,
+`.bubble.thought`, `.narrator` carry the look. Beats re‑render the same wrapper with
+different bubbles — image stays cached, conversation moves.
+
+---
+
+## 13. When in doubt
 
 Put the new frame next to `assets/title/title-cover.webp` (*The First Booking*) and ask:
 *do they sit on the same shelf?*
@@ -419,6 +501,7 @@ If the new picture has **floating elements** where the reference has objects on 
 If the new picture is **generic Mediterranean** where the reference is *Messinia* — wrong.
 If the new picture is **clean dashboard** where the reference is *paper, dust, an open window* — wrong.
 
-**The compass**: stylized illustrated realism, on a real surface, in Messinia, with real
-objects doing real work. The desk. Warm. Hand‑made. Mediterranean. The world is *outside*
-through a window the whole time.
+**The compass**: editorial gouache + woodcut bones, on a real surface, in Messinia, with
+real objects doing real work. The desk. Warm. Hand‑made. Mediterranean. The world is
+*outside* through a window the whole time. Characters speak in bubbles inside the scene;
+the narrator stays quiet underneath in italic.

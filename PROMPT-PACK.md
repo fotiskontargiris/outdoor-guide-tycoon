@@ -6,12 +6,14 @@ uses). No `--` parameters, no special syntax — paste the whole block into a ch
 get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) and
 `ASSET-MANIFEST.md` (the asset list and filenames).
 
-> **Doctrine version note (2026-05-28)**: the doctrine evolved to *"the changing guide's
-> desk + stylized illustrated realism"*. The earlier prompts in §3–§11 produced the 43
-> assets already shipped under the earlier *"editorial gouache + woodcut bones"*
-> direction; they're kept here for re‑generation parity. **For new production (Tier H/I/J/K
-> — desks, backpacks, clients, reports — see §14)**, use the new style anchor in §3a and
-> the new reference image, `assets/title/title-cover.webp` (*The First Booking*).
+> **Doctrine version note (2026-05-28)**: the doctrine evolved to add the **desk
+> metaphor** (what we draw) and the **speech‑bubble flow** (how scenes are used). The
+> **style register** stays *"editorial gouache + woodcut bones"* — never changed since
+> launch. Every prompt below uses the same §3 style anchor; new‑tier subjects (Tier H/I/J/K
+> in §14) just apply that style to new compositional subjects (desks, backpacks, clients,
+> reports). The First Booking (`assets/title/title-cover.webp`) is the *worked example of
+> the doctrine applied to a desk subject*, in the same editorial gouache + woodcut bones
+> style as the heroes / places / scenes already shipped.
 
 > **The single biggest consistency lever**: once *The First Booking* (`title-cover.webp`)
 > is your reference, **start a new ChatGPT conversation** for each batch, **upload that
@@ -60,9 +62,12 @@ length is the cost of getting exactly what you want.
 
 ---
 
-## 3. The locked style anchor — *editorial gouache* (used for shipped 43; kept for re-generation)
+## 3. The locked style anchor — *editorial gouache + woodcut bones* (the one and only)
 
-Every legacy prompt (§4–§11) opens with the same style anchor paragraph, **verbatim**:
+Every prompt opens with this paragraph, **verbatim**. The style register has been locked
+since launch and has not changed. The doctrine evolution of 2026-05-28 added the *desk
+metaphor* (what we draw) and the *speech‑bubble flow* (how scenes are used) — neither
+touched *how* images are rendered.
 
 > *Render this as an editorial Mediterranean illustration in a matte gouache style — opaque
 > chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use
@@ -76,32 +81,6 @@ Every legacy prompt (§4–§11) opens with the same style anchor paragraph, **v
 > posters, Hugo Pratt's Mediterranean comics, mid‑century New Yorker editorial
 > illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT
 > photographic, NOT 3D rendered, NOT a vector flat‑design graphic.*
-
----
-
-## 3a. The current style anchor — *stylized illustrated realism + the desk* (USE THIS FOR NEW WORK)
-
-Every new prompt (Tier H/I/J/K — see §14) opens with this paragraph, **verbatim**. The
-shift: physical, layered, warm‑realist; objects on a real surface; a window onto Messinia
-in the background; "indie‑game editorial illustration" rather than gouache woodcut.
-
-> *Render this as a stylized illustrated realism scene in the warm Mediterranean register
-> of the reference image — paper, sun, sea, stone, old gear, warm evening shadows, hand‑
-> made depth. Objects sit on a real surface (wood table, ledger paper, organised desk),
-> layered with believable overlap and slight perspective foreshortening. Subtle paper /
-> linen / metal textures, but never noisy. No gradients, no glow, no drop shadows beyond
-> the natural ground shadow of each object, no airbrush, no 3D render, no photoreal, no
-> vector flat‑design, no cartoon, no anime, no cute. Limited five‑colour palette: warm
-> terracotta clay #C8633D, sun‑bleached olive sage #7E8A4B, deep Ionian sea blue #1F4A56,
-> warm limestone bone cream #EEE5D2, and warm near‑black ink #1B1B1F — plus exactly one
-> seasonal accent specified per asset. Whenever the camera composition allows, an open
-> window or doorway shows the outside — Kalamáta harbour at sunset, an olive grove, a
-> mountain ridge. The world is in Messinia, mainland southern Greece, never the Cycladic
-> islands (no whitewashed buildings, no blue domes). Mid‑close camera angle, foreshortened
-> from a person's seat at the table, not top‑down and not straight‑on. Every object is
-> doing one of three jobs: telling us where, telling us who, or telling us what just
-> happened — nothing is decorative. Match the visual feel of the attached reference image
-> (The First Booking) exactly.*
 
 ---
 
@@ -640,11 +619,17 @@ location: append a small table at the bottom of `ASSET-MANIFEST.md` once product
 
 ---
 
-## 14. NEW TIERS — the changing desk doctrine (use §3a, not §3)
+## 14. NEW TIERS — the changing desk doctrine
 
-For the surfaces added in the 2026-05-28 doctrine evolution. Use **§3a** style anchor
-(stylized illustrated realism, desk‑physicality). **Always attach `title-cover.webp`
-(*The First Booking*) as the reference image and instruct ChatGPT to match it exactly.**
+For the surfaces added in the 2026-05-28 doctrine evolution (Tier H desks, Tier I
+backpacks, Tier J clients, Tier K reports). Use the **§3 style anchor** — same editorial
+gouache + woodcut bones as everything else. The only difference is the *subject* (a desk
+with objects, a backpack, a client card, a ledger page) rather than a single‑figure or
+single‑place composition.
+
+**Always attach `title-cover.webp` (*The First Booking*) as the reference image** so
+ChatGPT keeps the desk‑subject convention (layered objects, table surface, open window
+onto Messinia) consistent across the batch.
 
 Workflow:
 1. Open a new ChatGPT conversation per batch.
@@ -660,7 +645,7 @@ Workflow:
 Save to: `assets/desk/desk-phase2-working.webp`
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame this as a wide cinematic landscape (about 16:10 ratio).
 
@@ -673,7 +658,7 @@ Greek text where it naturally appears (route names on cards, "REPAIR" stamp, led
 Save to: `assets/desk/desk-phase3-office.webp`
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame this as a wide cinematic landscape (about 16:10 ratio).
 
@@ -686,7 +671,7 @@ Greek + English where natural; readable section headings on the laptop, illegibl
 Save to: `assets/desk/desk-phase4-regional.webp`
 
 ```
-[§3a style anchor — verbatim with seasonal accent CYPRESS GREEN]
+[§3 style anchor — verbatim, with the seasonal accent specified as cypress green-black]
 
 Frame this as a wide cinematic landscape (about 16:10 ratio).
 
@@ -701,7 +686,7 @@ Cypress green accent appears in the manager portrait frames and on the legal-doc
 Save to: `assets/backpack/backpack-phase1.webp`
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame in landscape orientation, about 4:3 ratio.
 
@@ -714,7 +699,7 @@ No people in the frame. Match the warm Mediterranean register, the layered-objec
 Save to: `assets/backpack/backpack-phase2-depot.webp`
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame as wide landscape (about 16:9 ratio).
 
@@ -727,7 +712,7 @@ No people in frame. Match the warm working-shed register and Mediterranean physi
 Save to: `assets/backpack/backpack-phase3-cache.webp`
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame as wide landscape (about 16:9 ratio).
 
@@ -745,7 +730,7 @@ each in **portrait orientation, about 4:5 ratio** — these slot into card UI.
 For each client below, use this template (replace the SUBJECT line):
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame this in portrait orientation, about 4:5 ratio, as a people card composition.
 
@@ -776,7 +761,7 @@ These are *backgrounds* the day's verdict prints onto — the canvas, not the da
 Save to: `assets/reports/report-blank.webp`
 
 ```
-[§3a style anchor — verbatim, no seasonal accent]
+[§3 style anchor — verbatim, no seasonal accent on this one]
 
 Frame in landscape orientation, about 4:3 ratio.
 
@@ -789,7 +774,7 @@ No text on the page beyond the column header shapes (illegible). No people. Matc
 Save to: `assets/reports/report-review-good.webp`
 
 ```
-[§3a style anchor — verbatim]
+[§3 style anchor — verbatim]
 
 Frame in landscape orientation, about 4:3 ratio.
 
@@ -802,7 +787,7 @@ No legible text — the type should look like real type at a glance but not be d
 Save to: `assets/reports/report-review-bad.webp`
 
 ```
-[§3a style anchor — verbatim, rain grey accent and slightly desaturated palette]
+[§3 style anchor — verbatim, with rain grey as the seasonal accent and the palette pulled down a notch in saturation]
 
 Frame in landscape orientation, about 4:3 ratio.
 
@@ -815,7 +800,7 @@ No legible text. No people. Match the reference surface and palette but at the d
 Save to: `assets/reports/report-gear-damage.webp`
 
 ```
-[§3a style anchor — verbatim, rain grey accent]
+[§3 style anchor — verbatim, with rain grey as the seasonal accent]
 
 Frame in landscape orientation, about 4:3 ratio.
 
