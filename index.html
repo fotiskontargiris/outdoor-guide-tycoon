@@ -571,7 +571,8 @@
 
   /* STORY-SCREEN — solid-bg page for prose moments. Lets the player
      read undistracted before the scene image arrives. Day-tag top,
-     centred prose middle, "touch to continue" pulses bottom. */
+     centred prose middle. Auto-transitions after ~10s with a slow
+     fade; tap also dismisses (silent skip — no visible prompt). */
   .story-screen{
     position:fixed; inset:0; z-index:105;
     background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
@@ -579,9 +580,19 @@
     align-items:center; justify-content:center;
     padding:60px 40px 80px;
     cursor:pointer;
-    transition:opacity .5s ease;
+    transition:opacity 1.2s ease;
   }
   .story-screen.fading{opacity:0;}
+  /* Scene-full bubble overrides — in viewport context, use pixel offsets
+     that clear the menu button (top-right 14/14, size 44) and leave a
+     comfortable inset from screen edges. Inside .scene-stage (smaller
+     box) the existing percentage positions still apply. */
+  .scene-full .bubble.left-top  { top:80px; left:24px;  max-width:55%; }
+  .scene-full .bubble.right-top { top:80px; right:80px; max-width:50%; }
+  .scene-full .bubble.left-mid  { top:38%;  left:24px;  max-width:55%; }
+  .scene-full .bubble.right-mid { top:38%;  right:80px; max-width:50%; }
+  .scene-full .bubble.left-bot  { top:62%;  left:24px;  max-width:55%; }
+  .scene-full .bubble.right-bot { top:62%;  right:80px; max-width:50%; }
   .story-screen-tag{
     position:absolute; top:18px; left:0; right:0;
     text-align:center;
@@ -1197,7 +1208,9 @@ function removeStoryOverlay(){
 // for any kitchen / scene transition where the narrator text wants room
 // to breathe without competing with the cover image.
 function renderStoryScreen(opts){
-  // opts: { tag, text, onContinue }
+  // opts: { tag, text, onContinue, autoMs }
+  // Auto-transitions after autoMs (default 10000ms). Slow fade-out
+  // (CSS 1.2s). Tap also dismisses (silent skip — no visible prompt).
   removeStoryOverlay();
   if(!(typeof document !== 'undefined' && document.body && document.body.appendChild)) {
     // Test harness fallback — skip the overlay, go straight to next.
@@ -1210,15 +1223,18 @@ function renderStoryScreen(opts){
   overlay.innerHTML = `
     <div class="story-screen-tag">${opts.tag||''}</div>
     <p class="story-screen-text">${opts.text||''}</p>
-    <div class="story-screen-tap">Touch to continue</div>
   `;
+  let dismissed = false;
   const handler = () => {
+    if(dismissed) return;
+    dismissed = true;
     overlay.removeEventListener('click', handler);
     overlay.classList.add('fading');
     if(typeof opts.onContinue === 'function') opts.onContinue();
-    setTimeout(() => { overlay.parentNode && overlay.parentNode.removeChild(overlay); }, 520);
+    setTimeout(() => { overlay.parentNode && overlay.parentNode.removeChild(overlay); }, 1250);
   };
   overlay.addEventListener('click', handler);
+  setTimeout(handler, opts.autoMs || 10000);  // auto-dismiss after 10s
   document.body.appendChild(overlay);
   setScene('');
 }
@@ -1307,10 +1323,10 @@ async function doContinue(){
    (discipline / kit / loan) under the cover of stepping out into the panigíri. */
 function renderKitchen(){
   // Kitchen scene proper: image fills viewport, mum's bubble at upper-LEFT
-  // (she's on the left of the frame, voice comes that way), and a small
-  // bottom-right input box for the name. The narrator paragraph already
-  // appeared on renderKitchenIntro's story-screen, so this beat stays
-  // visually clean.
+  // (she's on the left of the frame, voice comes that way), small
+  // bottom-right input box for the name. Narrator paragraph already
+  // appeared on the prior story-screen; this beat stays visually clean.
+  // No day-tag — that was on the story-screen too, no need to repeat.
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('');
   removeTitleOverlay();
   removeSceneOverlay();
@@ -1318,8 +1334,9 @@ function renderKitchen(){
   const cover = ASSETS['scene-kitchen']
     ? `<img class="scene-full-bg" src="${ASSETS['scene-kitchen']}" alt="Your mother\u2019s kitchen in Kalamata">`
     : '';
-  const tag = `<div class="scene-full-tag">Kalamata \u00b7 your mother\u2019s kitchen</div>`;
-  // left-top — bubble in upper-left, tail points down-left toward mum
+  // left-top — bubble in upper-left, tail points down toward mum.
+  // .scene-full overrides give it 80px top / 24px left and 55% max-width,
+  // so it clears the menu button and leaves room for the image to breathe.
   const bubble = `<div class="bubble left-top">Sit, sit. You\u2019ve gotten thin \u2014 what did they do to you out there.</div>`;
   const safeName = (pendingName||'').replace(/[<>"]/g,'');
   const panel = `<div class="scene-full-panel scene-full-panel--mini">
@@ -1331,11 +1348,11 @@ function renderKitchen(){
     const overlay = document.createElement('div');
     overlay.id = 'sceneOverlay';
     overlay.className = 'scene-full';
-    overlay.innerHTML = `${cover}${tag}${bubble}${panel}`;
+    overlay.innerHTML = `${cover}${bubble}${panel}`;
     document.body.appendChild(overlay);
     setScene('');
   } else {
-    setScene(`<div class="scene-full">${cover}${tag}${bubble}${panel}</div>`);
+    setScene(`<div class="scene-full">${cover}${bubble}${panel}</div>`);
   }
 }
 function kitchenCaptureName(){ const el=$('gname'); if(el&&typeof el.value==='string') pendingName=el.value.replace(/[<>"]/g,'').slice(0,18); }
