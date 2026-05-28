@@ -532,6 +532,88 @@
   .scene-input .scene-btn:hover{background:#000; transform:translateY(-1px);}
   .scene-input .scene-btn:active{transform:translateY(0);}
 
+  /* Mini variant of the scene panel — narrower, anchored bottom-right
+     instead of centred. Used when the narrator text has been shown on
+     a prior story-screen and only a small input remains. */
+  .scene-full-panel--mini{
+    left:auto; right:24px;
+    bottom:24px;
+    transform:none;
+    width:auto; max-width:300px;
+    padding:12px 14px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .scene-full-panel--mini .scene-input-label{margin-bottom:2px;}
+  .scene-full-panel--mini input{
+    width:100%;
+    padding:9px 12px;
+    border-radius:8px;
+    border:1px solid rgba(27,27,31,.4);
+    background:rgba(255,255,255,.7);
+    color:#1B1B1F;
+    font-family:'Fraunces',serif; font-size:15px;
+    outline:none;
+  }
+  .scene-full-panel--mini input:focus{
+    border-color:var(--terra);
+    background:rgba(255,255,255,.95);
+  }
+  .scene-full-panel--mini .scene-btn{
+    width:100%;
+    background:#1B1B1F; color:#EEE5D2;
+    border:none; border-radius:8px;
+    padding:10px 14px;
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px;
+    cursor:pointer;
+    transition:background .15s, transform .15s;
+  }
+  .scene-full-panel--mini .scene-btn:hover{background:#000; transform:translateY(-1px);}
+
+  /* STORY-SCREEN — solid-bg page for prose moments. Lets the player
+     read undistracted before the scene image arrives. Day-tag top,
+     centred prose middle, "touch to continue" pulses bottom. */
+  .story-screen{
+    position:fixed; inset:0; z-index:105;
+    background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:60px 40px 80px;
+    cursor:pointer;
+    transition:opacity .5s ease;
+  }
+  .story-screen.fading{opacity:0;}
+  .story-screen-tag{
+    position:absolute; top:18px; left:0; right:0;
+    text-align:center;
+    font-family:'Spline Sans Mono',monospace;
+    font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--terra);
+    padding:0 70px;
+    pointer-events:none;
+  }
+  .story-screen-text{
+    max-width:640px;
+    font-family:'Fraunces',serif; font-style:italic;
+    font-size:clamp(16px,2.2vw,21px);
+    line-height:1.6;
+    color:var(--ink);
+    text-align:center;
+    margin:0;
+    opacity:0;
+    animation:introFade 1.2s ease 0.4s both;
+  }
+  .story-screen-tap{
+    position:absolute;
+    bottom:30px; left:0; right:0;
+    text-align:center;
+    font-family:'Spline Sans Mono',monospace;
+    font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--ink-faint);
+    opacity:0;
+    animation:introTapIn 0.5s ease 2s forwards, introTapPulse 1.8s ease 2.5s infinite alternate;
+    pointer-events:none;
+  }
+
   /* Scene stage — persistent scene image with characters speaking in
      bubbles overlaid. See ART-DIRECTION.md §12. The image holds across
      beats of a conversation; bubbles replace per beat. */
@@ -1106,6 +1188,52 @@ function removeSceneOverlay(){
   const ex = document.getElementById('sceneOverlay');
   if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
 }
+function removeStoryOverlay(){
+  const ex = document.getElementById('storyOverlay');
+  if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
+}
+// Render a solid-bg "story-screen" — a paragraph of prose with day-tag
+// at the top and tap-to-continue at the bottom. Used as the front beat
+// for any kitchen / scene transition where the narrator text wants room
+// to breathe without competing with the cover image.
+function renderStoryScreen(opts){
+  // opts: { tag, text, onContinue }
+  removeStoryOverlay();
+  if(!(typeof document !== 'undefined' && document.body && document.body.appendChild)) {
+    // Test harness fallback — skip the overlay, go straight to next.
+    if(typeof opts.onContinue === 'function') opts.onContinue();
+    return;
+  }
+  const overlay = document.createElement('div');
+  overlay.id = 'storyOverlay';
+  overlay.className = 'story-screen';
+  overlay.innerHTML = `
+    <div class="story-screen-tag">${opts.tag||''}</div>
+    <p class="story-screen-text">${opts.text||''}</p>
+    <div class="story-screen-tap">Touch to continue</div>
+  `;
+  const handler = () => {
+    overlay.removeEventListener('click', handler);
+    overlay.classList.add('fading');
+    if(typeof opts.onContinue === 'function') opts.onContinue();
+    setTimeout(() => { overlay.parentNode && overlay.parentNode.removeChild(overlay); }, 520);
+  };
+  overlay.addEventListener('click', handler);
+  document.body.appendChild(overlay);
+  setScene('');
+}
+// The kitchen front beat: narrator paragraph on a solid bg, no image.
+// Reads undistracted; tap → renderKitchen (image + bubble + mini input).
+function renderKitchenIntro(){
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('');
+  removeTitleOverlay();
+  removeSceneOverlay();
+  renderStoryScreen({
+    tag: 'Kalamata · your mother’s kitchen',
+    text: 'The bus smelled of diesel and someone’s gardenia. The oilcloth has the same lemons on it. The good plates — the ones for guests — are out, which is how you know she has decided you are a guest now. Or, worse, a patient. Nothing she says tonight will be a question.',
+    onContinue: renderKitchen,
+  });
+}
 function renderTitle(save, loading){
   // Body-level overlay — the .scene parent has backdrop-filter:blur
   // which creates a positioning context that traps position:fixed
@@ -1151,7 +1279,7 @@ function renderTitle(save, loading){
 }
 async function doContinue(){
   const save=cachedSave||await loadSave();
-  if(!save||!save.S){ renderKitchen(); return; }
+  if(!save||!save.S){ renderKitchenIntro(); return; }
   S=save.S; gCounter=save.g||0;
   S.depot=S.depot||{}; S.loadout=S.loadout||[]; S.packSize=S.packSize||4;
   // Migrate old array-form owned (v5 and earlier) to the new tiered object form
@@ -1178,26 +1306,26 @@ async function doContinue(){
    = hero pick → the pitch), then renderSetup() handles the practical picks
    (discipline / kit / loan) under the cover of stepping out into the panigíri. */
 function renderKitchen(){
-  // Body-level fullscreen overlay (same pattern as title). Image fills
-  // the viewport edge-to-edge; day-tag pinned top; mum's speech bubble
-  // overlays; narrator + name input + Sit-down button collapse into a
-  // discrete panel at the lower portion of the screen.
+  // Kitchen scene proper: image fills viewport, mum's bubble at upper-LEFT
+  // (she's on the left of the frame, voice comes that way), and a small
+  // bottom-right input box for the name. The narrator paragraph already
+  // appeared on renderKitchenIntro's story-screen, so this beat stays
+  // visually clean.
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('');
   removeTitleOverlay();
   removeSceneOverlay();
+  removeStoryOverlay();
   const cover = ASSETS['scene-kitchen']
     ? `<img class="scene-full-bg" src="${ASSETS['scene-kitchen']}" alt="Your mother\u2019s kitchen in Kalamata">`
     : '';
   const tag = `<div class="scene-full-tag">Kalamata \u00b7 your mother\u2019s kitchen</div>`;
-  const bubble = `<div class="bubble right-top">Sit, sit. You\u2019ve gotten thin \u2014 what did they do to you out there.</div>`;
+  // left-top — bubble in upper-left, tail points down-left toward mum
+  const bubble = `<div class="bubble left-top">Sit, sit. You\u2019ve gotten thin \u2014 what did they do to you out there.</div>`;
   const safeName = (pendingName||'').replace(/[<>"]/g,'');
-  const panel = `<div class="scene-full-panel">
-    <p class="scene-narrator">The bus smelled of diesel and someone\u2019s gardenia. The oilcloth has the same lemons on it. The good plates \u2014 the ones for guests \u2014 are out, which is how you know she has decided you are a guest now. Or, worse, a patient. Nothing she says tonight will be a question.</p>
-    <div class="scene-input">
-      <span class="scene-input-label">What does she call you?</span>
-      <input id="gname" type="text" maxlength="18" value="${safeName}" placeholder="e.g. Alexios">
-      <button class="scene-btn" onclick="kitchenSit()">Sit down \u25b8</button>
-    </div>
+  const panel = `<div class="scene-full-panel scene-full-panel--mini">
+    <span class="scene-input-label">What does she call you?</span>
+    <input id="gname" type="text" maxlength="18" value="${safeName}" placeholder="e.g. Alexios">
+    <button class="scene-btn" onclick="kitchenSit()">Sit down \u25b8</button>
   </div>`;
   if(typeof document !== 'undefined' && typeof document.createElement === 'function' && document.body && document.body.appendChild){
     const overlay = document.createElement('div');
@@ -1658,7 +1786,7 @@ if(typeof window !== 'undefined' && typeof window.addEventListener === 'function
    gesture, remove the body-level title overlay, then proceed to the
    action. If fullscreen fails (iOS Safari in-browser), the game runs
    anyway with browser chrome visible. */
-function startNewGame(){ enterFullscreen(); removeTitleOverlay(); renderKitchen(); }
+function startNewGame(){ enterFullscreen(); removeTitleOverlay(); renderKitchenIntro(); }
 function continueGame(){ enterFullscreen(); removeTitleOverlay(); doContinue(); }
 function logEntryColor(t){
   if(/Hired|resigned/.test(t)) return 'var(--sea)';
