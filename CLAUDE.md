@@ -10,7 +10,7 @@ A text-driven **outdoor-activities tycoon game**, set in the **Peloponnese (Mess
 
 **Tone & aesthetic:** an "Aegean/Mediterranean dusk field-journal" look — warm sand text on deep teal, a faint topographic-contour SVG backdrop, a serif narrative voice (Fraunces / Spectral) paired with a monospace "instruments" font (Spline Sans Mono) for stats. Second-person, literary, concise prose. No emojis (dingbat symbols like ▸ ▶ ✓ ☾ are fine).
 
-**Layout doctrine (locked 2026-05-28):** **landscape only**, **fixed viewport**, **no page scroll ever**. One design, no portrait fallback — touch devices in portrait get a "Sideways, please" rotate-overlay until they rotate. The body and `.wrap` lock to `100dvh`; top chrome (appbar + HUD + goal + forecast) is `flex:none` anchored at top; `#scene` is `flex:1` and fills the remaining viewport. Two-col scenes (kitchen, trailhead, hire, panigíri, Hilux, title): image fixed in the left column, only the right `.col-panel` scrolls internally. Utility screens (shop, cert school, logbook): the scene area itself scrolls internally. The scene image is the *steady* visual anchor; only content panels scroll.
+**Layout doctrine:** **landscape only**, **fixed viewport**, **no page scroll ever**. One design, no portrait fallback — touch devices in portrait get a "Sideways, please" rotate-overlay until they rotate. The body and `.wrap` lock to `100dvh`; top chrome (appbar + HUD + goal + forecast) is `flex:none` anchored at top; `#scene` is `flex:1` and fills the remaining viewport. Two-col scenes (kitchen, trailhead, hire, panigíri, Hilux, title): image fixed in the left column, only the right `.col-panel` scrolls internally. Utility screens (shop, cert school, logbook): the scene area itself scrolls internally. The scene image is the *steady* visual anchor; only content panels scroll.
 
 **The design arc:** the player shifts from *doing* the work (Phase 1, hands-on guiding) to *leading people who do it* (Phase 2, managing guides). That shift is the emotional core; keep it central in any new feature.
 
@@ -173,18 +173,16 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
 - `BUILD-PHASE-1.md` — the implementation brief: read order, first vertical slice, guardrails.
 
 **The look**
-- `ART-DIRECTION.md` — the canonical visual doctrine. **Style register reset 2026-05-28
-  to "ink‑and‑watercolor travel"** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
+- `ART-DIRECTION.md` — the canonical visual doctrine. **Style register:
+  "ink‑and‑watercolor travel"** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
   energy — wet translucent washes, loose hand‑drawn ink line, paper‑white showing through).
-  Replaces the earlier "editorial gouache + woodcut bones" register; the 43 assets shipped
-  under it remain in‑game and work, with a re‑generation pass queued. The **"changing
-  guide's desk"** metaphor (what we draw + five locked UI surfaces: Desk · Route card ·
+  The **"changing guide's desk"** metaphor (what we draw + five locked UI surfaces: Desk · Route card ·
   Backpack · People card · Day report; the desk evolves across phases P1 kitchen → P4
   regional board) and the **speech‑bubble flow** pattern (persistent scene image with
   overlaid character bubbles, narrator italic below, choices below that; see §12) are
   unchanged. Palette (terra · olive · sea · bone · ink + one seasonal accent) is now
   expressed as wet washes. Pair‑read with `LANGUAGE.md`.
-- `DESK-HUB.md` — **the diegetic UI doctrine** (locked 2026-05-28). The home base for each
+- `DESK-HUB.md` — **the diegetic UI doctrine**. The home base for each
   game phase is a ROOM you tap (Phase 1: childhood bedroom in mum's house, school desk by a
   wide window onto Kalamáta harbour + Taygetos). ~9 clickable objects per hub (phone /
   notebook / backpack / window / catalogue / wallet / corkboard / bed / door); each tap →

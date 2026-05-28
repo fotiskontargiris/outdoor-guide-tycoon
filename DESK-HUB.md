@@ -9,7 +9,7 @@ button on a UI panel.
 Reads as a point‑and‑click adventure (Myst, Broken Sword, *Dredge*, *Strange
 Horticulture*). Felt that way; not implemented that way before.
 
-Locked **2026-05-28**. Replaces the abstract `renderMorning` button‑driven home base
+Replaces the abstract `renderMorning` button‑driven home base
 for Phase 1; same pattern extends to every later phase.
 
 ---

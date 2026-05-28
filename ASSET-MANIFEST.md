@@ -10,30 +10,14 @@ it.* It does not relitigate style.
 
 ---
 
-## 0. Status of the world (2026-05-28)
+## 0. Status
 
-**43 assets shipped** under the earlier *"editorial gouache + woodcut bones"* direction.
-They live in‑game and work. Folders + filenames are stable.
+Doctrine: **ink-and-watercolor travel** (`ART-DIRECTION.md §4`). Every asset is **20:9
+with a 16:9 safe zone**. Home base is the **diegetic desk hub** (`DESK-HUB.md`). This
+manifest lists every asset to produce, by tier.
 
-**The doctrine evolved** on 2026-05-28 in two passes:
-1. **Desk metaphor + speech‑bubble flow** (what we draw + how scenes are used) — see
-   `ART-DIRECTION.md §1-3, §12`.
-2. **Style register reset** from the earlier "editorial gouache + woodcut bones" to
-   **"ink‑and‑watercolor travel"** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
-   energy — wet translucent washes, loose hand‑drawn ink, paper‑white showing through).
-   See `ART-DIRECTION.md §4` and `PROMPT-PACK.md §3`.
-
-The 43 shipped assets (heroes, places, scenes, chrome, glyphs, title cover) were
-generated under the earlier gouache + woodcut register. They remain in‑game and work
-visually for now. A **re‑generation pass** against the new ink‑and‑watercolor register
-is queued; the new First Booking would be the first job, becoming the new canonical
-reference image. The current `title-cover.webp` is the worked example of the *previous*
-register.
-
-**The remaining production** (Phases ↓) covers the surfaces the doctrine added that
-weren't shipped yet — Phase 2/3/4 desks, the backpack screen variants, client cards, and
-day‑report surfaces. The original tiers (heroes, places, glyphs, scenes, chrome, title)
-are complete.
+The currently-shipped assets predate the ink-and-watercolor style and stand in as
+placeholders; a regeneration pass is queued, starting with the Phase 1 bedroom hub base.
 
 ---
 
@@ -61,9 +45,9 @@ to 40+ assets.
 
 | ID | Subject | Register | Why this one |
 |---|---|---|---|
-| `pilot-01-hero-alani` | The Alani, leaning on his moped, kafeneío door behind, cigarette unlit | **Comic default** | Maximum character voice; instantly tests whether the gouache/woodcut combo carries a heightened hero without going cartoon. |
+| `pilot-01-hero-alani` | The Alani, leaning on his moped, kafeneío door behind, cigarette unlit | **Comic default** | Maximum character voice; instantly tests whether the ink-and-watercolor register carries a heightened hero without going cartoon. |
 | `pilot-02-place-voidokilia` | The Voidokiliá crescent at mid‑afternoon, lagoon on the inland side, Pylos fort silhouette far right | **Place silhouette** | Most iconic landscape in the Peloponnese; locks the *not Santorini* move. Tests palette discipline (terra/olive/sea/bone, no whitewash). |
-| `pilot-03-scene-hilux-dawn` | The Hilux, alone in the yard, at first light. One shape. Bone sky, terra dust, ink truck | **Pathos still** | The locked sentimental object. Tests whether the matte surface can carry a quiet beat without milking. *No figures.* |
+| `pilot-03-scene-hilux-dawn` | The Hilux, alone in the yard, at first light. One shape. Bone sky, terra dust, ink truck | **Pathos still** | The locked sentimental object. Tests whether the wet-wash surface can carry a quiet beat without milking. *No figures.* |
 
 If those three sit on a wall together and feel like the same game — proceed to Tier A.
 
@@ -106,20 +90,18 @@ Reference frames live in `ART-DIRECTION.md §6A`. Gender is locked per hero — 
 
 ## 5. Tier C — Disciplines (7 glyphs)
 
-Diagrammatic, no‑text, woodcut‑clean. **SVG, 64×64 source, displayed at 32×32 typically.**
-Drawn as if etched into a brass plate (ink on bone, with negative space inside the figure
-where the contour reads it). Ship with `currentColor` for `stroke` and `fill` so they
-recolour to the active palette token via CSS.
+Diagrammatic, no-text, loose ink line. **WebP, ~96×96 source, displayed at 22–36px.**
+The figure reads through negative space on bone paper. Ship as transparent-background WebP.
 
 | ID | File | Subject |
 |---|---|---|
-| `glyph-discipline-hike` | `assets/disciplines/glyph-discipline-hike.svg` | A boot, profile, on a contour line |
-| `glyph-discipline-seakayak` | `assets/disciplines/glyph-discipline-seakayak.svg` | A paddle blade, dripping, single drop |
-| `glyph-discipline-canyon` | `assets/disciplines/glyph-discipline-canyon.svg` | A knotted rope, figure‑eight knot at centre |
-| `glyph-discipline-raft` | `assets/disciplines/glyph-discipline-raft.svg` | An oar, water curl at the blade |
-| `glyph-discipline-cycle` | `assets/disciplines/glyph-discipline-cycle.svg` | A pedal crank, side view |
-| `glyph-discipline-sup` | `assets/disciplines/glyph-discipline-sup.svg` | A board edge, paddle T‑grip above |
-| `glyph-discipline-climb` | `assets/disciplines/glyph-discipline-climb.svg` | A cam and a karabiner, hooked |
+| `glyph-discipline-hike` | `assets/disciplines/glyph-discipline-hike.webp` | A boot, profile, on a contour line |
+| `glyph-discipline-seakayak` | `assets/disciplines/glyph-discipline-seakayak.webp` | A paddle blade, dripping, single drop |
+| `glyph-discipline-canyon` | `assets/disciplines/glyph-discipline-canyon.webp` | A knotted rope, figure‑eight knot at centre |
+| `glyph-discipline-raft` | `assets/disciplines/glyph-discipline-raft.webp` | An oar, water curl at the blade |
+| `glyph-discipline-cycle` | `assets/disciplines/glyph-discipline-cycle.webp` | A pedal crank, side view |
+| `glyph-discipline-sup` | `assets/disciplines/glyph-discipline-sup.webp` | A board edge, paddle T‑grip above |
+| `glyph-discipline-climb` | `assets/disciplines/glyph-discipline-climb.webp` | A cam and a karabiner, hooked |
 
 (Phase 3 reserves: `sail`, `snorkel`, `paraglide` — produce when those disciplines ship.)
 
@@ -127,18 +109,18 @@ recolour to the active palette token via CSS.
 
 ## 6. Tier D — Weather (5 + 1 glyphs)
 
-Iconographic, same SVG / `currentColor` treatment as disciplines. **64×64 source.** These
+Iconographic, same loose ink-line treatment as disciplines. **~96×96 source.** These
 appear in the forecast strip; the *full sky* versions for trip headers come later as Tier F
 backdrops.
 
 | ID | File | Subject |
 |---|---|---|
-| `glyph-weather-clear` | `assets/weather/glyph-weather-clear.svg` | The `☼` rendered as a clean rayed disc, simplified |
-| `glyph-weather-hot` | `assets/weather/glyph-weather-hot.svg` | A heavier sun, three short heat waves beneath |
-| `glyph-weather-wind` | `assets/weather/glyph-weather-wind.svg` | Bent grass on a sloped horizon, a flag pulled |
-| `glyph-weather-mist` | `assets/weather/glyph-weather-mist.svg` | A low ceiling on a ridge, three horizontal bands |
-| `glyph-weather-storm` | `assets/weather/glyph-weather-storm.svg` | Bruise horizon, a single zigzag — restrained |
-| `glyph-weather-unstable` | `assets/weather/glyph-weather-unstable.svg` | Half‑sun / half‑cloud composite — the *turn* marker, the new mechanic |
+| `glyph-weather-clear` | `assets/weather/glyph-weather-clear.webp` | The `☼` rendered as a clean rayed disc, simplified |
+| `glyph-weather-hot` | `assets/weather/glyph-weather-hot.webp` | A heavier sun, three short heat waves beneath |
+| `glyph-weather-wind` | `assets/weather/glyph-weather-wind.webp` | Bent grass on a sloped horizon, a flag pulled |
+| `glyph-weather-mist` | `assets/weather/glyph-weather-mist.webp` | A low ceiling on a ridge, three horizontal bands |
+| `glyph-weather-storm` | `assets/weather/glyph-weather-storm.webp` | Bruise horizon, a single zigzag — restrained |
+| `glyph-weather-unstable` | `assets/weather/glyph-weather-unstable.webp` | Half‑sun / half‑cloud composite — the *turn* marker, the new mechanic |
 
 ---
 
@@ -179,7 +161,7 @@ produce; commit to them only after the pilot trio and Tier B–C land.
 
 ## 9. Tier G — Chrome (3)
 
-UI flat‑lays. Same matte gouache surface, but the *object* is the subject — no figures.
+UI flat-lays. Same ink-and-watercolor surface, but the *object* is the subject — no figures.
 
 | ID | File | Subject |
 |---|---|---|
@@ -191,7 +173,7 @@ UI flat‑lays. Same matte gouache surface, but the *object* is the subject — 
 
 ## 10. File specs (current — post‑optimisation)
 
-After the weight pass (`scripts/optimize-assets.py`, 2026-05-28) every illustrated asset
+After the weight pass (`scripts/optimize-assets.py`) every illustrated asset
 is **WebP at quality 88**, resized to 2× retina max for its slot. The title wordmark stays
 SVG. Total `assets/` is **~22 MB** (down from ~115 MB, a 93 MB save).
 
@@ -200,12 +182,12 @@ SVG. Total `assets/` is **~22 MB** (down from ~115 MB, a 93 MB save).
 | A — Cover | Title cover | WebP | 1586 × 992 (native) | responsive, max 560px | opaque bone |
 | A — Cover | Wordmark | SVG | — | scales | not used live (HTML text overlay instead) |
 | A — Opening | Kitchen scene | WebP | 1586 × 992 (native) | responsive, max 720px | opaque |
-| B — Heroes | Wide landscape composition | WebP | 1920 × 864 (20:9; safe zone 16:9) | full-bleed scene-full | figure-left, context-right; current 720×1082 portrait shipped under old spec |
+| B — Heroes | Wide landscape composition | WebP | 1920 × 864 (20:9; safe zone 16:9) | full-bleed scene-full | figure-left, context-right |
 | C — Disciplines | Glyph | WebP | 96 × 96 | 36px display | opaque, was wildly oversized at 1254×1254 |
 | D — Weather | Glyph | WebP | 96 × 96 | 22px display | opaque, same story |
-| E — Places | Silhouette | WebP | 1920 × 864 (20:9; safe zone 16:9) | full-bleed scene / route card | opaque; current ~1586×1005 shipped under old 8:5-ish spec |
+| E — Places | Silhouette | WebP | 1920 × 864 (20:9; safe zone 16:9) | full-bleed scene / route card | opaque |
 | F — Scenes | Set piece | WebP | ~1586 × ~992 (native) | max 720px | opaque |
-| G — Chrome | Flat lay | WebP | 1200 × 900 | max 480px | opaque |
+| G - Chrome | Flat lay on a surface | WebP | 1920x864 (20:9; doc in 16:9 safe zone) | full-bleed detail view | opaque |
 
 **Naming**: `tier-slug.webp` where `tier` is `hero / place / glyph‑discipline / glyph‑weather
 / title / scene / chrome` and `slug` is the stable id from §3–9.
@@ -215,11 +197,11 @@ re-generation comparisons (~10 MB; not loaded by the game).
 
 ---
 
-## 10½. New surfaces from the doctrine evolution (the next production tier)
+## 10½. New surfaces (the next production tier)
 
-The doctrine evolution of 2026-05-28 added four new asset surfaces. Existing wire‑ups in
+Four asset surfaces beyond the original set form the next production tier. Existing wire‑ups in
 `index.html` will pick these up automatically once they're in `assets/` and added to the
-`ASSETS` map. Render every one against *The First Booking* as the locked reference.
+`ASSETS` map. Render every one against your approved ink-and-watercolor reference image.
 
 ### Tier H — Phase 2/3/4 desks (3)
 The desk *changes* across phases. Phase 1 is shipped (= title‑cover, the first booking).
@@ -270,7 +252,7 @@ the renderer composes against.
 
 ---
 
-## 10¾. Tier L — desk hub (new 2026-05-28, see DESK-HUB.md)
+## 10¾. Tier L — desk hub (see DESK-HUB.md)
 
 The diegetic UI tier. The game's home base becomes a *room you tap*. For Phase 1:
 the childhood bedroom in Kalamata, school desk by a wide window onto the harbour
@@ -336,7 +318,7 @@ draft     — artwork delivered, not yet approved against doctrine
 shipped   — approved, file in assets/, wired into index.html, harness green
 ```
 
-**All 43 assets are `shipped`** as of 2026-05-28 — produced via ChatGPT (GPT‑Image) using
+**All 43 assets are `shipped`** — produced via ChatGPT (GPT‑Image) using
 the ChatGPT‑specific prompts in `PROMPT-PACK.md`; the title wordmark was produced in a
 vector tool as recommended. Files live in `assets/<tier>/`; the `ASSETS` map in
 `index.html` (around line 470) maps every id to its path. Harness clean (0 exceptions
@@ -377,7 +359,7 @@ over 100 runs).
    accent for most cards, the CSS‑variable approach (`document.documentElement.style.
    setProperty('--accent', …)` at season change) is now the cheaper next step — would tint
    chrome and instrument labels seasonally without re‑shipping art variants. **Open.**
-4. ~~**Asset weight / CDN**~~ — **RESOLVED 2026-05-28**: weight pass via
+4. ~~**Asset weight / CDN**~~ — **RESOLVED**: weight pass via
    `scripts/optimize-assets.py` (Pillow). Resized each asset per‑tier to 2× retina max +
    converted to WebP at quality 88. **Total `assets/` 115 MB → 22 MB (93 MB saved,
    88.3% reduction).** Biggest wins: glyphs went from ~1 MB each at 1254×1254 to ~1 KB at

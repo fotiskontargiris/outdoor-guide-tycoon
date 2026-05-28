@@ -19,13 +19,13 @@ standalone scene illustrations that don't sit on a single surface.
 | `reports/` | **Day report** | Day-report backgrounds and surfaces — receipts, review cards, ledger pages | WebP | `report-{slug}.webp` |
 | `scenes/` | special set pieces | Moments that aren't bound to one surface — kitchen (the *pre-desk* opening), Hilux dawn (pathos), panigíri (parody-lift), first-hire (transition), radio-crisis (Phase 2 beat) | WebP | `scene-{slug}.webp` |
 | `chrome/` | UI flat-lays | Single-object flat-lays placed inside other screens — logbook, certificate, loan papers | WebP | `chrome-{slug}.webp` |
-| `disciplines/` | glyph chrome | The seven discipline icons (woodcut-style) | WebP | `glyph-discipline-{slug}.webp` |
+| `disciplines/` | glyph chrome | The seven discipline icons (ink-line) | WebP | `glyph-discipline-{slug}.webp` |
 | `weather/` | glyph chrome | The six weather state icons | WebP | `glyph-weather-{slug}.webp` |
 | `title/` | cover / wordmark | Title screen cover image + wordmark | WebP + SVG | `title-cover.webp`, `title-wordmark.svg` |
 
 ## Format rules
 
-- **WebP at quality 88** for every illustrated asset. The 2026-05-28 weight pass converted
+- **WebP at quality 88** for every illustrated asset. The weight pass converted
   the entire PNG ship (115 MB) to WebP and resized per-tier to 2× retina max. New assets
   should follow the same convention — see `scripts/optimize-assets.py`.
 - **SVG** for the wordmark only. Not used live (HTML text overlay renders cleaner) but
@@ -35,8 +35,7 @@ standalone scene illustrations that don't sit on a single surface.
 
 ## Status
 
-The original 43 shipped assets (heroes, places, disciplines, weather, scenes, chrome,
-title) landed 2026-05-28 under the earlier "editorial gouache + woodcut bones" direction.
-They work in-game. New assets follow `ART-DIRECTION.md`'s current **"changing guide's
-desk + stylized illustrated realism"** doctrine. The `assets/pilot-0[1-3]-*.png` originals
-at root are archival reference for the earlier batch.
+The 43 shipped assets (heroes, places, disciplines, weather, scenes, chrome, title)
+predate the current **ink-and-watercolor travel** register (`ART-DIRECTION.md §4`)
+and stand in as placeholders until a regeneration pass. They work in-game. The
+`assets/pilot-0*-*.png` originals at root are archival reference.

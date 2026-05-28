@@ -8,7 +8,7 @@ mechanical model.
 Diminutive: **♂ → *yie mou / yióka mou*** ("my son"), **♀ → *kóri mou / korítsi mou*** ("my daughter").
 
 Visual direction is open — the pixel‑art rollout has been retired. The character signifiers
-that anchored the earlier portrait spec live on in `INTRO-KITCHEN.md` (panigíri send‑offs)
+that anchor the heroes live on in `INTRO-KITCHEN.md` (panigíri send‑offs)
 and the per‑hero reveals.
 
 ---

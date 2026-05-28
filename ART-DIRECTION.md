@@ -8,16 +8,6 @@ asset.
 LANGUAGE sets the voice; ART-DIRECTION sets the surface. They are written to be cross‑
 referenced: prose and picture written to feel like the same world.
 
-> **Doctrine versioning**:
-> - The **style register** was **reset on 2026-05-28** from the earlier *"editorial
->   gouache + woodcut bones"* to **"ink‑and‑watercolor travel"** — Moleskine‑sketchbook
->   / Mediterranean travel‑guidebook energy. Wet translucent washes, loose hand‑drawn
->   ink line, paper‑white showing through. See §4 below. The 43 assets shipped under
->   the earlier register remain in‑game; new generations follow the new doctrine.
-> - The **visual metaphor** is **"the changing guide's desk"** with five locked UI
->   surfaces. That governs *what we draw and where it sits*. See §1–§3. Unchanged.
-> - The **scene‑use pattern** is **persistent scene image with overlaid speech bubbles**
->   for any moment a character speaks. See §12. Unchanged.
 
 ---
 
@@ -157,7 +147,7 @@ This is where `LANGUAGE.md §3 Verdicts, not metrics` shows up most.
 
 ---
 
-## 4. Style register — *ink‑and‑watercolor travel* (reset 2026-05-28)
+## 4. Style register — *ink‑and‑watercolor travel*
 
 The rendering register governing how every new image is made.
 Moleskine‑sketchbook / Mediterranean travel‑guidebook energy. The desk metaphor (§1–§3)
@@ -202,11 +192,8 @@ governs *what we draw*; this section governs *how the pigment sits on paper*.
   game UI overlays. The only square assets are the small glyph icons (discipline +
   weather) which sit inside UI chips at 32–96px display size.
 
-The 43 shipped assets (heroes, places, scenes, chrome, glyphs, title cover) are from
-the earlier **gouache + woodcut** register. They remain in‑game and work visually for
-now. A re‑generation pass against the new register is queued whenever Fotis returns
-to the asset work; the new First Booking would be the first job, becoming the new
-canonical reference image.
+The shipped assets predate this register and are queued for a regeneration pass;
+until then they stand in as placeholders.
 
 ---
 
@@ -283,7 +270,7 @@ to `assets/title/title-cover.webp` because it also serves as the title cover).
 ### B. Route cards — place silhouettes (`assets/places/`)
 The ~10 named places (Polylimnio, Voidokilia, Pylos‑Methoni, Mavromati, Neda, Lousios,
 Taygetos, Mani, Kardamyli, Kalamata). Each is the *small image inside a route card*. The
-existing 10 are shipped under the earlier doctrine; they work as route‑card thumbnails.
+10 shipped places stand in as placeholders; they work as route‑card thumbnails.
 
 ### C. Backpack screen (`assets/backpack/`)
 - `backpack-phase1` — *(to make)* small worn pack, 4 slots, dust on the strap
@@ -324,7 +311,7 @@ Single‑object flat‑lays placed inside other surfaces. Shipped:
 ### H. Glyphs (`assets/disciplines/` + `assets/weather/`)
 Small icons for the forecast strip + the discipline picker. Shipped: 7 discipline + 6
 weather glyphs. These are the only non‑desk‑metaphor visual elements and they stay as
-small woodcut icons — they read as *brass plaque tokens on the desk*, not as separate UI.
+small loose-ink icons — they read as *brass plaque tokens on the desk*, not as separate UI.
 
 ### I. Title (`assets/title/`)
 `title-cover.webp` (the first‑booking desk view, doubles as the canonical Phase 1 desk
@@ -357,7 +344,7 @@ These are settled. Do not reopen without flagging.
 - **Visual metaphor**: *the changing guide's desk.* Every UI surface is something on or
   about the desk.
 - **Core sentence**: *You are at the table where outdoor life becomes a business.*
-- **Style register**: *ink‑and‑watercolor travel.* Reset 2026-05-28 from the earlier gouache + woodcut register. Wet washes, paper‑white showing through, loose ink line. Warm Mediterranean. Paper, sun,
+- **Style register**: *ink‑and‑watercolor travel.* Wet washes, paper‑white showing through, loose ink line. Warm Mediterranean. Paper, sun,
   sea, stone, old gear, warm shadows. Closer to indie‑game editorial illustration than
   to photographic, vector, 3D, or cartoon.
 - **Canonical reference image**: *The First Booking* at `assets/title/title-cover.webp`.
@@ -453,7 +440,7 @@ Things that have been tried in adjacent genres and would visibly clash here.
 - **Decorative ornament.** Floral borders, evil‑eye motifs as spacers, ouzo‑bottle
   filigree. Every element does where/who/what or it isn't in the frame.
 
-**Watercolor‑specific anti‑patterns** (added with the 2026-05-28 style reset):
+**Watercolor-specific anti-patterns**:
 
 - **Opaque flat colour.** If every passage is solid fill, the watercolor language is
   lost. Some passages MUST be white‑of‑paper.
@@ -502,16 +489,16 @@ Whenever a moment is **a conversation** rather than a single‑frame illustratio
 
 ### Speech bubble visual style
 
-Every bubble is editorial gouache + woodcut bones (§4), applied at small scale.
+Every bubble is in the ink-and-watercolor register (§4), applied at small scale.
 
 - **Shape**: rounded rectangle (12–18px radius). Slight imperfection is OK; computed
   perfection is not — these are *hand‑painted speech bubbles*, not chat UI.
 - **Fill**: bone cream `#EEE5D2` (or `var(--bone)` token if we add it). Slightly
   translucent (≈92% opacity) so the scene shows faintly behind.
-- **Outline**: ink `#1B1B1F` (`var(--ink-dark)` token), ~2px confident line — the
-  woodcut bone. Never a thin grey hairline.
+- **Outline**: ink `#1B1B1F` (`var(--ink-dark)` token), ~2px confident ink line, like the
+  fountain-pen line in §4. Never a thin grey hairline.
 - **Tail**: a short 8–10px ink line pointing to the speaker's position in the image.
-  Geometric, woodcut‑clean — not the cartoon "wobbly oval tail."
+  Confident and straight — not the cartoon “wobbly oval tail.”
 - **Type inside**: serif (Fraunces or Spectral), ink, 14–16px, line‑height ~1.35.
   Greek diction renders here (§4 of `LANGUAGE.md` glossary), including curly quotes,
   em dashes, italics for emphasis.

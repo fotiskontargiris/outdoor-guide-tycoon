@@ -6,26 +6,12 @@ uses). No `--` parameters, no special syntax — paste the whole block into a ch
 get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) and
 `ASSET-MANIFEST.md` (the asset list and filenames).
 
-> **Doctrine version note (2026-05-28)**: the **style register was reset** to
-> **ink‑and‑watercolor travel** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
-> energy) — replacing the earlier "editorial gouache + woodcut bones" register. Every
-> prompt below uses the new §3 anchor automatically. The desk metaphor (what we draw),
-> the five UI surfaces, the bubble‑flow pattern, the five‑colour palette, and the Greek
-> specificity all stay; what changes is the rendering register. **The 43 assets already
-> shipped were generated under the earlier register and remain in‑game** — they work
-> visually for now and can be re‑generated against the new register when time allows.
-> The First Booking (`assets/title/title-cover.webp`) is the worked example of the
-> earlier register; a new cover in the watercolor register would be the first job of a
-> re‑generation pass.
-
-> **The single biggest consistency lever**: pick ONE approved **ink‑and‑watercolor**
-> image as your reference and reuse it across every batch. ⚠️ NOT `title-cover.webp` or
-> the old `pilot-01` — those are in the *previous gouache register* and would drag new
-> images backwards. The workflow: generate your first new‑register image from the §3
-> anchor alone (no reference attached), approve it, then for every subsequent batch
+> **The single biggest consistency lever**: pick ONE approved image as your reference
+> and reuse it across every batch. The workflow: generate your first image from the
+> §3 anchor alone (no reference attached), approve it, then for every subsequent batch
 > **start a new ChatGPT conversation, upload that approved image as the first
-> attachment**, and prefix with: *"Match the wet‑wash watercolor surface, fountain‑pen
-> ink line, paper‑showing‑through feel, palette, and Mediterranean atmosphere of the
+> attachment**, and prefix with: *"Match the wet-wash watercolor surface, fountain-pen
+> ink line, paper-showing-through feel, palette, and Mediterranean atmosphere of the
 > reference image exactly. Generate the next image in the same illustrated series."*
 
 ---
@@ -51,32 +37,32 @@ get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) an
 
 ---
 
-## 2. What ChatGPT does differently from Midjourney
+## 2. How ChatGPT image generation works
 
-| | Midjourney | ChatGPT |
-|---|---|---|
-| Aspect ratio | `--ar 20:9` for all scenes (matches modern phone landscape) | "as a wide landscape composition, about 20:9 ratio, with critical content in the central 16:9 safe zone" in the prompt body |
-| Negative prompt | `--no <list>` flag | "Do not include X, Y, Z" sentences in the prompt body |
-| Style reference | `--sref <url>` flag | Upload the reference image into the chat + text instruction |
-| Character reference | `--cref <url>` flag | Upload + "give this person the same face" |
-| Stylization control | `--style raw --s 150` | "Render this in a literal, illustrated style — not stylised toward your house aesthetic" |
-| Consistency within batch | `--seed N` | Stay in the same conversation; ask for "the next image in the same series" |
-| Text in image | Unreliable | Reliable; can ask for legible signs / labels / handwriting |
+No `--` parameters or special syntax: everything goes in the prompt body as plain
+language. The conventions these prompts rely on:
 
-ChatGPT is **more literal and reverent** than Midjourney. It will follow long, structured,
-detailed prompts faithfully. Lean into specificity — the prompts below are long because
-length is the cost of getting exactly what you want.
+| Goal | How to express it in the prompt |
+|---|---|
+| Aspect ratio | "as a wide landscape composition, about 20:9 ratio, with critical content in the central 16:9 safe zone" |
+| Negative prompt | "Do not include X, Y, Z" sentences in the prompt body |
+| Style reference | upload the reference image into the chat + a text instruction to match it |
+| Character reference | upload the face + "give this person the same face" |
+| Literal rendering | "render this in a literal, illustrated style, not stylised toward your house aesthetic" |
+| Consistency within a batch | stay in the same conversation; ask for "the next image in the same series" |
+| Legible text | reliable -- you can ask for legible signs, labels, or handwriting |
+
+ChatGPT is **literal and reverent**: it follows long, structured, detailed prompts
+faithfully. Lean into specificity -- the prompts below are long because length is the
+cost of getting exactly what you want.
 
 ---
 
 ## 3. The locked style anchor — *ink‑and‑watercolor travel*
 
-Every prompt opens with this paragraph, **verbatim**. The style register was reset on
-2026-05-28 from the earlier *"editorial gouache + woodcut bones"* direction to
-**ink‑and‑watercolor travel** — Moleskine‑sketchbook / Mediterranean travel‑guidebook
-energy. The desk metaphor, the five UI surfaces, the bubble‑flow pattern, the
-five‑colour palette, the Greek specificity all stay; what changes is *how the pigment
-sits on paper*.
+Every prompt opens with this paragraph, **verbatim**. The desk metaphor, the five UI
+surfaces, the bubble-flow pattern, the five-colour palette, and the Greek specificity
+all live downstream of it; this paragraph fixes *how the pigment sits on paper*.
 
 > *Render this as an ink‑and‑watercolor travel illustration — the visual register of a
 > Moleskine travel‑journal page or a mid‑century Mediterranean travel‑guidebook plate.
@@ -568,7 +554,7 @@ Save to: `assets/chrome/chrome-logbook.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. No seasonal accent — keep this in the core five colours only.
 
-Frame in landscape orientation (about 4:3 ratio).
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: A linen-bound notebook lying slightly open on an old wooden taverna table, viewed from a three-quarter slightly top-down angle. The day's entry is handwritten in dark serif ink on the visible page (the handwriting itself should be indecipherable hand-drawn shapes rather than legible text). A fountain pen rests beside it. Soft warm late-afternoon window light from the upper left. The notebook's linen cover is bone-cream. No other objects in frame. Quiet, intimate, object-as-subject composition.
 
@@ -581,7 +567,7 @@ Save to: `assets/chrome/chrome-certificate.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is terra red (used only in the wax stamp).
 
-Frame in landscape orientation (about 4:3 ratio).
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: An official Greek HATEOA (Hellenic Outdoor Trainers and Educators Association) hiking guide certificate document on cream paper. A red rubber wax-style stamp is in the lower right corner. A signature line in ink at the bottom. A simple official border line in ink around the document edge. Viewed from a three-quarter slightly top-down angle on a plain bone-cream background. A deadpan, official, period-correct look. The body text should be simulated illegible serif text (shapes that look like type, not actually legible). Three-quarter view, single object as subject.
 
@@ -594,7 +580,7 @@ Save to: `assets/chrome/chrome-loan-papers.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is terra red (only in the bank stamp).
 
-Frame in landscape orientation (about 4:3 ratio).
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: Three different financial documents laid out side by side on a wooden table top-down. Left: a formal bank loan form on white paper with a red rubber stamp. Centre: a handwritten note on torn lined yellow notepaper from a friend. Right: a small printed-receipt-style document on cheap brown paper from a less-official lender, no header. Three financing sources made physical objects. Top-down, slightly three-quarter view. Soft window light from upper left. Plain wooden background. All text on all three documents should be simulated illegible (shapes that look like writing, not actually legible).
 
@@ -631,7 +617,7 @@ location: append a small table at the bottom of `ASSET-MANIFEST.md` once product
 | Santorini whitewash leaking | Add place name twice; explicitly call out "this is mainland Messinia, NOT the Cycladic islands" |
 | Hilux scene grows people anyway | Restate "completely empty of any people, animals, or birds — the truck must be alone in the frame. Do not add any figures." three times if needed |
 | Text appearing where it shouldn't | Say "no readable text — any signs or papers should show indecipherable hand-painted shapes only" |
-| Style drift across batch | Always upload your approved NEW-register pilot-01 as reference (NOT the old shipped title-cover/pilot — those are gouache), always send the §5 style-lock preface, always stay in the same conversation for a whole batch |
+| Style drift across batch | Always upload your approved pilot-01 as reference, always send the §5 style-lock preface, always stay in the same conversation for a whole batch |
 | Hero faces inconsistent across batch | After hero-01 generates well, upload IT also as a second reference for the rest of the heroes batch |
 | Aspect ratio not respected | Re-send the prompt with the aspect line at the very TOP, then re-state at the bottom: "Final reminder: wide landscape composition, about 20:9 ratio, with the figure within the central 16:9 safe zone, NOT a portrait crop" |
 | Image too dark / desaturated overall | Drop the words "shadow" and "dust" by one each; emphasise "warm afternoon light" |
@@ -802,9 +788,8 @@ as the base (leave the desk surface clear), and make the interactive objects (st
 cards, radios, laptop, contracts, map pins) into separate transparent overlays.
 Production deferred until the Phase 1 hub ships (`DESK-HUB.md §3`).
 
-> ⚠️ Reference image: attach your approved NEW-register (ink-and-watercolor) image —
-> NOT the old `title-cover.webp` (that's the previous gouache register and would drag
-> these backwards). And there is no `desk-phase1-*` — Phase 1 IS the bedroom hub above.
+> Reference image: attach your approved ink-and-watercolor image at the start of the
+> batch. And there is no `desk-phase1-*` -- Phase 1 IS the bedroom hub above.
 
 ### The Phase 2-4 room briefs
 
@@ -853,8 +838,7 @@ Cypress green accent appears in the manager portrait frames and on the legal-doc
 These are the screens you reach by tapping a hub object: the backpack interior (tap
 the pack), client people-cards (tap the corkboard), the day-report surfaces (shown
 after a trip). Style: the **§3 ink-and-watercolor anchor**. Reference image: your
-approved new-register image, attached at the start of the batch (NOT the old
-gouache title-cover/pilot).
+approved ink-and-watercolor image, attached at the start of the batch.
 
 ### Tier I — Backpack screen (3)
 
@@ -864,7 +848,7 @@ Save to: `assets/backpack/backpack-phase1.webp`
 ```
 [§3 style anchor — verbatim]
 
-Frame in landscape orientation, about 4:3 ratio.
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: A small worn outdoor backpack, about 40 litres, laid open on a wooden taverna table from the same kitchen as the reference image. The pack is dusty olive canvas with leather straps, faded from sun and salt. Inside are four roughly defined packing slots, partially packed: a water bottle in one, a small bag of trail snacks in another, a thin first-aid pouch, a folded paper map. A pencil and a small notebook sit beside the pack. The kitchen window is visible in the background showing the harbour at evening. This is the solo guide's pack — small, well-worn, every slot mattering.
 
@@ -939,7 +923,7 @@ Save to: `assets/reports/report-blank.webp`
 ```
 [§3 style anchor — verbatim, no seasonal accent on this one]
 
-Frame in landscape orientation, about 4:3 ratio.
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: A clean ledger page with faint horizontal blue rules, viewed slightly from above on the same warm wooden taverna table from the reference image. A worn pencil rests at the margin. The corner of the page is slightly turned. A small wax stamp impression sits at the bottom right corner in a faint terra colour. The page is mostly empty — this is the canvas the day's verdict will be typed onto. Warm window light from the upper left.
 
@@ -952,7 +936,7 @@ Save to: `assets/reports/report-review-good.webp`
 ```
 [§3 style anchor — verbatim]
 
-Frame in landscape orientation, about 4:3 ratio.
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: A small printed Google / TripAdvisor-style review card lying on the wooden table from the reference image, viewed slightly from above. The card shows a row of five filled stars (★★★★★) in noon-gold, a one-line illegible headline shape suggesting praise, a short paragraph of illegible-but-readable-shape body text below, and a small reviewer-name footer. Warm dusk light catching the gold of the stars. The card looks like it was printed from a printer onto cardstock.
 
@@ -965,7 +949,7 @@ Save to: `assets/reports/report-review-bad.webp`
 ```
 [§3 style anchor — verbatim, with rain grey as the seasonal accent and the palette pulled down a notch in saturation]
 
-Frame in landscape orientation, about 4:3 ratio.
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: A small printed Google / TripAdvisor-style review card lying on the wooden table from the reference image, viewed slightly from above. The card shows three filled stars and two empty stars (★★★☆☆), a short headline shape suggesting disappointment, an illegible body paragraph below, and a small reviewer footer. There is a faint ink smudge along the lower edge and a fingerprint mark in one corner — the day didn't go well. Slightly cooler and more desaturated than the good-review variant, light coming through cloud.
 
@@ -978,7 +962,7 @@ Save to: `assets/reports/report-gear-damage.webp`
 ```
 [§3 style anchor — verbatim, with rain grey as the seasonal accent]
 
-Frame in landscape orientation, about 4:3 ratio.
+Frame as a wide landscape composition, about 20:9 ratio (modern phone landscape) -- the document/object lying on a surface, with the document itself in the central 16:9 safe zone and the surrounding desk surface (wood grain, the corner of a notebook, a pencil, soft paper shadow) filling out to 20:9.
 
 Subject: A small notation page from the gear logbook, lying on the wooden table from the reference image, viewed slightly from above. On the page: a pencil sketch of a snapped trekking pole at the centre, a wear-score margin with check-boxes (handwritten ticks against a small list), and at the bottom a small red "NEEDS REPLACEMENT" rubber-stamp impression. A pencil rests alongside. The light is more diffuse — cloudy day mood, suggesting the trip went hard.
 
