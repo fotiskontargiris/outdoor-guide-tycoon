@@ -343,7 +343,7 @@ Greek man, adult realistic proportions, illustrated not photographic. Do not inc
 
 Open a new chat, attach `pilot-01-hero-alani` (or `pilot-02-place-voidokilia` if you prefer
 a place reference), send the style‑lock preface from §5, then send each place prompt. Each
-is **wide landscape, about 8:5 ratio**.
+is **wide landscape, about 20:9 ratio (modern phone landscape), with the recognisable place silhouette kept in the central 16:9 safe zone**.
 
 ### `place-kalamata` — Kalamata harbour · noon‑gold accent
 Save to: `assets/places/place-kalamata.png`
@@ -351,7 +351,7 @@ Save to: `assets/places/place-kalamata.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is noon gold.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The stone quay harbour of Kalamata in southern Greece at golden afternoon. A curved line of small waterfront cafés with chairs out on the pavement. A single working caïque (Greek fishing boat) tied up against the quay. The distant inland silhouette of the Taygetos mountain range fading purple-blue in the far background. Two small human-scale figures walking the quay mid-frame. A café table with two coffee glasses in the near right corner. Mid-distance landscape composition. The noon-gold accent appears only on the boat's mast and on a cluster of the café tablecloths.
 
@@ -364,7 +364,7 @@ Save to: `assets/places/place-polylimnio.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is cypress green-black.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The Polylimnio tiered waterfall pools in Messinia, southern Greece. Multiple stacked emerald pools cascade down slick green stone in deep forested shade, viewed from mid-slope above one of the lower pools. Dense fig and plane tree canopy above. One single human-scale figure swimming in the lowest pool for scale. Dappled forest light. Cool water atmosphere. Mid-distance landscape composition. The cypress-green accent appears only in the deepest forest shadows and in the pool depths.
 
@@ -379,7 +379,7 @@ Save to: `assets/places/place-pylos-methoni.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is noon gold.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The Venetian fortress of Methoni in Messinia, southern Greece, seen from sea level. A low promontory of weathered stone walls and a single square tower projects into the deep Ionian. A small mainland Greek fishing harbour at the foot of the fortress, with two or three caïques tied up. The bay opens wide to the right. Late afternoon warm light. Two small figures fishing from the harbour mole for scale. Mid-distance landscape composition. The noon-gold accent appears only on the fortress wall at golden hour and on the boat masts.
 
@@ -392,7 +392,7 @@ Save to: `assets/places/place-mavromati.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is noon gold.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The archaeological site of Ancient Messene at Mavromati village in the Peloponnese, Greece. Broken Greek classical columns and tumbled stone blocks under low golden-hour afternoon light. The village spring at the edge of the site with a small stone basin. One small human-scale figure standing among the columns for scale. Ancient olive trees framing the scene. Open countryside opening toward distant mountains. The deep timelessness of a Greek archaeological site, but rendered as a quiet illustrated scene — not fantasy ruins. The noon-gold accent appears only on the column tops catching the golden-hour light.
 
@@ -405,7 +405,7 @@ Save to: `assets/places/place-neda.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is cypress green-black.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The Neda gorge in the Peloponnese, Greece. Narrow ribs of cold grey limestone close in to form a deep slot canyon. A single emerald pool sits at the canyon floor below. A hairline human figure traverses the high rim for scale. Deep cool blue-green shade with one shaft of warm light reaching the pool. Mossy wet rock walls. The sound of water implied. Vertical, narrow, mid-distance landscape composition. The cypress-green accent appears only in the deepest canyon shadows and on the mossy rock.
 
@@ -418,7 +418,7 @@ Save to: `assets/places/place-lousios.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is cypress green-black.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The Lousios gorge in Arcadia, mainland Greece. A forested gorge with a small medieval Byzantine Orthodox monastery clinging to a ledge midway up the cliff face. A wooden suspension bridge crosses the gorge at the bottom over a green river. Two small human-scale figures cross the bridge for scale. Dense fir and chestnut canopy on both sides. The deep cool shadow of the gorge below. The monastery is painted in white-and-red with a small dome roof. Mid-distance landscape composition. The cypress-green accent appears only in the gorge shadows and in the forest depth.
 
@@ -431,7 +431,7 @@ Save to: `assets/places/place-taygetos.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is noon gold.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The alpine summit ridge of Mount Taygetos in the Peloponnese, Greece, in mid-summer with streaks of unmelted snow in the north-facing couloirs. The tiny stone cell-chapel of Profitis Ilias is silhouetted on the highest peak. A single human-scale figure stands on the ridge below the summit for scale. Cold, thin, clear high-altitude light. The Peloponnese opens below in fading olive and sea blue toward the horizon. Austere alpine atmosphere. Mid-distance landscape composition. The noon-gold accent appears only on the chapel walls catching altitude light.
 
@@ -444,7 +444,7 @@ Save to: `assets/places/place-mani.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is rain grey.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The Mani peninsula in the southern Peloponnese, Greece. A cluster of austere slate-grey stone tower houses (the famous Maniote pyrgoi defensive towers) rises vertically up a barren rocky hillside. Salt-scoured prickly scrub and aloe in the foreground. An empty unpaved road bends south toward distant Cape Tainaron. No trees, no greenery — this is the dry, hard, austere Mani. Hard afternoon light. The sea barely visible far right as a thin blue band. One single human-scale figure walks the road for scale. The wind in the scrub is implied by a slightly sloped horizon. Mid-distance landscape composition. The rain-grey accent appears only in the tower stone and in the road.
 
@@ -457,7 +457,7 @@ Save to: `assets/places/place-kardamyli.png`
 ```
 Same ink-and-watercolor travel style as the reference image — wet translucent washes, loose hand-drawn ink line in warm sepia-black, paper showing through where the wash didn't reach, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is noon gold.
 
-Frame in wide landscape orientation (about 8:5 ratio).
+Frame in wide landscape orientation, about 20:9 ratio (modern phone landscape). Keep the recognisable place silhouette within the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop.
 
 Subject: The small stone fishing harbour of Kardamyli on the Messinian Mani coast, Greece. Ancient plane trees shade a stone-paved waterfront. A stone-built quay with one or two caïques tied up. The old cobbled mule path turns uphill behind the village toward the Taygetos foothills. Two figures share afternoon coffee at a café table under the plane trees. Warm late golden light. Mid-distance landscape composition. The noon-gold accent appears only on the boat masts and on the café lanterns above the tables.
 

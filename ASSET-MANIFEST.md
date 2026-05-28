@@ -144,7 +144,7 @@ backdrops.
 
 ## 7. Tier E — Places (10 silhouettes)
 
-One locked silhouette per major place. **Landscape crop**, 8:5 (e.g. 1024 × 640). These are
+One locked silhouette per major place. **Wide landscape**, 20:9 (e.g. 1920 × 864), with the recognisable place silhouette kept in the central 16:9 safe zone so it survives both the full-screen trailhead and the narrower route-card crop. These are
 the route‑card headers and the menu transition frames; each place earns *one* composition
 that recurs across menu / route card / trip header so the player learns the place by shape.
 
@@ -203,7 +203,7 @@ SVG. Total `assets/` is **~22 MB** (down from ~115 MB, a 93 MB save).
 | B — Heroes | Wide landscape composition | WebP | 1920 × 864 (20:9; safe zone 16:9) | full-bleed scene-full | figure-left, context-right; current 720×1082 portrait shipped under old spec |
 | C — Disciplines | Glyph | WebP | 96 × 96 | 36px display | opaque, was wildly oversized at 1254×1254 |
 | D — Weather | Glyph | WebP | 96 × 96 | 22px display | opaque, same story |
-| E — Places | Silhouette | WebP | ~1586 × ~1005 (native) | max 560px | opaque |
+| E — Places | Silhouette | WebP | 1920 × 864 (20:9; safe zone 16:9) | full-bleed scene / route card | opaque; current ~1586×1005 shipped under old 8:5-ish spec |
 | F — Scenes | Set piece | WebP | ~1586 × ~992 (native) | max 720px | opaque |
 | G — Chrome | Flat lay | WebP | 1200 × 900 | max 480px | opaque |
 
