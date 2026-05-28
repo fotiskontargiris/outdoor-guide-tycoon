@@ -445,6 +445,93 @@
     padding:0 16px;
   }
 
+  /* SCENE-FULL — fullscreen body-level overlay for any scene that
+     wants the cover-image-fills-everything treatment (kitchen, etc.).
+     Same architecture as .title-full: bypasses .scene's containment
+     by sitting at body level. Layout: cover image fills bg; day-tag
+     pinned top-center; speech bubbles overlay; discrete narrator +
+     controls panel pinned to lower portion of screen. */
+  .scene-full{
+    position:fixed; inset:0; z-index:100;
+    overflow:hidden;
+    background:var(--bg);
+  }
+  .scene-full-bg{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    z-index:0;
+  }
+  .scene-full-tag{
+    position:absolute; top:18px; left:0; right:0;
+    z-index:3; text-align:center;
+    font-family:'Spline Sans Mono',monospace;
+    font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:rgba(238,229,210,.92);
+    text-shadow:0 1px 4px rgba(0,0,0,.75);
+    pointer-events:none;
+    padding:0 70px;  /* keep clear of hamburger top-right */
+  }
+  /* Bubbles inside scene-full sit above the bg, below the panel */
+  .scene-full .bubble{z-index:3;}
+  /* Discrete narrator + controls panel pinned to lower portion */
+  .scene-full-panel{
+    position:absolute;
+    left:50%; bottom:20px;
+    transform:translateX(-50%);
+    z-index:4;
+    width:calc(100% - 40px);
+    max-width:720px;
+    background:rgba(238,229,210,.93);
+    border:1.5px solid #1B1B1F;
+    border-radius:12px;
+    padding:14px 18px;
+    box-shadow:0 6px 26px rgba(0,0,0,.5);
+  }
+  .scene-narrator{
+    font-family:'Fraunces',serif; font-style:italic;
+    font-size:13px; line-height:1.5;
+    color:#1B1B1F;
+    margin:0;
+  }
+  .scene-input{
+    display:flex; align-items:center;
+    gap:10px; flex-wrap:wrap;
+    margin-top:12px; padding-top:12px;
+    border-top:1px solid rgba(27,27,31,.18);
+  }
+  .scene-input-label{
+    font-family:'Spline Sans Mono',monospace;
+    font-size:9px; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(27,27,31,.55);
+    flex:none;
+  }
+  .scene-input input{
+    flex:1; min-width:140px;
+    padding:9px 12px;
+    border-radius:8px;
+    border:1px solid rgba(27,27,31,.4);
+    background:rgba(255,255,255,.65);
+    color:#1B1B1F;
+    font-family:'Fraunces',serif; font-size:15px;
+    outline:none;
+  }
+  .scene-input input:focus{
+    border-color:var(--terra);
+    background:rgba(255,255,255,.92);
+  }
+  .scene-input .scene-btn{
+    flex:none;
+    background:#1B1B1F; color:#EEE5D2;
+    border:none; border-radius:8px;
+    padding:10px 16px;
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px;
+    cursor:pointer;
+    transition:background .15s, transform .15s;
+  }
+  .scene-input .scene-btn:hover{background:#000; transform:translateY(-1px);}
+  .scene-input .scene-btn:active{transform:translateY(0);}
+
   /* Scene stage — persistent scene image with characters speaking in
      bubbles overlaid. See ART-DIRECTION.md §12. The image holds across
      beats of a conversation; bubbles replace per beat. */
@@ -1015,6 +1102,10 @@ function removeTitleOverlay(){
   const ex = document.getElementById('titleOverlay');
   if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
 }
+function removeSceneOverlay(){
+  const ex = document.getElementById('sceneOverlay');
+  if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
+}
 function renderTitle(save, loading){
   // Body-level overlay — the .scene parent has backdrop-filter:blur
   // which creates a positioning context that traps position:fixed
@@ -1087,22 +1178,40 @@ async function doContinue(){
    = hero pick → the pitch), then renderSetup() handles the practical picks
    (discipline / kit / loan) under the cover of stepping out into the panigíri. */
 function renderKitchen(){
-  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('Home, and the smell of something browning');
-  // Theatrical 2-col: kitchen scene stage on the left (image + speech
-  // bubble), narrator + name input + button on the right.
-  const stage = sceneStage('scene-kitchen', [
-    {text:'Sit, sit. You’ve gotten thin — what did they do to you out there.', where:'right-top'},
-  ], { alt:'Your mother’s kitchen in Kalamata' });
-  const panel = `<p class="narrator" style="text-align:left;margin-top:0">The bus smelled of diesel and someone’s gardenia. The oilcloth has the same lemons on it. The good plates — the ones for guests — are out, which is how you know she has decided you are a guest now. Or, worse, a patient. Nothing she says tonight will be a question.</p>
-    <label style="display:block;margin-top:12px;font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">What does she call you?</label>
-    <input id="gname" type="text" maxlength="18" value="${(pendingName||'').replace(/[<>"]/g,'')}" placeholder="e.g. Alexios"
-      style="width:100%;margin:6px 0 4px;padding:12px 14px;border-radius:11px;border:1px solid var(--edge);background:rgba(0,0,0,.18);color:var(--ink);font-family:'Fraunces',serif;font-size:18px;outline:none">
-    <div class="actionbar"><button class="go" onclick="kitchenSit()">Sit down</button></div>`;
-  setScene(`<div class="day-tag" style="color:var(--gold)">Kalamata · your mother’s kitchen</div>
-    <div class="two-col"><div class="col-stage">${stage}</div><div class="col-panel">${panel}</div></div>`);
+  // Body-level fullscreen overlay (same pattern as title). Image fills
+  // the viewport edge-to-edge; day-tag pinned top; mum's speech bubble
+  // overlays; narrator + name input + Sit-down button collapse into a
+  // discrete panel at the lower portion of the screen.
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('');
+  removeTitleOverlay();
+  removeSceneOverlay();
+  const cover = ASSETS['scene-kitchen']
+    ? `<img class="scene-full-bg" src="${ASSETS['scene-kitchen']}" alt="Your mother\u2019s kitchen in Kalamata">`
+    : '';
+  const tag = `<div class="scene-full-tag">Kalamata \u00b7 your mother\u2019s kitchen</div>`;
+  const bubble = `<div class="bubble right-top">Sit, sit. You\u2019ve gotten thin \u2014 what did they do to you out there.</div>`;
+  const safeName = (pendingName||'').replace(/[<>"]/g,'');
+  const panel = `<div class="scene-full-panel">
+    <p class="scene-narrator">The bus smelled of diesel and someone\u2019s gardenia. The oilcloth has the same lemons on it. The good plates \u2014 the ones for guests \u2014 are out, which is how you know she has decided you are a guest now. Or, worse, a patient. Nothing she says tonight will be a question.</p>
+    <div class="scene-input">
+      <span class="scene-input-label">What does she call you?</span>
+      <input id="gname" type="text" maxlength="18" value="${safeName}" placeholder="e.g. Alexios">
+      <button class="scene-btn" onclick="kitchenSit()">Sit down \u25b8</button>
+    </div>
+  </div>`;
+  if(typeof document !== 'undefined' && typeof document.createElement === 'function' && document.body && document.body.appendChild){
+    const overlay = document.createElement('div');
+    overlay.id = 'sceneOverlay';
+    overlay.className = 'scene-full';
+    overlay.innerHTML = `${cover}${tag}${bubble}${panel}`;
+    document.body.appendChild(overlay);
+    setScene('');
+  } else {
+    setScene(`<div class="scene-full">${cover}${tag}${bubble}${panel}</div>`);
+  }
 }
 function kitchenCaptureName(){ const el=$('gname'); if(el&&typeof el.value==='string') pendingName=el.value.replace(/[<>"]/g,'').slice(0,18); }
-function kitchenSit(){ kitchenCaptureName(); renderKitchenDish(); }
+function kitchenSit(){ kitchenCaptureName(); removeSceneOverlay(); renderKitchenDish(); }
 function renderKitchenDish(){
   const opts=DISHES.map(d=>`<button class="opt ${pickedDish===d.id?'primary':''}" onclick="kitchenDish('${d.id}')">
     <span class="mark">${pickedDish===d.id?'✓':'·'}</span><span class="b-main">${d.name}<span class="b-sub">${d.sub} — <em>${d.tail}</em></span></span></button>`).join('');
