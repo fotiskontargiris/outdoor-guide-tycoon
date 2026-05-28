@@ -173,16 +173,17 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
 - `BUILD-PHASE-1.md` — the implementation brief: read order, first vertical slice, guardrails.
 
 **The look**
-- `ART-DIRECTION.md` — the canonical visual doctrine. **Style register stays
-  "editorial gouache + woodcut bones"** — locked at launch, never changed. The 2026-05-28
-  evolution added the **"changing guide's desk"** metaphor (what we draw + five locked UI
-  surfaces: Desk · Route card · Backpack · People card · Day report; the desk evolves
-  across phases P1 kitchen → P4 regional board) and the **speech‑bubble flow** pattern
-  (how scenes are used: persistent scene image with overlaid character bubbles, narrator
-  italic below, choices below that; see §12). Canonical reference: *The First Booking* at
-  `assets/title/title-cover.webp` — same editorial gouache + woodcut bones style, just
-  applied to a desk subject. Palette (terra · olive · sea · bone · ink + one seasonal
-  accent). Pair‑read with `LANGUAGE.md`.
+- `ART-DIRECTION.md` — the canonical visual doctrine. **Style register reset 2026-05-28
+  to "ink‑and‑watercolor travel"** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
+  energy — wet translucent washes, loose hand‑drawn ink line, paper‑white showing through).
+  Replaces the earlier "editorial gouache + woodcut bones" register; the 43 assets shipped
+  under it remain in‑game and work, with a re‑generation pass queued. The **"changing
+  guide's desk"** metaphor (what we draw + five locked UI surfaces: Desk · Route card ·
+  Backpack · People card · Day report; the desk evolves across phases P1 kitchen → P4
+  regional board) and the **speech‑bubble flow** pattern (persistent scene image with
+  overlaid character bubbles, narrator italic below, choices below that; see §12) are
+  unchanged. Palette (terra · olive · sea · bone · ink + one seasonal accent) is now
+  expressed as wet washes. Pair‑read with `LANGUAGE.md`.
 - `ASSET-MANIFEST.md` — the bridge from doctrine to production. Every asset with a stable id,
   filename, subject, composition hook, and status. Tiered A–G; pilot trio defined to prove
   the style across all three registers before scaling. Source of truth for what to make next,

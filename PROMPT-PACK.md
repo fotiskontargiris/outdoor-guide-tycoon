@@ -6,14 +6,17 @@ uses). No `--` parameters, no special syntax — paste the whole block into a ch
 get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) and
 `ASSET-MANIFEST.md` (the asset list and filenames).
 
-> **Doctrine version note (2026-05-28)**: the doctrine evolved to add the **desk
-> metaphor** (what we draw) and the **speech‑bubble flow** (how scenes are used). The
-> **style register** stays *"editorial gouache + woodcut bones"* — never changed since
-> launch. Every prompt below uses the same §3 style anchor; new‑tier subjects (Tier H/I/J/K
-> in §14) just apply that style to new compositional subjects (desks, backpacks, clients,
-> reports). The First Booking (`assets/title/title-cover.webp`) is the *worked example of
-> the doctrine applied to a desk subject*, in the same editorial gouache + woodcut bones
-> style as the heroes / places / scenes already shipped.
+> **Doctrine version note (2026-05-28)**: the **style register was reset** to
+> **ink‑and‑watercolor travel** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
+> energy) — replacing the earlier "editorial gouache + woodcut bones" register. Every
+> prompt below uses the new §3 anchor automatically. The desk metaphor (what we draw),
+> the five UI surfaces, the bubble‑flow pattern, the five‑colour palette, and the Greek
+> specificity all stay; what changes is the rendering register. **The 43 assets already
+> shipped were generated under the earlier register and remain in‑game** — they work
+> visually for now and can be re‑generated against the new register when time allows.
+> The First Booking (`assets/title/title-cover.webp`) is the worked example of the
+> earlier register; a new cover in the watercolor register would be the first job of a
+> re‑generation pass.
 
 > **The single biggest consistency lever**: once *The First Booking* (`title-cover.webp`)
 > is your reference, **start a new ChatGPT conversation** for each batch, **upload that
@@ -62,25 +65,35 @@ length is the cost of getting exactly what you want.
 
 ---
 
-## 3. The locked style anchor — *editorial gouache + woodcut bones* (the one and only)
+## 3. The locked style anchor — *ink‑and‑watercolor travel*
 
-Every prompt opens with this paragraph, **verbatim**. The style register has been locked
-since launch and has not changed. The doctrine evolution of 2026-05-28 added the *desk
-metaphor* (what we draw) and the *speech‑bubble flow* (how scenes are used) — neither
-touched *how* images are rendered.
+Every prompt opens with this paragraph, **verbatim**. The style register was reset on
+2026-05-28 from the earlier *"editorial gouache + woodcut bones"* direction to
+**ink‑and‑watercolor travel** — Moleskine‑sketchbook / Mediterranean travel‑guidebook
+energy. The desk metaphor, the five UI surfaces, the bubble‑flow pattern, the
+five‑colour palette, the Greek specificity all stay; what changes is *how the pigment
+sits on paper*.
 
-> *Render this as an editorial Mediterranean illustration in a matte gouache style — opaque
-> chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use
-> woodcut‑style ink linework: confident ~2px lines on foreground figures, hairline ~1px on
-> mid‑ground structures, and no outlines at all on landscape masses (hills, sea, sky read
-> as flat colour blocks only). Flat lighting from a single warm sun direction; shadows are
-> single blocks of a darker neighbour hue, never pure black. Use only this limited
-> five‑colour palette: warm terracotta clay, sun‑bleached olive sage, deep Ionian sea blue,
-> warm limestone bone cream, and warm near‑black ink — plus exactly one seasonal accent
-> specified per asset. Hand‑made and opinionated, in the spirit of Edward Bawden travel
-> posters, Hugo Pratt's Mediterranean comics, mid‑century New Yorker editorial
-> illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT
-> photographic, NOT 3D rendered, NOT a vector flat‑design graphic.*
+> *Render this as an ink‑and‑watercolor travel illustration — the visual register of a
+> Moleskine travel‑journal page or a mid‑century Mediterranean travel‑guidebook plate.
+> Wet, translucent watercolor washes with natural soft edges, gentle bleeds at wash
+> boundaries, and visible granulated pigment pooling where the brush lifted. Loose
+> hand‑drawn ink line work in warm sepia‑black, made with a fountain pen on paper —
+> confident but slightly wobbly, with varying line weight from the pen's natural pressure;
+> never a uniform machine‑precise stroke. White‑of‑paper gaps where the watercolor wash
+> didn't reach: the warm limestone bone‑cream paper surface is part of the image, not a
+> continuous fill, and several passages of every frame are simply the paper showing
+> through. Limited five‑colour palette, each colour applied as a wet wash (translucent,
+> not opaque): warm terracotta clay, sun‑bleached olive sage, deep Ionian sea blue, warm
+> limestone bone (the paper itself), and warm near‑black ink for the line work — plus
+> exactly one seasonal accent specified per asset, also as a wash. Bright Mediterranean
+> afternoon light: warm bone‑cream paper holds the bright passages; a single saturated
+> wash holds the shadow. Loose, hand‑made, observed sketch energy — opinionated but
+> never tightly rendered or overworked. In the spirit of Liz Steel's travel watercolors,
+> Lapin's Mediterranean sketchbooks, David Hockney's travel sketches, and mid‑century
+> European travel‑guidebook illustration. This is INK and WATERCOLOR on paper — NOT
+> gouache, NOT digital flat‑design, NOT a vector graphic, NOT photographic, NOT 3D
+> rendered, NOT a cartoon, NOT anime, NOT chibi, NOT a CG render.*
 
 ---
 

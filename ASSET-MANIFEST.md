@@ -15,11 +15,20 @@ it.* It does not relitigate style.
 **43 assets shipped** under the earlier *"editorial gouache + woodcut bones"* direction.
 They live in‑game and work. Folders + filenames are stable.
 
-**The doctrine evolved** on 2026-05-28 — `ART-DIRECTION.md` adds the **"changing guide's
-desk"** metaphor (what we draw) and the **speech‑bubble flow** pattern (how scenes are
-used). The **style register** stays *"editorial gouache + woodcut bones"* — unchanged
-since launch. The canonical reference is *The First Booking* (`assets/title/title-cover.webp`),
-in that same style applied to a desk subject. Every new asset is judged against it.
+**The doctrine evolved** on 2026-05-28 in two passes:
+1. **Desk metaphor + speech‑bubble flow** (what we draw + how scenes are used) — see
+   `ART-DIRECTION.md §1-3, §12`.
+2. **Style register reset** from the earlier "editorial gouache + woodcut bones" to
+   **"ink‑and‑watercolor travel"** (Moleskine‑sketchbook / Mediterranean travel‑guidebook
+   energy — wet translucent washes, loose hand‑drawn ink, paper‑white showing through).
+   See `ART-DIRECTION.md §4` and `PROMPT-PACK.md §3`.
+
+The 43 shipped assets (heroes, places, scenes, chrome, glyphs, title cover) were
+generated under the earlier gouache + woodcut register. They remain in‑game and work
+visually for now. A **re‑generation pass** against the new ink‑and‑watercolor register
+is queued; the new First Booking would be the first job, becoming the new canonical
+reference image. The current `title-cover.webp` is the worked example of the *previous*
+register.
 
 **The remaining production** (Phases ↓) covers the surfaces the doctrine added that
 weren't shipped yet — Phase 2/3/4 desks, the backpack screen variants, client cards, and

@@ -9,14 +9,15 @@ LANGUAGE sets the voice; ART-DIRECTION sets the surface. They are written to be 
 referenced: prose and picture written to feel like the same world.
 
 > **Doctrine versioning**:
-> - The **style register** is and remains **"editorial Mediterranean — gouache colour,
->   woodcut bones"** (locked at launch; never changed). Every shipped asset and every new
->   asset uses the same matte gouache surface + woodcut linework + flat lighting + five‑
->   colour palette. See §4 below.
-> - The **visual metaphor** evolved on 2026-05-28 to **"the changing guide's desk"** with
->   five locked UI surfaces. That governs *what we draw and where it sits*. See §1–§3.
-> - The **scene‑use pattern** evolved on the same date to **persistent scene image with
->   overlaid speech bubbles** for any moment a character speaks. See §12.
+> - The **style register** was **reset on 2026-05-28** from the earlier *"editorial
+>   gouache + woodcut bones"* to **"ink‑and‑watercolor travel"** — Moleskine‑sketchbook
+>   / Mediterranean travel‑guidebook energy. Wet translucent washes, loose hand‑drawn
+>   ink line, paper‑white showing through. See §4 below. The 43 assets shipped under
+>   the earlier register remain in‑game; new generations follow the new doctrine.
+> - The **visual metaphor** is **"the changing guide's desk"** with five locked UI
+>   surfaces. That governs *what we draw and where it sits*. See §1–§3. Unchanged.
+> - The **scene‑use pattern** is **persistent scene image with overlaid speech bubbles**
+>   for any moment a character speaks. See §12. Unchanged.
 
 ---
 
@@ -156,34 +157,44 @@ This is where `LANGUAGE.md §3 Verdicts, not metrics` shows up most.
 
 ---
 
-## 4. Style register — *editorial gouache + woodcut bones* (locked at launch — unchanged)
+## 4. Style register — *ink‑and‑watercolor travel* (reset 2026-05-28)
 
-The rendering register that has always governed how images are made, and continues to.
-The **desk metaphor** (§1–§3) changed *what we draw*; this section keeps locking *how
-we draw it*.
+The rendering register governing how every new image is made.
+Moleskine‑sketchbook / Mediterranean travel‑guidebook energy. The desk metaphor (§1–§3)
+governs *what we draw*; this section governs *how the pigment sits on paper*.
 
-- **Matte gouache surface** — opaque colour blocks, chalky paper texture, no gradients,
-  no airbrush, no drop shadow, no glow.
-- **Woodcut bones underneath.** Every silhouette reads at 24px. Confident ~2px line on
-  foreground figures, ~1.25px on mid‑ground structures, no outlines at all on landscape
-  masses (hills, sea, sky read as colour blocks only). The line is the spine; the colour
-  is the warmth. Reference family: A. Tassos folk woodcuts, Edward Bawden travel posters,
-  Hugo Pratt Mediterranean panels, mid‑century New Yorker editorial illustration.
-- **Flat lighting, directional shade.** Single warm sun source; shadows are single blocks
-  of a darker neighbour hue, never pure black.
-- **Limited five‑hue palette + one seasonal accent.** See §5.
-- **Hand‑made, opinionated, illustrated.** Never photographic, never 3D rendered, never
-  vector flat‑design.
+- **Wet, translucent watercolor washes.** Each of the five core hues is applied as a
+  WASH — translucent paint with natural soft edges, gentle bleed at wash boundaries,
+  granulated pigment pooling where the brush lifted. NOT opaque, NOT flat colour blocks,
+  NOT gradient‑rendered. The wash should look like it dried on paper, with all the
+  natural artifacts that implies.
+- **White‑of‑paper gaps.** The warm limestone bone‑cream isn't a paint — it's the
+  *paper itself*. Substantial passages of every frame are simply the paper showing
+  through, where the watercolor wash didn't reach. This is the single most identifying
+  visual feature of the register and the one most easily missed by AI generators.
+- **Loose hand‑drawn ink line work.** Made with a fountain pen on paper — warm
+  sepia‑black, confident but slightly wobbly, varying line weight from the pen's
+  natural pressure. Sketch energy. Never a uniform machine‑precise stroke; never a
+  woodcut bone.
+- **Bright Mediterranean afternoon light.** Warm bone‑cream paper holds the bright
+  passages; a single saturated wash holds the shadow. No drop shadows, no glow, no
+  airbrush, no airless flat colour, no digital gradient.
+- **Limited five‑hue palette + one seasonal accent.** Same hex values (§5); now
+  expressed as wet washes rather than opaque colour blocks.
+- **Hand‑made, observed, opinionated.** Sketched, not rendered. Loose, not tightly
+  finished. Travel‑journal energy, not editorial polish.
+- **Reference family**: Liz Steel's travel watercolors, Lapin's Mediterranean
+  sketchbooks, David Hockney's travel sketches, mid‑century European travel‑guidebook
+  illustration, Patrick Vale's ink work, mid‑century European travel posters that lean
+  watercolor (Stefan Mosca, Bernard Villemot).
 - **Stylised, never cute.** Adult proportions, never chibi / anime / mascot.
 - **Composed asymmetry, mid‑close camera.** Slightly off‑axis, not stagey symmetry.
 
-The **canonical reference image** is *The First Booking* (`assets/title/title-cover.webp`)
-— a kitchen table at dusk, foiled food parcel from mum, folded Messinia map, old phone
-with a `NEW BOOKING — Sea Kayaking — Voidokilia & the Lagoon` notification, coins,
-notebook, backpack strap, water bottle with a *Taygetos* sticker, Kalamáta olive tin, an
-open window onto the harbour at sunset. The image is in editorial gouache + woodcut
-bones, applied to the *desk subject* — same surface as the earlier hero and place
-batches, just a new compositional subject. Judge new assets against it.
+The 43 shipped assets (heroes, places, scenes, chrome, glyphs, title cover) are from
+the earlier **gouache + woodcut** register. They remain in‑game and work visually for
+now. A re‑generation pass against the new register is queued whenever Fotis returns
+to the asset work; the new First Booking would be the first job, becoming the new
+canonical reference image.
 
 ---
 
@@ -334,7 +345,7 @@ These are settled. Do not reopen without flagging.
 - **Visual metaphor**: *the changing guide's desk.* Every UI surface is something on or
   about the desk.
 - **Core sentence**: *You are at the table where outdoor life becomes a business.*
-- **Style register**: *editorial gouache + woodcut bones.* Locked at launch, unchanged. Warm Mediterranean. Paper, sun,
+- **Style register**: *ink‑and‑watercolor travel.* Reset 2026-05-28 from the earlier gouache + woodcut register. Wet washes, paper‑white showing through, loose ink line. Warm Mediterranean. Paper, sun,
   sea, stone, old gear, warm shadows. Closer to indie‑game editorial illustration than
   to photographic, vector, 3D, or cartoon.
 - **Canonical reference image**: *The First Booking* at `assets/title/title-cover.webp`.
@@ -420,10 +431,29 @@ Things that have been tried in adjacent genres and would visibly clash here.
   hues no one chose, melted faces. If a frame looks like prompt output, it does not ship.
 - **Cute weather characters.** Smiling clouds, winking suns, sad‑face rain. The weather
   is a *force*.
-- **Drop shadows, gradients, glow, motion FX.** Depth is geometry.
+- **Drop shadows, gradients, glow, motion FX.** Depth is paper‑and‑pigment, not
+  computed effects.
 - **Emoji.** See `LANGUAGE.md §5`.
 - **Decorative ornament.** Floral borders, evil‑eye motifs as spacers, ouzo‑bottle
   filigree. Every element does where/who/what or it isn't in the frame.
+
+**Watercolor‑specific anti‑patterns** (added with the 2026-05-28 style reset):
+
+- **Opaque flat colour.** If every passage is solid fill, the watercolor language is
+  lost. Some passages MUST be white‑of‑paper.
+- **Digital gradient washes.** A wash should look like wet pigment drying on paper —
+  granulation, soft bleed at the edge — not like a Photoshop gradient.
+- **Tight, photo‑realistic rendering.** Travel sketches are *loose*. Over‑rendering
+  reads as "watercolor‑style 3D" — the worst of both worlds.
+- **Muddy, overworked washes.** Three layers of brown mixed wet‑on‑wet. Should always
+  read as clear, translucent, one or two confident strokes.
+- **Uniform line weight.** Pen pressure varies; a fountain pen line has thicker and
+  thinner moments. A uniform 2px CAD stroke kills the hand‑made energy.
+- **Picture‑book illustration.** Soft, rounded, sweet, child‑facing. We're adult
+  travel illustration, not bedtime story.
+- **Generic "watercolor filter" look.** AI generators often produce a tinted‑with‑
+  watercolor‑texture image rather than a real watercolor — recognisably digital. The
+  reference family in §4 is the corrective.
 
 ---
 
@@ -510,7 +540,8 @@ If the new picture has **floating elements** where the reference has objects on 
 If the new picture is **generic Mediterranean** where the reference is *Messinia* — wrong.
 If the new picture is **clean dashboard** where the reference is *paper, dust, an open window* — wrong.
 
-**The compass**: editorial gouache + woodcut bones, on a real surface, in Messinia, with
-real objects doing real work. The desk. Warm. Hand‑made. Mediterranean. The world is
-*outside* through a window the whole time. Characters speak in bubbles inside the scene;
-the narrator stays quiet underneath in italic.
+**The compass**: ink‑and‑watercolor travel, on a real surface, in Messinia, with real
+objects doing real work. The desk. Warm. Wet pigment on bone‑cream paper, fountain‑pen
+line in warm sepia‑black, paper showing through. Hand‑made. Mediterranean. Sketched,
+not rendered. The world is *outside* through a window the whole time. Characters speak
+in bubbles inside the scene; the narrator stays quiet underneath in italic.
