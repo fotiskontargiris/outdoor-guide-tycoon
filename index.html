@@ -450,11 +450,18 @@
      Same architecture as .title-full: bypasses .scene's containment
      by sitting at body level. Layout: cover image fills bg; day-tag
      pinned top-center; speech bubbles overlay; discrete narrator +
-     controls panel pinned to lower portion of screen. */
+     controls panel pinned to lower portion of screen.
+     Fades in over 1.4s — combined with the story-screen's 1.2s fade-
+     out, gives a true crossfade transition from text → graphic. */
   .scene-full{
     position:fixed; inset:0; z-index:100;
     overflow:hidden;
     background:var(--bg);
+    animation:sceneFadeIn 1.4s ease-out both;
+  }
+  @keyframes sceneFadeIn{
+    from{opacity:0;}
+    to  {opacity:1;}
   }
   .scene-full-bg{
     position:absolute; inset:0;
