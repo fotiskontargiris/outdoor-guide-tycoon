@@ -384,6 +384,64 @@
   .art-glyph{display:inline-block; width:36px; height:36px; vertical-align:middle; margin-right:6px;}
   .art-glyph-sm{display:block; width:22px; height:22px; margin:4px auto 4px;}
 
+  /* TITLE SCREEN — full-bleed cover, two small centered buttons.
+     The cold-open intro already showed the wordmark / kicker /
+     verdict typography; this screen is mute on purpose — just the
+     desk image and "tap to begin." Cover fills the entire scene
+     area via object-fit:cover (crops to fit, no letterboxing). */
+  .title-full{
+    position:relative; flex:1; min-height:0;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    margin:-14px -18px -16px;  /* breaks out of .wrap padding so cover is true full-bleed */
+  }
+  .title-full-bg{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    z-index:0;
+  }
+  .title-full-controls{
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+    gap:10px;
+    width:100%; max-width:320px;
+    padding:0 16px;
+  }
+  .title-btn{
+    display:flex; align-items:center; gap:12px;
+    width:100%;
+    background:rgba(238,229,210,.94); color:#1B1B1F;
+    border:2px solid #1B1B1F; border-radius:12px;
+    padding:11px 16px;
+    font-family:'Fraunces',serif; font-weight:600; font-size:16px;
+    text-align:left; cursor:pointer;
+    box-shadow:0 4px 18px rgba(0,0,0,.35);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .title-btn:hover{transform:translateY(-1px); background:#EEE5D2;}
+  .title-btn:active{transform:translateY(0);}
+  .title-btn[disabled]{opacity:.45; cursor:not-allowed; transform:none;}
+  .title-btn .mark{
+    font-family:'Spline Sans Mono',monospace; font-size:14px;
+    color:var(--terra); flex:none; width:18px; text-align:center;
+  }
+  .title-btn .b-main{flex:1; line-height:1.15;}
+  .title-btn .b-sub{
+    display:block;
+    font-family:'Spline Sans Mono',monospace; font-size:9px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(27,27,31,.6); margin-top:3px; font-weight:500;
+  }
+  .title-footnote{
+    position:absolute; bottom:14px; left:0; right:0;
+    z-index:2; text-align:center;
+    font-family:'Spline Sans Mono',monospace; font-size:10px;
+    letter-spacing:.15em; color:rgba(238,229,210,.6);
+    text-shadow:0 1px 3px rgba(0,0,0,.6);
+    padding:0 16px;
+  }
+
   /* Scene stage — persistent scene image with characters speaking in
      bubbles overlaid. See ART-DIRECTION.md §12. The image holds across
      beats of a conversation; bubbles replace per beat. */
@@ -945,37 +1003,33 @@ async function clearSave(){
 
 async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
 function renderTitle(save, loading){
-  // Kicker moved onto the cover overlay; clear .sub so it doesn't
-  // duplicate the same line in the appbar above the cover.
+  // The cold-open intro (.intro-screen) already showed the wordmark,
+  // kicker, and verdict in big animated typography. This title screen
+  // is the SECOND beat — the cover image takes the whole canvas; the
+  // only thing on top is two small buttons centred. The image speaks.
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('');
-  const canCont=!!save && !loading;
-  const sub = loading?'Checking for a saved season…' : save?`Resume — Year ${save.S.year||1} · ${save.S.season==='winter'?'Winter planning':(save.S.seasonDay?summerDate(save.S.seasonDay):'Day '+save.S.day)}, ${save.S.phase===2?'a team to run':'building your name'}` : 'No saved season yet';
-  // New cover (The First Booking) is dense with narrative — overlaying
-  // type would compete with mum's note, the phone notification, the
-  // map. So: cover image leads, wordmark + kicker sit BELOW as a
-  // caption. Withholding copy below the wordmark — kitchen scene does
-  // the reveal.
-  const titleCover = imgFor('title-cover', {cls:'art art-title', alt:'The First Booking — a Kalamata kitchen table at dusk'});
-  const wordmarkHTML = `<div class="title-wm">
-    <div class="title-wm-kicker">A career in the outdoors, money, and minor catastrophes</div>
-    <div class="title-wm-main">Outdoor Guide Life</div>
-    <div class="title-wm-italic">or no Life</div>
+  const canCont = !!save && !loading;
+  const sub = loading
+    ? 'Checking for a saved season…'
+    : save
+      ? `Year ${save.S.year||1} · ${save.S.season==='winter'?'Winter planning':(save.S.seasonDay?summerDate(save.S.seasonDay):'Day '+save.S.day)}`
+      : 'A fresh start';
+  const cover = ASSETS['title-cover']
+    ? `<img class="title-full-bg" src="${ASSETS['title-cover']}" alt="The First Booking — a Kalamata kitchen table at dusk">`
+    : '';
+  const btn = (mark, main, subline, disabled, onclick) =>
+    `<button class="title-btn" ${disabled?'disabled':''} onclick="${disabled?'':onclick}">
+       <span class="mark">${mark}</span>
+       <span class="b-main">${main}<span class="b-sub">${subline}</span></span>
+     </button>`;
+  const controls = `<div class="title-full-controls">
+    ${btn('▸','Continue', sub, !canCont, 'continueGame()')}
+    ${btn('✦','New game','Home to Kalamata', false, 'startNewGame()')}
   </div>`;
-  // Theatrical 2-col title screen: cover left, wordmark + verdict + buttons right.
-  const leftCol = titleCover ? `<div class="title-block">${titleCover}</div>` : '';
-  const rightCol = `${wordmarkHTML}
-    <div class="day-tag" style="color:var(--gold);text-align:center;margin-top:8px">Right then</div>
-    <p class="verdict" style="text-align:center">All the necessary mistakes are still ahead of you.</p>
-    <div class="choices">
-      ${simpleOpt('▸','Continue', sub, !canCont, 'continueGame()')}
-      ${simpleOpt('✦','New game','Home to Kalamata, and your mother’s kitchen', false, 'startNewGame()')}
-    </div>
-    ${hasStorage()?'':'<p style="font-size:12px;color:var(--ink-faint);font-style:italic;margin-top:14px">Saving isn\u2019t available in this viewer, so progress won\u2019t survive a reload — but the game plays in full.</p>'}`;
-  if(titleCover){
-    setScene(`<div class="two-col"><div class="col-stage">${leftCol}</div><div class="col-panel">${rightCol}</div></div>`);
-  } else {
-    setScene(`<div class="end" style="padding-top:4px">${rightCol}</div>`);
-  }
+  const footnote = hasStorage()
+    ? ''
+    : '<div class="title-footnote">Saving isn’t available in this viewer — but the game plays in full.</div>';
+  setScene(`<div class="title-full">${cover}${controls}${footnote}</div>`);
 }
 async function doContinue(){
   const save=cachedSave||await loadSave();
