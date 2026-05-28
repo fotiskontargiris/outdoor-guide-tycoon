@@ -533,16 +533,22 @@
 <div class="wrap">
   <header class="appbar">
     <!-- Brand block (kicker + h1) moved onto the cover image overlay
-         in renderTitle. The contextual subtitle stays here as a small
-         left-aligned line; the menu button stays right. -->
+         in renderTitle. Only the contextual subtitle stays here.
+         The hamburger menu button (#menuBtn) is now at body level so
+         it sits above body-level overlays (title cover, intro, etc.)
+         — see end of <body>. -->
     <div class="sub" id="sub"></div>
-    <button class="iconbtn" id="menuBtn" onclick="toggleMenu()" aria-label="Menu">≡</button>
   </header>
   <div class="hud" id="hud"></div>
   <div class="goal" id="goal"></div>
   <div id="fcast"></div>
   <div class="scene" id="scene"></div>
 </div>
+<!-- Permanent hamburger — body level so it stacks above any body-level
+     overlays (title cover at z:100, intro at z:500). Its own z:150
+     sits between cover and drawer (z:200), so menu can open over it. -->
+<button class="iconbtn" id="menuBtn" onclick="toggleMenu()" aria-label="Menu">≡</button>
+
 <div class="drawer" id="drawer" onclick="if(event.target===this)closeMenu()">
   <div class="sheet" id="sheet"></div>
 </div>
