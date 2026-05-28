@@ -1005,12 +1005,18 @@ async function clearSave(){
 }
 
 async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
+function removeTitleOverlay(){
+  const ex = document.getElementById('titleOverlay');
+  if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
+}
 function renderTitle(save, loading){
-  // The cold-open intro (.intro-screen) already showed the wordmark,
-  // kicker, and verdict in big animated typography. This title screen
-  // is the SECOND beat — the cover image takes the whole canvas; the
-  // only thing on top is two small buttons centred. The image speaks.
+  // Body-level overlay — the .scene parent has backdrop-filter:blur
+  // which creates a positioning context that traps position:fixed
+  // children, plus the visible rounded panel chrome. Bypassing that
+  // by appending directly to <body> so the cover goes true full-bleed
+  // from corner to corner of the viewport.
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('');
+  removeTitleOverlay();
   const canCont = !!save && !loading;
   const sub = loading
     ? 'Checking for a saved season…'
@@ -1032,7 +1038,19 @@ function renderTitle(save, loading){
   const footnote = hasStorage()
     ? ''
     : '<div class="title-footnote">Saving isn’t available in this viewer — but the game plays in full.</div>';
-  setScene(`<div class="title-full">${cover}${controls}${footnote}</div>`);
+  // Append at body level so the overlay escapes .scene's containment.
+  // The test harness uses a fake document without createElement, so
+  // fall back to the old setScene path there.
+  if(typeof document !== 'undefined' && typeof document.createElement === 'function' && document.body && document.body.appendChild){
+    const overlay = document.createElement('div');
+    overlay.id = 'titleOverlay';
+    overlay.className = 'title-full';
+    overlay.innerHTML = `${cover}${controls}${footnote}`;
+    document.body.appendChild(overlay);
+    setScene(''); // clear the scene so nothing peeks through
+  } else {
+    setScene(`<div class="title-full">${cover}${controls}${footnote}</div>`);
+  }
 }
 async function doContinue(){
   const save=cachedSave||await loadSave();
@@ -1522,10 +1540,11 @@ if(typeof window !== 'undefined' && typeof window.addEventListener === 'function
   }, {once:false});
 }
 /* Wrappers for the title-screen buttons — try fullscreen on the user
-   gesture, then proceed to the action. If fullscreen fails (iOS Safari
-   in-browser), the game runs anyway with browser chrome visible. */
-function startNewGame(){ enterFullscreen(); renderKitchen(); }
-function continueGame(){ enterFullscreen(); doContinue(); }
+   gesture, remove the body-level title overlay, then proceed to the
+   action. If fullscreen fails (iOS Safari in-browser), the game runs
+   anyway with browser chrome visible. */
+function startNewGame(){ enterFullscreen(); removeTitleOverlay(); renderKitchen(); }
+function continueGame(){ enterFullscreen(); removeTitleOverlay(); doContinue(); }
 function logEntryColor(t){
   if(/Hired|resigned/.test(t)) return 'var(--sea)';
   if(/Certified/.test(t)) return 'var(--gold)';
