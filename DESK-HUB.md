@@ -354,7 +354,7 @@ Things to settle BEFORE final commit but not blocking the first asset ship:
 |---|---|---|
 | 1 | Lock the doctrine | This doc (DESK-HUB.md) ✓ |
 | 2 | Manifest entry | `ASSET-MANIFEST.md` Tier L |
-| 3 | Prompt pack | `PROMPT-PACK.md` §15 hub prompts |
+| 3 | Prompt pack | `PROMPT-PACK.md` §14 (Phase 1 hub) + §15 (Phases 2-4 briefs) + §16 (detail views) |
 | 4 | Asset: base scene | `assets/hub/bedroom-p1-base.webp` |
 | 5 | Asset: phone, notebook, backpack overlays | ~3 transparent PNGs |
 | 6 | Asset: catalogue, wallet, corkboard overlays | ~3 more |
@@ -371,7 +371,7 @@ Things to settle BEFORE final commit but not blocking the first asset ship:
 | 17 | Playtest + iterate | Fotis tests, we tune |
 
 Stages 1-3 are this commit. Stages 4-8 are Fotis-side asset generation (ChatGPT
-with the new §15 prompts + the existing pilot-01 as reference). Stages 9-16
+with the new §14 hub prompts + the approved base scene as reference). Stages 9-16
 are subsequent code commits after the base scene exists.
 
 ---
@@ -382,6 +382,7 @@ are subsequent code commits after the base scene exists.
   the desk-metaphor doctrine (§1-§3) that this implements.
 - `LANGUAGE.md` — mum's voice rules (§3), the slacker meta-voice for any UI text.
 - `ASSET-MANIFEST.md` — Tier L holds the hub assets (added in this commit).
-- `PROMPT-PACK.md` — §15 hub prompts (added in this commit).
+- `PROMPT-PACK.md` — §14 Phase 1 hub prompts (base + overlays), §15 Phase 2-4 briefs,
+  §16 detail-view assets (backpack / clients / reports).
 - `index.html` — `renderMorning()` to be replaced by `renderBedroomHub()` in a
   later commit, after the base scene lands.

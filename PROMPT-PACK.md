@@ -638,215 +638,7 @@ location: append a small table at the bottom of `ASSET-MANIFEST.md` once product
 
 ---
 
-## 14. NEW TIERS — clients, reports, backpacks (+ legacy desk briefs)
-
-For the surfaces added in the 2026-05-28 doctrine evolution. Use the **§3 style anchor**
-(now **ink‑and‑watercolor travel** — NOT the old gouache + woodcut; §3 is the single
-source of truth and these prompts inherit whatever it currently says). The only
-difference per prompt is the *subject*.
-
-> **Reference image — read this.** The old guidance said "attach `title-cover.webp`".
-> Do NOT do that anymore — `title-cover.webp` is in the *previous* gouache register and
-> attaching it would drag new images back to the old style. Instead: attach your most
-> recently approved **ink‑and‑watercolor** image (once you've produced one) as the
-> reference. Until a first new‑register image exists, rely on the §3 anchor text alone,
-> approve that image, then use IT as the reference for the rest of the batch.
-
-> **Desks are HUBS now — see §15 + `DESK-HUB.md`.** When this section was written, the
-> phase rooms (desk‑phase2/3/4) were imagined as single static scenes. That's been
-> superseded: every phase home base is a **diegetic hub** — one painted base scene +
-> transparent object overlays composited at runtime (the bedroom in §15 is the worked
-> example). So:
-> - **Phase 1 home base = the childhood bedroom hub** (`bedroom-p1-base` + overlays, §15).
->   *There is no "desk-phase1-office" — the childhood bedroom IS the Phase 1 home base.*
-> - **Phase 2/3/4 home bases** follow the SAME base+overlay method. The desk briefs below
->   (Tier H) are kept as the **room‑content descriptions** for those phases — but when you
->   actually produce them, split each like §15: paint the ROOM + furniture as the base
->   (leave the desk surface clear), and make the interactive objects (staff cards, radios,
->   laptop, contracts, map pins) into separate transparent overlays. Production deferred
->   until Phase 1 hub ships (`DESK-HUB.md §3`).
-
-Workflow for the producible tiers below (clients §J, reports §K, backpacks §I):
-1. Open a new ChatGPT conversation per batch.
-2. Attach your latest approved ink‑and‑watercolor image as the style reference. First
-   message: *"This is the locked style reference for a series I'm producing. Match its
-   wet‑wash surface, fountain‑pen line, paper‑showing‑through feel, palette, and
-   Mediterranean atmosphere exactly. I'll send subjects in subsequent messages."*
-3. ChatGPT acknowledges. Then paste the prompt blocks below in sequence.
-
-### Tier H — Phase 2/3/4 room briefs (produce as hubs per §15, deferred)
-
-#### `desk-phase2-working` — the working desk · summer accent (noon gold)
-Save to: `assets/desk/desk-phase2-working.webp`
-
-```
-[§3 style anchor — verbatim]
-
-Frame this as a wide cinematic landscape, about 20:9 ratio (modern phone landscape). Keep critical compositional elements within the central 16:9 safe zone so they survive narrower viewports.
-
-Subject: A working desk in Kalamata at late afternoon, viewed slightly from above and to the side — the angle a person at the desk would see it. On the surface: two staff cards laid out (one labelled "Maria", one "Nikos", with small painted portrait icons and a stat strip in mono type), a small cork route board pinned with three index cards naming day-routes (Voidokilia, Polylimnio, Mavromati) in Greek and English, two handheld guide radios sitting on small black chargers with status lights on, a gear-checklist clipboard with hand-written ticks, a manila folder labelled "REPAIR" with a few invoices peeking out, an open cash ledger book with neat handwritten entries and a column of euro figures. The same kitchen of the reference image — Kalamata harbour visible through the window at sunset, terracotta rooftops, the sea. The table has organised itself; the chaos of solo guiding has become coordination. Noon-gold accent appears on the radio status lights and one route-card edge catching the window light.
-
-Greek text where it naturally appears (route names on cards, "REPAIR" stamp, ledger column headers), but illegible "writing shapes" for any actual narrative text. Do not include any people in the frame, only the desk and its objects. Match the warm dusk light, the open window onto Messinia, and the physical-objects-on-a-table register of the reference image. No people, no anime, no cartoon, no photoreal, no 3D, no vector flat design, no dashboard UI elements.
-```
-
-#### `desk-phase3-office` — the company desk · summer accent (noon gold)
-Save to: `assets/desk/desk-phase3-office.webp`
-
-```
-[§3 style anchor — verbatim]
-
-Frame this as a wide cinematic landscape, about 20:9 ratio (modern phone landscape). Keep critical compositional elements within the central 16:9 safe zone so they survive narrower viewports.
-
-Subject: A small Greek outdoor-tourism company office desk in Kalamata, slightly elevated angle from the seat. On the surface: a modern but unflashy laptop screen showing a booking platform with three rows of upcoming trips (place names, dates, party size — in Greek and English), a stack of printed Google/TripAdvisor reviews with five-star rows visible, two package brochures (one labelled "Mani Coast Week", one "Taygetos Traverse") in glossy folded form, a stapled sheet of hotel partner notes from a Kardamyli hotel, a branded rubber stamp with the company logo and an ink pad, a wall calendar pinned above the desk with red-marked busy days, a tray with signed contracts in folders. The same window onto Kalamata harbour at sunset. The table has become an office. The atmosphere is "this is becoming a real business, and that is both exciting and dangerous."
-
-Greek + English where natural; readable section headings on the laptop, illegible body text. No people in frame. Match the warm dusk register and Messinian window-view of the reference image. No people, no anime, no cartoon, no photoreal, no 3D, no vector flat design, no glossy plastic dashboard UI on the laptop — the laptop screen looks like real paper-textured editorial illustration of a software window.
-```
-
-#### `desk-phase4-regional` — the regional operations board · autumn accent (cypress green)
-Save to: `assets/desk/desk-phase4-regional.webp`
-
-```
-[§3 style anchor — verbatim, with the seasonal accent specified as cypress green-black]
-
-Frame this as a wide cinematic landscape, about 20:9 ratio (modern phone landscape). Keep critical compositional elements within the central 16:9 safe zone so they survive narrower viewports.
-
-Subject: A regional operations board — a wider working surface, almost a war-room corner. On a wall above: a large hand-painted map of the Peloponnese with red pins for each base (one over Kalamata, one over Areopoli in the Mani, one over Stemnitsa in Arcadia, one over the Achaia coast). On the surface below: stacked base folders each labelled in Greek (ΚΑΛΑΜΑΤΑ, ΜΑΝΗ, ΑΡΚΑΔΙΑ, ΑΧΑΪΑ), framed portraits of three regional managers with their names handwritten under each, a corkboard with crisis notes pinned (one with a small red CRISIS stamp), a tall pile of legal documents with green ribbon ties, a thick financial-report binder, a roll of brand-materials posters tied with twine, an expansion-plans architectural roll on the far edge. A higher-floor window now — looking down on the town's rooftops at dusk, the harbour smaller and farther below. The desk has become a war-room. Atmosphere: "you built the machine; the question now is whether you still belong to the life that started it."
-
-Cypress green accent appears in the manager portrait frames and on the legal-document ribbons. No people in the frame, only their portraits on the desk. Match the reference image's physical-objects-on-a-table register but at a slightly more elevated, larger-table scale. No people, no anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-### Tier I — Backpack screen (3)
-
-#### `backpack-phase1` — small worn pack
-Save to: `assets/backpack/backpack-phase1.webp`
-
-```
-[§3 style anchor — verbatim]
-
-Frame in landscape orientation, about 4:3 ratio.
-
-Subject: A small worn outdoor backpack, about 40 litres, laid open on a wooden taverna table from the same kitchen as the reference image. The pack is dusty olive canvas with leather straps, faded from sun and salt. Inside are four roughly defined packing slots, partially packed: a water bottle in one, a small bag of trail snacks in another, a thin first-aid pouch, a folded paper map. A pencil and a small notebook sit beside the pack. The kitchen window is visible in the background showing the harbour at evening. This is the solo guide's pack — small, well-worn, every slot mattering.
-
-No people in the frame. Match the warm Mediterranean register, the layered-objects-on-a-surface physicality, and the open-window-onto-Messinia atmosphere of the reference image. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-#### `backpack-phase2-depot` — the gear depot
-Save to: `assets/backpack/backpack-phase2-depot.webp`
-
-```
-[§3 style anchor — verbatim]
-
-Frame as wide landscape (about 16:9 ratio).
-
-Subject: A small gear depot in a back room of a Kalamata outdoor-guide outfit. On the walls: a row of climbing helmets hanging on pegs, coils of rope on hooks, three sit-on-top sea kayaks stacked on a wall rack, life-jackets folded on a high shelf. On a low workbench: a crate of labelled water bottles, a row of named gear bins (each with a guide's initials on a paper tag — M., N., A.), a clipboard tally on a chain, a small box of headlamps. Through a small high window: a glimpse of olive trees and the sea, late afternoon. The supply line that lives behind a working guide team.
-
-No people in frame. Match the warm working-shed register and Mediterranean physicality of the reference image. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-#### `backpack-phase3-cache` — the organised company cache
-Save to: `assets/backpack/backpack-phase3-cache.webp`
-
-```
-[§3 style anchor — verbatim]
-
-Frame as wide landscape (about 16:9 ratio).
-
-Subject: An organised company gear cache — a proper outfitter's storeroom. Floor-to-ceiling labelled storage bins by discipline (HIKE / KAYAK / CANYON / RAFT / CYCLE / SUP / CLIMB written in stencilled Greek + English), folded stacks of branded company buffs in three colours, a small workshop bench with hanging tools (a sewing awl, a rope-end cutter, a multi-tool), a wall of named gear lockers each with a guide's initial-tag, a small printed inventory sheet on a clipboard with a worn pencil. Daylight from a high industrial window, the slate-grey sea visible far in the distance. The atmosphere of a small company that has its act together.
-
-No people in frame. Match the same warm Mediterranean register and physical surface feel as the reference. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-### Tier J — Client people cards (9)
-
-Heroes are illustrated already (see §7). Clients are noun phrases that have lived in
-prose; now each becomes a small people card. Same conversation, same style ref. Frame
-each in **wide landscape composition, about 20:9 ratio, figure-left (figure kept within central 16:9 safe zone)** — these slot into card UI.
-
-For each client below, use this template (replace the SUBJECT line):
-
-```
-[§3 style anchor — verbatim]
-
-Frame this as a wide landscape composition, about 20:9 ratio (modern phone landscape), with the client(s) positioned LEFT of frame and the rest given to context or paper-showing space — same landscape-first treatment as the heroes. Keep critical content within the central 16:9 safe zone so it survives narrower viewports.
-
-Subject: <CLIENT SUBJECT — see table>
-
-The card sits visually on the same warm Mediterranean surface as the reference image, with subtle suggestion of being a printed/laminated card on the desk. Single client(s) mid-shot or full-shot off-axis, on a bone-cream background, no scene behind them beyond a hint of context. Adult realistic proportions; never cute or anime. Match the surface and palette of the reference image exactly.
-
-No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-| ID | Subject for `<CLIENT SUBJECT>` |
-|---|---|
-| `client-family` | A family of four: one parent with a heavily overstuffed pack, the other parent holding the hand of a four-year-old in a sun hat, a six-year-old child riding on the first parent's shoulders. All in worn outdoor clothes. Cheerful, slightly chaotic |
-| `client-cruise` | A line of six cruise tourists from a coach trip, identical lanyards around their necks reading "EXCURSION", water bottles still capped, sensible shoes, slightly bewildered, mid-morning light |
-| `client-photographers` | Three serious-looking photographers in their forties with telephoto lenses and tripods, two carrying coffee cups, all glancing impatiently at the same off-frame horizon. Practical outdoor clothes |
-| `client-corporate` | A male corporate team-lead in a branded fleece with a small company logo, looking down at a smartphone, a small group of five colleagues standing slightly behind him also in matching fleeces. He looks at his watch |
-| `client-k2` | A single male tourist in his fifties in absurdly over-specified full alpine kit — mountaineering boots, four trekking poles strapped to a 70-litre pack, an altimeter watch, a serious expression — standing in front of an olive grove on a flat valley floor. Completely the wrong kit for the terrain |
-| `client-german-goat` | A German couple in their forties, sun-hatted, both gently weeping with sincere emotion at a single Greek mountain goat standing calmly in front of them. One of them is filming the goat on a phone. The goat is unimpressed |
-| `client-bouzouki` | A Greek man in his sixties with a bouzouki musical instrument in a worn black case visible on his back, a slightly too-small daypack hanging from his other shoulder, walking ahead of an unseen group, a warm half-smile |
-| `client-kyria-voula` | A small dignified Greek woman in her seventies, kyría Voúla, in modest dark clothing with a head scarf and a leather handbag from which a small blood-pressure diary peeks, a walking cane in her right hand, looking ahead with composure |
-| `client-cousin-mitsos` | A wiry Greek man in his fifties, cousin Mitsos, in oily mechanic's overalls and a faded baseball cap, holding a large spanner in one hand, a smear of grease on his cheek, leaning slightly against an unseen vehicle, a knowing slight smile |
-
-### Tier K — Day report surfaces (4)
-
-These are *backgrounds* the day's verdict prints onto — the canvas, not the data.
-
-#### `report-blank` — ledger page (no accent — core five hues only)
-Save to: `assets/reports/report-blank.webp`
-
-```
-[§3 style anchor — verbatim, no seasonal accent on this one]
-
-Frame in landscape orientation, about 4:3 ratio.
-
-Subject: A clean ledger page with faint horizontal blue rules, viewed slightly from above on the same warm wooden taverna table from the reference image. A worn pencil rests at the margin. The corner of the page is slightly turned. A small wax stamp impression sits at the bottom right corner in a faint terra colour. The page is mostly empty — this is the canvas the day's verdict will be typed onto. Warm window light from the upper left.
-
-No text on the page beyond the column header shapes (illegible). No people. Match the reference image's surface and lighting exactly. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-#### `report-review-good` — five-star review card · noon gold accent
-Save to: `assets/reports/report-review-good.webp`
-
-```
-[§3 style anchor — verbatim]
-
-Frame in landscape orientation, about 4:3 ratio.
-
-Subject: A small printed Google / TripAdvisor-style review card lying on the wooden table from the reference image, viewed slightly from above. The card shows a row of five filled stars (★★★★★) in noon-gold, a one-line illegible headline shape suggesting praise, a short paragraph of illegible-but-readable-shape body text below, and a small reviewer-name footer. Warm dusk light catching the gold of the stars. The card looks like it was printed from a printer onto cardstock.
-
-No legible text — the type should look like real type at a glance but not be decipherable. No people. Match the reference image's surface, palette, and warm Mediterranean lighting. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-#### `report-review-bad` — three-star review card · rain grey accent (drop saturation)
-Save to: `assets/reports/report-review-bad.webp`
-
-```
-[§3 style anchor — verbatim, with rain grey as the seasonal accent and the palette pulled down a notch in saturation]
-
-Frame in landscape orientation, about 4:3 ratio.
-
-Subject: A small printed Google / TripAdvisor-style review card lying on the wooden table from the reference image, viewed slightly from above. The card shows three filled stars and two empty stars (★★★☆☆), a short headline shape suggesting disappointment, an illegible body paragraph below, and a small reviewer footer. There is a faint ink smudge along the lower edge and a fingerprint mark in one corner — the day didn't go well. Slightly cooler and more desaturated than the good-review variant, light coming through cloud.
-
-No legible text. No people. Match the reference surface and palette but at the desaturated end of the register. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
-#### `report-gear-damage` — gear-damage notation page · rain grey accent
-Save to: `assets/reports/report-gear-damage.webp`
-
-```
-[§3 style anchor — verbatim, with rain grey as the seasonal accent]
-
-Frame in landscape orientation, about 4:3 ratio.
-
-Subject: A small notation page from the gear logbook, lying on the wooden table from the reference image, viewed slightly from above. On the page: a pencil sketch of a snapped trekking pole at the centre, a wear-score margin with check-boxes (handwritten ticks against a small list), and at the bottom a small red "NEEDS REPLACEMENT" rubber-stamp impression. A pencil rests alongside. The light is more diffuse — cloudy day mood, suggesting the trip went hard.
-
-No legible text — the handwritten check-list and headers are real-shape but illegible. No people. Match the reference's surface and palette, just slightly cooler with the rain-grey accent in the stamp ink. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
-```
-
----
-
-## 15. Tier L — Desk Hub (Phase 1 bedroom + object overlays)
+## 14. The desk-hub — Phase 1: the childhood bedroom (build this first)
 
 The diegetic UI tier (see `DESK-HUB.md`). One large base scene of the Phase 1
 childhood bedroom + 13 transparent‑background object overlays that composite on
@@ -997,6 +789,201 @@ and re-roll BEFORE producing the rest.
 
 This wall-test is the same discipline as the original pilot trio — get the
 visual relationship right before scaling.
+
+---
+
+
+## 15. The desk-hub — Phases 2-4: the later rooms (deferred)
+
+Same diegetic method as Phase 1 (§14): each later room is a base scene + transparent
+object overlays, NOT a single static painting. The briefs below describe each room's
+CONTENTS — when you produce them, split each like Phase 1: paint the room + furniture
+as the base (leave the desk surface clear), and make the interactive objects (staff
+cards, radios, laptop, contracts, map pins) into separate transparent overlays.
+Production deferred until the Phase 1 hub ships (`DESK-HUB.md §3`).
+
+> ⚠️ Reference image: attach your approved NEW-register (ink-and-watercolor) image —
+> NOT the old `title-cover.webp` (that's the previous gouache register and would drag
+> these backwards). And there is no `desk-phase1-*` — Phase 1 IS the bedroom hub above.
+
+### The Phase 2-4 room briefs
+
+#### `desk-phase2-working` — the working desk · summer accent (noon gold)
+Save to: `assets/desk/desk-phase2-working.webp`
+
+```
+[§3 style anchor — verbatim]
+
+Frame this as a wide cinematic landscape, about 20:9 ratio (modern phone landscape). Keep critical compositional elements within the central 16:9 safe zone so they survive narrower viewports.
+
+Subject: A working desk in Kalamata at late afternoon, viewed slightly from above and to the side — the angle a person at the desk would see it. On the surface: two staff cards laid out (one labelled "Maria", one "Nikos", with small painted portrait icons and a stat strip in mono type), a small cork route board pinned with three index cards naming day-routes (Voidokilia, Polylimnio, Mavromati) in Greek and English, two handheld guide radios sitting on small black chargers with status lights on, a gear-checklist clipboard with hand-written ticks, a manila folder labelled "REPAIR" with a few invoices peeking out, an open cash ledger book with neat handwritten entries and a column of euro figures. The same kitchen of the reference image — Kalamata harbour visible through the window at sunset, terracotta rooftops, the sea. The table has organised itself; the chaos of solo guiding has become coordination. Noon-gold accent appears on the radio status lights and one route-card edge catching the window light.
+
+Greek text where it naturally appears (route names on cards, "REPAIR" stamp, ledger column headers), but illegible "writing shapes" for any actual narrative text. Do not include any people in the frame, only the desk and its objects. Match the warm dusk light, the open window onto Messinia, and the physical-objects-on-a-table register of the reference image. No people, no anime, no cartoon, no photoreal, no 3D, no vector flat design, no dashboard UI elements.
+```
+
+#### `desk-phase3-office` — the company desk · summer accent (noon gold)
+Save to: `assets/desk/desk-phase3-office.webp`
+
+```
+[§3 style anchor — verbatim]
+
+Frame this as a wide cinematic landscape, about 20:9 ratio (modern phone landscape). Keep critical compositional elements within the central 16:9 safe zone so they survive narrower viewports.
+
+Subject: A small Greek outdoor-tourism company office desk in Kalamata, slightly elevated angle from the seat. On the surface: a modern but unflashy laptop screen showing a booking platform with three rows of upcoming trips (place names, dates, party size — in Greek and English), a stack of printed Google/TripAdvisor reviews with five-star rows visible, two package brochures (one labelled "Mani Coast Week", one "Taygetos Traverse") in glossy folded form, a stapled sheet of hotel partner notes from a Kardamyli hotel, a branded rubber stamp with the company logo and an ink pad, a wall calendar pinned above the desk with red-marked busy days, a tray with signed contracts in folders. The same window onto Kalamata harbour at sunset. The table has become an office. The atmosphere is "this is becoming a real business, and that is both exciting and dangerous."
+
+Greek + English where natural; readable section headings on the laptop, illegible body text. No people in frame. Match the warm dusk register and Messinian window-view of the reference image. No people, no anime, no cartoon, no photoreal, no 3D, no vector flat design, no glossy plastic dashboard UI on the laptop — the laptop screen looks like real paper-textured editorial illustration of a software window.
+```
+
+#### `desk-phase4-regional` — the regional operations board · autumn accent (cypress green)
+Save to: `assets/desk/desk-phase4-regional.webp`
+
+```
+[§3 style anchor — verbatim, with the seasonal accent specified as cypress green-black]
+
+Frame this as a wide cinematic landscape, about 20:9 ratio (modern phone landscape). Keep critical compositional elements within the central 16:9 safe zone so they survive narrower viewports.
+
+Subject: A regional operations board — a wider working surface, almost a war-room corner. On a wall above: a large hand-painted map of the Peloponnese with red pins for each base (one over Kalamata, one over Areopoli in the Mani, one over Stemnitsa in Arcadia, one over the Achaia coast). On the surface below: stacked base folders each labelled in Greek (ΚΑΛΑΜΑΤΑ, ΜΑΝΗ, ΑΡΚΑΔΙΑ, ΑΧΑΪΑ), framed portraits of three regional managers with their names handwritten under each, a corkboard with crisis notes pinned (one with a small red CRISIS stamp), a tall pile of legal documents with green ribbon ties, a thick financial-report binder, a roll of brand-materials posters tied with twine, an expansion-plans architectural roll on the far edge. A higher-floor window now — looking down on the town's rooftops at dusk, the harbour smaller and farther below. The desk has become a war-room. Atmosphere: "you built the machine; the question now is whether you still belong to the life that started it."
+
+Cypress green accent appears in the manager portrait frames and on the legal-document ribbons. No people in the frame, only their portraits on the desk. Match the reference image's physical-objects-on-a-table register but at a slightly more elevated, larger-table scale. No people, no anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+
+## 16. Detail-view assets (reached from the hub)
+
+These are the screens you reach by tapping a hub object: the backpack interior (tap
+the pack), client people-cards (tap the corkboard), the day-report surfaces (shown
+after a trip). Style: the **§3 ink-and-watercolor anchor**. Reference image: your
+approved new-register image, attached at the start of the batch (NOT the old
+gouache title-cover/pilot).
+
+### Tier I — Backpack screen (3)
+
+#### `backpack-phase1` — small worn pack
+Save to: `assets/backpack/backpack-phase1.webp`
+
+```
+[§3 style anchor — verbatim]
+
+Frame in landscape orientation, about 4:3 ratio.
+
+Subject: A small worn outdoor backpack, about 40 litres, laid open on a wooden taverna table from the same kitchen as the reference image. The pack is dusty olive canvas with leather straps, faded from sun and salt. Inside are four roughly defined packing slots, partially packed: a water bottle in one, a small bag of trail snacks in another, a thin first-aid pouch, a folded paper map. A pencil and a small notebook sit beside the pack. The kitchen window is visible in the background showing the harbour at evening. This is the solo guide's pack — small, well-worn, every slot mattering.
+
+No people in the frame. Match the warm Mediterranean register, the layered-objects-on-a-surface physicality, and the open-window-onto-Messinia atmosphere of the reference image. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+#### `backpack-phase2-depot` — the gear depot
+Save to: `assets/backpack/backpack-phase2-depot.webp`
+
+```
+[§3 style anchor — verbatim]
+
+Frame as wide landscape (about 16:9 ratio).
+
+Subject: A small gear depot in a back room of a Kalamata outdoor-guide outfit. On the walls: a row of climbing helmets hanging on pegs, coils of rope on hooks, three sit-on-top sea kayaks stacked on a wall rack, life-jackets folded on a high shelf. On a low workbench: a crate of labelled water bottles, a row of named gear bins (each with a guide's initials on a paper tag — M., N., A.), a clipboard tally on a chain, a small box of headlamps. Through a small high window: a glimpse of olive trees and the sea, late afternoon. The supply line that lives behind a working guide team.
+
+No people in frame. Match the warm working-shed register and Mediterranean physicality of the reference image. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+#### `backpack-phase3-cache` — the organised company cache
+Save to: `assets/backpack/backpack-phase3-cache.webp`
+
+```
+[§3 style anchor — verbatim]
+
+Frame as wide landscape (about 16:9 ratio).
+
+Subject: An organised company gear cache — a proper outfitter's storeroom. Floor-to-ceiling labelled storage bins by discipline (HIKE / KAYAK / CANYON / RAFT / CYCLE / SUP / CLIMB written in stencilled Greek + English), folded stacks of branded company buffs in three colours, a small workshop bench with hanging tools (a sewing awl, a rope-end cutter, a multi-tool), a wall of named gear lockers each with a guide's initial-tag, a small printed inventory sheet on a clipboard with a worn pencil. Daylight from a high industrial window, the slate-grey sea visible far in the distance. The atmosphere of a small company that has its act together.
+
+No people in frame. Match the same warm Mediterranean register and physical surface feel as the reference. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+### Tier J — Client people cards (9)
+
+Heroes are illustrated already (see §7). Clients are noun phrases that have lived in
+prose; now each becomes a small people card. Same conversation, same style ref. Frame
+each in **wide landscape composition, about 20:9 ratio, figure-left (figure kept within central 16:9 safe zone)** — these slot into card UI.
+
+For each client below, use this template (replace the SUBJECT line):
+
+```
+[§3 style anchor — verbatim]
+
+Frame this as a wide landscape composition, about 20:9 ratio (modern phone landscape), with the client(s) positioned LEFT of frame and the rest given to context or paper-showing space — same landscape-first treatment as the heroes. Keep critical content within the central 16:9 safe zone so it survives narrower viewports.
+
+Subject: <CLIENT SUBJECT — see table>
+
+The card sits visually on the same warm Mediterranean surface as the reference image, with subtle suggestion of being a printed/laminated card on the desk. Single client(s) mid-shot or full-shot off-axis, on a bone-cream background, no scene behind them beyond a hint of context. Adult realistic proportions; never cute or anime. Match the surface and palette of the reference image exactly.
+
+No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+| ID | Subject for `<CLIENT SUBJECT>` |
+|---|---|
+| `client-family` | A family of four: one parent with a heavily overstuffed pack, the other parent holding the hand of a four-year-old in a sun hat, a six-year-old child riding on the first parent's shoulders. All in worn outdoor clothes. Cheerful, slightly chaotic |
+| `client-cruise` | A line of six cruise tourists from a coach trip, identical lanyards around their necks reading "EXCURSION", water bottles still capped, sensible shoes, slightly bewildered, mid-morning light |
+| `client-photographers` | Three serious-looking photographers in their forties with telephoto lenses and tripods, two carrying coffee cups, all glancing impatiently at the same off-frame horizon. Practical outdoor clothes |
+| `client-corporate` | A male corporate team-lead in a branded fleece with a small company logo, looking down at a smartphone, a small group of five colleagues standing slightly behind him also in matching fleeces. He looks at his watch |
+| `client-k2` | A single male tourist in his fifties in absurdly over-specified full alpine kit — mountaineering boots, four trekking poles strapped to a 70-litre pack, an altimeter watch, a serious expression — standing in front of an olive grove on a flat valley floor. Completely the wrong kit for the terrain |
+| `client-german-goat` | A German couple in their forties, sun-hatted, both gently weeping with sincere emotion at a single Greek mountain goat standing calmly in front of them. One of them is filming the goat on a phone. The goat is unimpressed |
+| `client-bouzouki` | A Greek man in his sixties with a bouzouki musical instrument in a worn black case visible on his back, a slightly too-small daypack hanging from his other shoulder, walking ahead of an unseen group, a warm half-smile |
+| `client-kyria-voula` | A small dignified Greek woman in her seventies, kyría Voúla, in modest dark clothing with a head scarf and a leather handbag from which a small blood-pressure diary peeks, a walking cane in her right hand, looking ahead with composure |
+| `client-cousin-mitsos` | A wiry Greek man in his fifties, cousin Mitsos, in oily mechanic's overalls and a faded baseball cap, holding a large spanner in one hand, a smear of grease on his cheek, leaning slightly against an unseen vehicle, a knowing slight smile |
+
+### Tier K — Day report surfaces (4)
+
+These are *backgrounds* the day's verdict prints onto — the canvas, not the data.
+
+#### `report-blank` — ledger page (no accent — core five hues only)
+Save to: `assets/reports/report-blank.webp`
+
+```
+[§3 style anchor — verbatim, no seasonal accent on this one]
+
+Frame in landscape orientation, about 4:3 ratio.
+
+Subject: A clean ledger page with faint horizontal blue rules, viewed slightly from above on the same warm wooden taverna table from the reference image. A worn pencil rests at the margin. The corner of the page is slightly turned. A small wax stamp impression sits at the bottom right corner in a faint terra colour. The page is mostly empty — this is the canvas the day's verdict will be typed onto. Warm window light from the upper left.
+
+No text on the page beyond the column header shapes (illegible). No people. Match the reference image's surface and lighting exactly. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+#### `report-review-good` — five-star review card · noon gold accent
+Save to: `assets/reports/report-review-good.webp`
+
+```
+[§3 style anchor — verbatim]
+
+Frame in landscape orientation, about 4:3 ratio.
+
+Subject: A small printed Google / TripAdvisor-style review card lying on the wooden table from the reference image, viewed slightly from above. The card shows a row of five filled stars (★★★★★) in noon-gold, a one-line illegible headline shape suggesting praise, a short paragraph of illegible-but-readable-shape body text below, and a small reviewer-name footer. Warm dusk light catching the gold of the stars. The card looks like it was printed from a printer onto cardstock.
+
+No legible text — the type should look like real type at a glance but not be decipherable. No people. Match the reference image's surface, palette, and warm Mediterranean lighting. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+#### `report-review-bad` — three-star review card · rain grey accent (drop saturation)
+Save to: `assets/reports/report-review-bad.webp`
+
+```
+[§3 style anchor — verbatim, with rain grey as the seasonal accent and the palette pulled down a notch in saturation]
+
+Frame in landscape orientation, about 4:3 ratio.
+
+Subject: A small printed Google / TripAdvisor-style review card lying on the wooden table from the reference image, viewed slightly from above. The card shows three filled stars and two empty stars (★★★☆☆), a short headline shape suggesting disappointment, an illegible body paragraph below, and a small reviewer footer. There is a faint ink smudge along the lower edge and a fingerprint mark in one corner — the day didn't go well. Slightly cooler and more desaturated than the good-review variant, light coming through cloud.
+
+No legible text. No people. Match the reference surface and palette but at the desaturated end of the register. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
+
+#### `report-gear-damage` — gear-damage notation page · rain grey accent
+Save to: `assets/reports/report-gear-damage.webp`
+
+```
+[§3 style anchor — verbatim, with rain grey as the seasonal accent]
+
+Frame in landscape orientation, about 4:3 ratio.
+
+Subject: A small notation page from the gear logbook, lying on the wooden table from the reference image, viewed slightly from above. On the page: a pencil sketch of a snapped trekking pole at the centre, a wear-score margin with check-boxes (handwritten ticks against a small list), and at the bottom a small red "NEEDS REPLACEMENT" rubber-stamp impression. A pencil rests alongside. The light is more diffuse — cloudy day mood, suggesting the trip went hard.
+
+No legible text — the handwritten check-list and headers are real-shape but illegible. No people. Match the reference's surface and palette, just slightly cooler with the rain-grey accent in the stamp ink. No anime, no cartoon, no photoreal, no 3D, no vector flat design.
+```
 
 ---
 
