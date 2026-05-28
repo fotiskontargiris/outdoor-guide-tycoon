@@ -18,11 +18,15 @@ get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) an
 > earlier register; a new cover in the watercolor register would be the first job of a
 > re‑generation pass.
 
-> **The single biggest consistency lever**: once *The First Booking* (`title-cover.webp`)
-> is your reference, **start a new ChatGPT conversation** for each batch, **upload that
-> image as the first attachment**, and prefix with: *"Match the visual style, palette,
-> surface, and physical-objects-on-a-table feel of the reference image exactly. Generate
-> the next image in the same illustrated series."*
+> **The single biggest consistency lever**: pick ONE approved **ink‑and‑watercolor**
+> image as your reference and reuse it across every batch. ⚠️ NOT `title-cover.webp` or
+> the old `pilot-01` — those are in the *previous gouache register* and would drag new
+> images backwards. The workflow: generate your first new‑register image from the §3
+> anchor alone (no reference attached), approve it, then for every subsequent batch
+> **start a new ChatGPT conversation, upload that approved image as the first
+> attachment**, and prefix with: *"Match the wet‑wash watercolor surface, fountain‑pen
+> ink line, paper‑showing‑through feel, palette, and Mediterranean atmosphere of the
+> reference image exactly. Generate the next image in the same illustrated series."*
 
 ---
 
@@ -627,34 +631,50 @@ location: append a small table at the bottom of `ASSET-MANIFEST.md` once product
 | Santorini whitewash leaking | Add place name twice; explicitly call out "this is mainland Messinia, NOT the Cycladic islands" |
 | Hilux scene grows people anyway | Restate "completely empty of any people, animals, or birds — the truck must be alone in the frame. Do not add any figures." three times if needed |
 | Text appearing where it shouldn't | Say "no readable text — any signs or papers should show indecipherable hand-painted shapes only" |
-| Style drift across batch | Always upload pilot-01 as reference, always send the §5 style-lock preface, always stay in the same conversation for a whole batch |
+| Style drift across batch | Always upload your approved NEW-register pilot-01 as reference (NOT the old shipped title-cover/pilot — those are gouache), always send the §5 style-lock preface, always stay in the same conversation for a whole batch |
 | Hero faces inconsistent across batch | After hero-01 generates well, upload IT also as a second reference for the rest of the heroes batch |
 | Aspect ratio not respected | Re-send the prompt with the aspect line at the very TOP, then re-state at the bottom: "Final reminder: wide landscape composition, about 20:9 ratio, with the figure within the central 16:9 safe zone, NOT a portrait crop" |
 | Image too dark / desaturated overall | Drop the words "shadow" and "dust" by one each; emphasise "warm afternoon light" |
 
 ---
 
-## 14. NEW TIERS — the changing desk doctrine
+## 14. NEW TIERS — clients, reports, backpacks (+ legacy desk briefs)
 
-For the surfaces added in the 2026-05-28 doctrine evolution (Tier H desks, Tier I
-backpacks, Tier J clients, Tier K reports). Use the **§3 style anchor** — same editorial
-gouache + woodcut bones as everything else. The only difference is the *subject* (a desk
-with objects, a backpack, a client card, a ledger page) rather than a single‑figure or
-single‑place composition.
+For the surfaces added in the 2026-05-28 doctrine evolution. Use the **§3 style anchor**
+(now **ink‑and‑watercolor travel** — NOT the old gouache + woodcut; §3 is the single
+source of truth and these prompts inherit whatever it currently says). The only
+difference per prompt is the *subject*.
 
-**Always attach `title-cover.webp` (*The First Booking*) as the reference image** so
-ChatGPT keeps the desk‑subject convention (layered objects, table surface, open window
-onto Messinia) consistent across the batch.
+> **Reference image — read this.** The old guidance said "attach `title-cover.webp`".
+> Do NOT do that anymore — `title-cover.webp` is in the *previous* gouache register and
+> attaching it would drag new images back to the old style. Instead: attach your most
+> recently approved **ink‑and‑watercolor** image (once you've produced one) as the
+> reference. Until a first new‑register image exists, rely on the §3 anchor text alone,
+> approve that image, then use IT as the reference for the rest of the batch.
 
-Workflow:
+> **Desks are HUBS now — see §15 + `DESK-HUB.md`.** When this section was written, the
+> phase rooms (desk‑phase2/3/4) were imagined as single static scenes. That's been
+> superseded: every phase home base is a **diegetic hub** — one painted base scene +
+> transparent object overlays composited at runtime (the bedroom in §15 is the worked
+> example). So:
+> - **Phase 1 home base = the childhood bedroom hub** (`bedroom-p1-base` + overlays, §15).
+>   *There is no "desk-phase1-office" — the childhood bedroom IS the Phase 1 home base.*
+> - **Phase 2/3/4 home bases** follow the SAME base+overlay method. The desk briefs below
+>   (Tier H) are kept as the **room‑content descriptions** for those phases — but when you
+>   actually produce them, split each like §15: paint the ROOM + furniture as the base
+>   (leave the desk surface clear), and make the interactive objects (staff cards, radios,
+>   laptop, contracts, map pins) into separate transparent overlays. Production deferred
+>   until Phase 1 hub ships (`DESK-HUB.md §3`).
+
+Workflow for the producible tiers below (clients §J, reports §K, backpacks §I):
 1. Open a new ChatGPT conversation per batch.
-2. Drag `assets/title/title-cover.webp` into the chat. First message: *"This is the locked
-   style reference for an entire series I'm producing. Match its surface, palette, lighting,
-   physical-objects-on-a-table feel, and Mediterranean atmosphere exactly. I'll send you
-   subjects in subsequent messages."*
+2. Attach your latest approved ink‑and‑watercolor image as the style reference. First
+   message: *"This is the locked style reference for a series I'm producing. Match its
+   wet‑wash surface, fountain‑pen line, paper‑showing‑through feel, palette, and
+   Mediterranean atmosphere exactly. I'll send subjects in subsequent messages."*
 3. ChatGPT acknowledges. Then paste the prompt blocks below in sequence.
 
-### Tier H — Phase 2/3/4 desks (3)
+### Tier H — Phase 2/3/4 room briefs (produce as hubs per §15, deferred)
 
 #### `desk-phase2-working` — the working desk · summer accent (noon gold)
 Save to: `assets/desk/desk-phase2-working.webp`
