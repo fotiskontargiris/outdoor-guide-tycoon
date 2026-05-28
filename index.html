@@ -778,6 +778,81 @@
   .scene-full .bubble.right-mid { top:38%;  right:80px; max-width:50%; }
   .scene-full .bubble.left-bot  { top:62%;  left:24px;  max-width:55%; }
   .scene-full .bubble.right-bot { top:62%;  right:80px; max-width:50%; }
+
+  /* ============ DESK-HUB (diegetic home base) — see DESK-HUB.md ============
+     A body-level full-bleed room. One 20:9 base painting fills a centred
+     stage; interactive objects are absolutely-positioned overlays/regions
+     placed in % of the stage, so they track the image on any viewport.
+     The room IS the menu — no HUD chrome. */
+  .hub{ position:fixed; inset:0; z-index:100; background:var(--bg);
+    display:grid; place-items:center; overflow:hidden;
+    animation:sceneFadeIn 1.4s ease-out both; }
+  .hub-stage{ position:relative; aspect-ratio:1870/841;
+    width:min(100%, calc(100dvh * 1870 / 841)); max-height:100dvh; }
+  .hub-base{ position:absolute; inset:0; width:100%; height:100%;
+    object-fit:fill; z-index:0; }
+  /* a tappable object: positioned by its CENTRE (left/top), sized by width% */
+  .hub-obj, .hub-region{ position:absolute; transform:translate(-50%,-50%);
+    background:none; border:none; padding:0; margin:0; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; z-index:2; }
+  .hub-obj img{ display:block; width:100%; height:auto; pointer-events:none;
+    filter:drop-shadow(0 3px 5px rgba(27,27,31,.28)); }
+  .hub-obj{ animation:hubPulse 2.8s ease-in-out infinite;
+    transition:filter .2s, transform .12s; }
+  @keyframes hubPulse{ 0%,100%{ filter:drop-shadow(0 0 0 rgba(232,168,81,0)); }
+    50%{ filter:drop-shadow(0 0 7px rgba(232,168,81,.40)); } }
+  .hub-obj:hover, .hub-obj:focus-visible{
+    filter:drop-shadow(0 0 13px rgba(232,168,81,.85)); outline:none; }
+  .hub-obj:active{ transform:translate(-50%,-50%) scale(.96); }
+  /* invisible regions over painted-in furniture (window/bed/door/board) */
+  .hub-region{ border-radius:16px; animation:hubRegion 2.8s ease-in-out infinite;
+    transition:background .25s, box-shadow .25s; }
+  @keyframes hubRegion{ 0%,100%{ box-shadow:inset 0 0 22px 2px rgba(232,168,81,0); }
+    50%{ box-shadow:inset 0 0 26px 3px rgba(232,168,81,.15); } }
+  .hub-region:hover, .hub-region:focus-visible{ outline:none;
+    background:radial-gradient(ellipse at center, rgba(232,168,81,.20) 0%, rgba(232,168,81,0) 70%);
+    box-shadow:inset 0 0 30px 4px rgba(232,168,81,.40); }
+  /* highlight-all cue mode (the ? toggle): boost glow + show labels */
+  body.hub-cue .hub-obj{ filter:drop-shadow(0 0 13px rgba(232,168,81,.9)); }
+  body.hub-cue .hub-region{ box-shadow:inset 0 0 30px 4px rgba(232,168,81,.42);
+    background:radial-gradient(ellipse at center, rgba(232,168,81,.16) 0%, rgba(232,168,81,0) 72%); }
+  .hub-obj[data-label]::after, .hub-region[data-label]::after{ content:attr(data-label);
+    position:absolute; left:50%; top:100%; transform:translateX(-50%); margin-top:5px;
+    font-family:'Spline Sans Mono',monospace; font-size:10px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase; white-space:nowrap;
+    color:#EEE5D2; background:rgba(27,27,31,.82); padding:2px 7px; border-radius:5px;
+    opacity:0; transition:opacity .2s; pointer-events:none; }
+  body.hub-cue .hub-obj[data-label]::after, body.hub-cue .hub-region[data-label]::after{ opacity:1; }
+  /* top-center date / weather strip */
+  .hub-tag{ position:absolute; top:16px; left:0; right:0; z-index:5;
+    text-align:center; pointer-events:none;
+    font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:700;
+    letter-spacing:.26em; text-transform:uppercase;
+    color:rgba(238,229,210,.97); text-shadow:0 1px 6px rgba(0,0,0,.9); padding:0 64px; }
+  /* discreet diegetic status (cash / energy / rep) bottom-left */
+  .hub-status{ position:absolute; left:14px; bottom:12px; z-index:5;
+    display:flex; gap:13px; align-items:baseline; pointer-events:none;
+    font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:600;
+    color:rgba(238,229,210,.96); text-shadow:0 1px 5px rgba(0,0,0,.9);
+    background:rgba(27,27,31,.30); padding:5px 11px; border-radius:9px; }
+  .hub-status b{ font-weight:700; color:#fff; }
+  /* the ? help / highlight toggle, top-left (mirror of the menu btn top-right) */
+  .hub-help{ position:fixed; top:10px; left:10px; z-index:120;
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(27,27,31,.55); color:#EEE5D2; border:1px solid rgba(238,229,210,.35);
+    font-family:'Fraunces',serif; font-size:19px; font-weight:600; line-height:1;
+    cursor:pointer; display:grid; place-items:center;
+    -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); transition:background .2s; }
+  .hub-help:hover, .hub-help.on{ background:var(--terra); }
+  /* first-time hint line, bottom-center */
+  .hub-hint{ position:absolute; left:50%; bottom:56px; transform:translateX(-50%); z-index:6;
+    font-family:'Fraunces',serif; font-style:italic; font-size:14px; text-align:center;
+    color:#EEE5D2; text-shadow:0 1px 6px rgba(0,0,0,.95);
+    background:rgba(27,27,31,.42); padding:6px 15px; border-radius:20px;
+    pointer-events:none; animation:hubHintFade 6s ease forwards; }
+  @keyframes hubHintFade{ 0%{opacity:0;} 12%{opacity:1;} 80%{opacity:1;} 100%{opacity:0;} }
+  /* mum's off-frame voice — left-edge bubble */
+  .hub .bubble.left-edge{ position:absolute; top:30%; left:14px; max-width:42%; z-index:6; }
   .story-screen-tag{
     position:absolute; top:48px; left:0; right:0;
     text-align:center;
@@ -1017,7 +1092,7 @@ function paintForecast(){
 }
 function renderForecast(){
   ensureForecast();
-  const back = S.phase===1?'renderMorning()':'renderAssign()';
+  const back = S.phase===1?'renderCurrent()':'renderAssign()';
   const cards=S.forecast.slice(0,FORECAST_DAYS).map((w,i)=>`
     <div class="mate" style="align-items:flex-start">
       <div style="width:34px;height:34px;border-radius:50%;background:${w.col};box-shadow:0 0 12px ${w.col};flex:none;margin-top:2px"></div>
@@ -1220,8 +1295,38 @@ const ASSETS = {
   'title-cover':              'assets/title/title-cover.webp',
   'title-wordmark':           'assets/title/title-wordmark.svg',
   'scene-kitchen':            'assets/scenes/scene-kitchen.webp',
-  // Tier H — Phase 2/3/4 desks (Phase 1 shipped 2026-05-28 as title-cover above)
-  'desk-phase1-first-booking':'assets/desk/desk-phase1-first-booking.webp',
+  // Tier L — bedroom desk-hub (Phase 1 home base): base + object/season overlays
+  'bedroom-p1-base':           'assets/hub/bedroom-p1-base.webp',
+  'bedroom-p1-phone-dark':     'assets/hub/bedroom-p1-phone-dark.webp',
+  'bedroom-p1-phone-lit':      'assets/hub/bedroom-p1-phone-lit.webp',
+  'bedroom-p1-notebook':       'assets/hub/bedroom-p1-notebook.webp',
+  'bedroom-p1-backpack-empty': 'assets/hub/bedroom-p1-backpack-empty.webp',
+  'bedroom-p1-backpack-packed':'assets/hub/bedroom-p1-backpack-packed.webp',
+  'bedroom-p1-catalogue':      'assets/hub/bedroom-p1-catalogue.webp',
+  'bedroom-p1-wallet-thin':    'assets/hub/bedroom-p1-wallet-thin.webp',
+  'bedroom-p1-wallet-thick':   'assets/hub/bedroom-p1-wallet-thick.webp',
+  'bedroom-p1-window-spring':  'assets/hub/bedroom-p1-window-spring.webp',
+  'bedroom-p1-window-summer':  'assets/hub/bedroom-p1-window-summer.webp',
+  'bedroom-p1-window-autumn':  'assets/hub/bedroom-p1-window-autumn.webp',
+  'bedroom-p1-window-winter':  'assets/hub/bedroom-p1-window-winter.webp',
+  'bedroom-p1-window-hilux':   'assets/hub/bedroom-p1-window-hilux.webp',
+  // Tier I — backpack detail screen
+  'backpack-phase1':           'assets/backpack/backpack-phase1.webp',
+  // Tier J — client people cards
+  'client-family':             'assets/clients/client-family.webp',
+  'client-cruise':             'assets/clients/client-cruise.webp',
+  'client-photographers':      'assets/clients/client-photographers.webp',
+  'client-corporate':          'assets/clients/client-corporate.webp',
+  'client-k2':                 'assets/clients/client-k2.webp',
+  'client-german-goat':        'assets/clients/client-german-goat.webp',
+  'client-bouzouki':           'assets/clients/client-bouzouki.webp',
+  'client-kyria-voula':        'assets/clients/client-kyria-voula.webp',
+  'client-cousin-mitsos':      'assets/clients/client-cousin-mitsos.webp',
+  // Tier K — day-report surfaces
+  'report-blank':              'assets/reports/report-blank.webp',
+  'report-review-good':        'assets/reports/report-review-good.webp',
+  'report-review-bad':         'assets/reports/report-review-bad.webp',
+  'report-gear-damage':        'assets/reports/report-gear-damage.webp',
   // Tier B — heroes (HEROES.md order)
   'hero-01-medic':            'assets/heroes/hero-01-medic.webp',
   'hero-02-chef':             'assets/heroes/hero-02-chef.webp',
@@ -1960,7 +2065,7 @@ function advanceDay(){
 }
 function renderCurrent(){
   if(S.season==='winter'){ renderOffSeason(); return; }
-  if(S.phase===1) renderMorning(); else renderAssign();
+  if(S.phase===1) renderBedroomHub(); else renderAssign();
 }
 
 /* ---------------- HUD ---------------- */
@@ -2004,7 +2109,7 @@ function renderHUD(){
 }
 function stat(l,v,c,bar){return `<div class="stat"><span class="lab">${l}</span><span class="val" style="color:${c||'var(--ink)'}">${v}</span>${bar?`<div class="bar"><i style="width:${clamp(bar[0],0,100)}%;background:${bar[1]}"></i></div>`:''}</div>`;}
 function gearGlyph(){const c=S.gear>=50?'var(--olive)':'var(--danger)';return `<b style="color:${c}">${S.gear}%</b>`;}
-function setScene(html){ if($('fcast'))$('fcast').innerHTML=''; $('scene').innerHTML=html; const el=$('scene'); el.style.animation='none'; void el.offsetWidth; el.style.animation='rise .45s ease both'; }
+function setScene(html){ removeHubOverlay(); if($('fcast'))$('fcast').innerHTML=''; $('scene').innerHTML=html; const el=$('scene'); el.style.animation='none'; void el.offsetWidth; el.style.animation='rise .45s ease both'; }
 // Permanent hamburger (see #menuBtn CSS). Kept as a no-op for compat
 // with existing render functions that still call showMenuBtn(true/false).
 function showMenuBtn(on){ /* no-op: button is always visible */ }
@@ -2090,7 +2195,7 @@ function logEntryColor(t){
   return 'var(--ink-dim)';
 }
 function renderLog(){
-  const back=S.phase===1?'renderMorning()':'renderAssign()';
+  const back=S.phase===1?'renderCurrent()':'renderAssign()';
   const total=(S.history&&S.history.length)||0;
   let items='';
   if(total){
@@ -2197,6 +2302,136 @@ function renderMorning(){
       </div>
     </div>`);
   paintForecast();
+}
+
+/* ============ DESK-HUB — diegetic Phase 1 home base (see DESK-HUB.md) ============
+   The childhood bedroom IS the menu: a body-level full-bleed base painting with
+   tappable object overlays + invisible furniture regions. Falls back to the
+   button-driven renderMorning() under the test harness (no real DOM) or if the
+   base art is ever missing, so gameplay + tests never break. */
+function removeHubOverlay(){
+  if(typeof document==='undefined' || typeof document.getElementById!=='function') return;
+  const b=document.body; if(b && b.classList && b.classList.remove) b.classList.remove('hub-cue');
+  const ex=document.getElementById('hubOverlay'); if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
+}
+function hubSpot(o){
+  const pos = o.region ? `left:${o.x}%;top:${o.y}%;width:${o.w}%;height:${o.h}%;`
+                       : `left:${o.x}%;top:${o.y}%;width:${o.w}%;`;
+  const cls = o.region ? 'hub-region' : 'hub-obj';
+  const art = o.region ? '' : (imgFor(o.asset, {cls:'', alt:o.label}) || '');
+  return `<button class="${cls}" style="${pos}" data-label="${o.label}" aria-label="${o.label}" onclick="${o.action}">${art}</button>`;
+}
+function toggleHubCue(){
+  if(!document.body) return;
+  const on = document.body.classList.toggle('hub-cue');
+  const btn = document.querySelector('.hub-help'); if(btn) btn.classList.toggle('on', on);
+}
+function renderBedroomHub(){
+  const realDOM = typeof document!=='undefined' && typeof document.createElement==='function'
+                  && document.body && document.body.appendChild;
+  if(!realDOM || !ASSETS['bedroom-p1-base']){ renderMorning(); return; }
+  removeHubOverlay(); removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay();
+  if($('hud'))$('hud').innerHTML=''; if($('goal'))$('goal').innerHTML=''; setSub('');
+  setScene('');  // clear .scene (also tears down any stale hub overlay)
+
+  const hasBk  = (S.bookings||[]).length>0;
+  const packed = (S.loadout||[]).length>0;
+  const rich   = (S.cash||0)>=200;
+  const objs = [
+    {asset:`bedroom-p1-phone-${hasBk?'lit':'dark'}`,         label:'Phone',  action:'openPhone()',    x:48, y:69, w:12},
+    {asset:`bedroom-p1-wallet-${rich?'thick':'thin'}`,       label:'Wallet', action:'openWallet()',   x:39, y:71, w:8},
+    {asset:'bedroom-p1-catalogue',                           label:'Shop',   action:'openShop()',     x:30, y:82, w:13},
+    {asset:`bedroom-p1-backpack-${packed?'packed':'empty'}`, label:'Pack',   action:'openBackpack()', x:15, y:82, w:15},
+  ];
+  // NOTE: bedroom-p1-notebook.webp shipped without alpha (renders as an opaque box),
+  // so the Logbook is an invisible region over the books painted on the desk for now —
+  // swap back to an overlay once a transparent notebook export lands.
+  const regions = [
+    {region:true, label:'Logbook',  action:'renderLog()',      x:60, y:69, w:11, h:12},
+    {region:true, label:'Forecast', action:'renderForecast()', x:49, y:33, w:36, h:44},
+    {region:true, label:'Rest',     action:'openRest()',       x:12, y:72, w:20, h:28},
+    {region:true, label:'People',   action:'openCorkboard()',  x:10, y:24, w:16, h:26},
+    {region:true, label:'Leave',    action:'goMenu()',         x:95, y:52, w:10, h:84},
+  ];
+  const spots  = objs.concat(regions).map(hubSpot).join('');
+  const tag    = `<div class="hub-tag">${dayTag()}${S.weather?' · '+S.weather.name:''}</div>`;
+  const status = `<div class="hub-status"><span>&euro;<b>${Math.round(S.cash||0)}</b></span>`
+    + `<span>energy <b>${Math.round(S.energy||0)}</b></span><span>rep <b>${Math.round(S.rep||0)}</b></span></div>`;
+  let hint='';
+  if(!S.hubSeen){ hint=`<div class="hub-hint">Tap the things around you.</div>`; S.hubSeen=true; saveGame(); }
+  const help = `<button class="hub-help" aria-label="What can I tap?" onclick="toggleHubCue()">?</button>`;
+  const base = `<img class="hub-base" src="${ASSETS['bedroom-p1-base']}" alt="Your childhood bedroom in Kalamata, the harbour in the window">`;
+  const overlay = document.createElement('div');
+  overlay.id='hubOverlay'; overlay.className='hub';
+  overlay.innerHTML = `<div class="hub-stage">${base}${spots}${tag}${status}${hint}</div>${help}`;
+  document.body.appendChild(overlay);
+}
+/* --- detail views reached from the hub (render into .scene; back = renderCurrent) --- */
+function openPhone(){
+  renderHUD();
+  const w=S.weather;
+  const cards=(S.bookings||[]).map((b,i)=>{
+    const need=b.diff===3?45:b.diff===2?30:0, tired=S.energy<need;
+    const lock=bookingLock(b); const dis=lock||tired;
+    const reason=lock||(tired?`Too exhausted — needs ${need} energy`:'');
+    return optBooking(b, dis, reason, `pickBooking(${i})`);
+  }).join('');
+  setScene(`
+    <div class="day-tag">${dayTag()} · the phone</div>
+    <p class="weather">${w.name}<small>${w.note}</small></p>
+    <h2>Who is paying you today?</h2>
+    <p>The morning’s bookings are on the screen. Pick a trip — or set the phone down and sort yourself out.</p>
+    <div class="choices">${cards||'<p class="verdict">Nothing new this morning. Quiet.</p>'}</div>
+    <div class="actionbar"><button class="go" onclick="renderCurrent()">Set the phone down</button></div>`);
+}
+function openWallet(){
+  renderHUD();
+  const debt = (S.loan)
+    ? `<p>Outstanding loan: <b style="color:var(--danger)">€${Math.round(S.loan.balance||S.loan.principal||0)}</b>${S.loan.source?' · '+S.loan.source:''}.</p>`
+    : '<p>No debts. Clean.</p>';
+  const ys=S.yearStats||{};
+  setScene(`
+    <div class="day-tag">${dayTag()} · the wallet</div>
+    <h2>€${Math.round(S.cash||0)}</h2>
+    <p>What you have to your name this morning.</p>
+    ${debt}
+    <p style="font-family:'Spline Sans Mono',monospace;font-size:12px;color:var(--ink-faint)">This year · fees €${Math.round(ys.fees||0)} · tips €${Math.round(ys.tips||0)} · wages paid €${Math.round(ys.wages||0)}</p>
+    <div class="actionbar"><button class="go" onclick="renderCurrent()">Pocket it again</button></div>`);
+}
+function openBackpack(){
+  renderHUD();
+  const art = imgFor('backpack-phase1', {cls:'art art-scene', alt:'Your worn day-pack'});
+  const owned = Object.keys(S.owned||{});
+  const items = owned.length
+    ? owned.map(id=>`<li><b>${ITEMS[id]||id}</b> — ${ownedTier(id)||'standard'} · ${ownedTrips(id)} trip${ownedTrips(id)===1?'':'s'} left</li>`).join('')
+    : '<li>Empty but for the bag itself.</li>';
+  const right = `<h2 style="margin-top:0">The pack</h2>
+    <p>Carries up to <b>${S.packSize||4}</b> item${(S.packSize||4)===1?'':'s'} a trip. You load it at the trailhead, before you walk.</p>
+    <ul style="font-size:14px;line-height:1.6;padding-left:18px;margin:0 0 14px">${items}</ul>
+    <div class="choices"><button class="opt" onclick="openShop()"><span class="mark">▣</span><span class="b-main">Buy or refill kit<span class="b-sub">Open the catalogue</span></span></button></div>
+    <div class="actionbar"><button class="go" onclick="renderCurrent()">Sling it back down</button></div>`;
+  if(art){ setScene(`<div class="two-col"><div class="col-stage">${art}</div><div class="col-panel">${right}</div></div>`); }
+  else { setScene(`<div class="end">${right}</div>`); }
+}
+function openRest(){
+  renderHUD();
+  const full = S.energy>=100;
+  setScene(`
+    <div class="day-tag">${dayTag()} · the bed</div>
+    <h2>Sleep until tomorrow?</h2>
+    <p>${full?'You are already well rested — a day in bed would just be a day lost.':'Rest restores your energy, but it costs you the day. The bookings move on without you.'}</p>
+    <div class="choices">
+      <button class="opt ${full?'disabled':'primary'}" onclick="${full?'':'restDay()'}"><span class="mark">~</span><span class="b-main">Sleep${full?' — already rested':''}<span class="b-sub">Restore energy · advances the day</span></span></button>
+      <button class="opt" onclick="renderCurrent()"><span class="mark">·</span><span class="b-main">Not yet<span class="b-sub">Back to the room</span></span></button>
+    </div>`);
+}
+function openCorkboard(){
+  renderHUD();
+  setScene(`
+    <div class="day-tag">${dayTag()} · the corkboard</div>
+    <h2>Your people</h2>
+    <p>Old school photos, a panigíri ticket, a faded team list. For now it is just you — when you take someone on, their face goes up here.</p>
+    <div class="actionbar"><button class="go" onclick="renderCurrent()">Back to the room</button></div>`);
 }
 function packUpgradeOpt(){
   const next = S.packSize<6?6 : S.packSize<8?8 : null;
@@ -2305,7 +2540,7 @@ function openShop(){
       ${packUpgradeOpt()}
       ${S.gear>=100 ? '' : simpleOpt('⚒','Service your equipment', S.cash<40?'Need €40':'€40 · +35% gear condition', S.cash<40, 'serviceGear()')}
     </div>
-    <div class="actionbar"><button class="go" onclick="renderMorning()">Done — back to the day</button></div>`);
+    <div class="actionbar"><button class="go" onclick="renderCurrent()">Done — back to the day</button></div>`);
 }
 /* Mid-summer vehicle purchase. Transport infra is the only category buyable
    outside winter — the rest (website, hotelDeal) still go through enrollInfra
@@ -2375,7 +2610,7 @@ function renderVehicleScene(id){
         <div class="col-panel">
           <h2 style="margin-top:0">${sc.title}</h2>
           ${paras}
-          <div class="actionbar"><button class="go" onclick="renderMorning()">Back to the day</button></div>
+          <div class="actionbar"><button class="go" onclick="renderCurrent()">Back to the day</button></div>
         </div>
       </div>`);
   } else {
@@ -2383,7 +2618,7 @@ function renderVehicleScene(id){
       <div class="day-tag" style="color:var(--sage)">${dayTag()} · a small freedom</div>
       <h2>${sc.title}</h2>
       ${paras}
-      <div class="actionbar"><button class="go" onclick="renderMorning()">Back to the day</button></div>
+      <div class="actionbar"><button class="go" onclick="renderCurrent()">Back to the day</button></div>
     </div>`);
   }
 }
@@ -3532,7 +3767,7 @@ function hire(i){ const c=S.cands[i]; S.cash-=c.fee;
 }
 function depotValue(){ return GEAR.reduce((s,it)=>s+(S.depot[it.id]||0)*it.cost,0); }
 function renderSummary(){
-  const back = S.phase===1?'renderMorning()':'renderAssign()';
+  const back = S.phase===1?'renderCurrent()':'renderAssign()';
   const st=S.stats||{earned:0,fees:0,tips:0,wagesPaid:0,tripsYou:0,tripsGuides:0,hires:0,bestRep:S.rep};
   const roster = S.guides.length
     ? S.guides.map(g=>`<div class="row"><span class="l">${g.name} · ${g.spec}</span><span class="v">skill ${g.skill} · €${g.wage}/day</span></div>`).join('')
