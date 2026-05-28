@@ -241,12 +241,13 @@
   .iconbtn:active{transform:scale(.95);}
   /* Permanent hamburger — fixed top-right of viewport, always visible
      so the player can exit fullscreen / open the menu from any scene,
-     including the title screen and the kitchen intro where the appbar
-     is otherwise empty. Semi-transparent so it doesn't compete with
-     the scene; full opacity on hover/active. z-index below the drawer
-     so the menu overlay covers it cleanly when open. */
+     including the title screen (z:100 cover overlay) and the kitchen
+     intro where the appbar is otherwise empty. Semi-transparent so it
+     doesn't compete with the scene; full opacity on hover/active.
+     z-index 150 — above title-full (100), below drawer (200) so the
+     menu overlay covers it cleanly when open. */
   #menuBtn{
-    position:fixed; top:14px; right:14px; z-index:40;
+    position:fixed; top:14px; right:14px; z-index:150;
     opacity:.55;
   }
   #menuBtn:hover, #menuBtn:active, #menuBtn:focus-visible{opacity:1;}
@@ -269,7 +270,7 @@
   button.go .gs{font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:500; color:rgba(26,43,34,.7);}
 
   /* menu drawer */
-  .drawer{position:fixed; inset:0; z-index:50; background:rgba(6,16,18,.62); backdrop-filter:blur(3px); display:none; align-items:flex-end; justify-content:center; opacity:0; transition:opacity .22s;}
+  .drawer{position:fixed; inset:0; z-index:200; background:rgba(6,16,18,.62); backdrop-filter:blur(3px); display:none; align-items:flex-end; justify-content:center; opacity:0; transition:opacity .22s;}
   .drawer.open{display:flex; opacity:1;}
   .sheet{width:100%; max-width:640px; background:linear-gradient(180deg,#123238,#0c272c); border:1px solid var(--edge); border-bottom:none; border-radius:20px 20px 0 0; padding:10px 16px 26px; transform:translateY(16px); transition:transform .24s; box-shadow:0 -20px 50px -20px rgba(0,0,0,.8);}
   .drawer.open .sheet{transform:none;}
@@ -384,16 +385,18 @@
   .art-glyph{display:inline-block; width:36px; height:36px; vertical-align:middle; margin-right:6px;}
   .art-glyph-sm{display:block; width:22px; height:22px; margin:4px auto 4px;}
 
-  /* TITLE SCREEN — full-bleed cover, two small centered buttons.
-     The cold-open intro already showed the wordmark / kicker /
-     verdict typography; this screen is mute on purpose — just the
-     desk image and "tap to begin." Cover fills the entire scene
-     area via object-fit:cover (crops to fit, no letterboxing). */
+  /* TITLE SCREEN — true fullscreen cover overlay. Sits OUTSIDE the
+     wrap visually (position:fixed inset:0) so the cover image goes
+     edge-to-edge regardless of wrap's 1100px max-width. The cold-open
+     intro already showed the wordmark / kicker / verdict typography;
+     this screen is mute on purpose — just the desk image and the two
+     small action buttons. Hamburger (z:150) and drawer (z:200) stack
+     above so menu still works from here. */
   .title-full{
-    position:relative; flex:1; min-height:0;
+    position:fixed; inset:0; z-index:100;
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
-    margin:-14px -18px -16px;  /* breaks out of .wrap padding so cover is true full-bleed */
+    background:var(--bg);  /* fallback if image is missing */
   }
   .title-full-bg{
     position:absolute; inset:0;
