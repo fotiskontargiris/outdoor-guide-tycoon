@@ -826,6 +826,160 @@ No legible text — the handwritten check-list and headers are real-shape but il
 
 ---
 
+## 15. Tier L — Desk Hub (Phase 1 bedroom + object overlays)
+
+The diegetic UI tier (see `DESK-HUB.md`). One large base scene of the Phase 1
+childhood bedroom + 13 transparent‑background object overlays that composite on
+top at runtime. Different state = different overlay swapped in; the base never
+changes.
+
+**Production order:**
+1. Base scene first (`bedroom-p1-base`) — once approved, becomes the reference
+   for all overlays.
+2. Overlays second, in a single ChatGPT conversation with the approved base
+   uploaded as the reference. Critical: every overlay must match the base's line
+   weight, wash discipline, and lighting direction or it won't sit cleanly.
+
+**For overlays, attach the approved base scene** as the reference image and tell
+ChatGPT: *"Match the visual style, line weight, wash colours, and lighting of the
+attached reference image exactly. The object must look like it was painted on the
+same page as the reference scene. Output with a fully transparent background — no
+sky, no paper, no surface around the object."*
+
+---
+
+### `bedroom-p1-base` — the Phase 1 childhood bedroom (no objects on the desk)
+
+Save to: `assets/hub/bedroom-p1-base.webp`
+
+```
+Render this as an ink-and-watercolor travel illustration — the visual register of a Moleskine travel-journal page or a mid-century Mediterranean travel-guidebook plate. Wet, translucent watercolor washes with natural soft edges, gentle bleeds at wash boundaries, and visible granulated pigment pooling where the brush lifted. Loose hand-drawn ink line work in warm sepia-black, made with a fountain pen on paper — confident but slightly wobbly, with varying line weight from the pen's natural pressure; never a uniform machine-precise stroke. White-of-paper gaps where the watercolor wash didn't reach: the warm limestone bone-cream paper surface is part of the image, not a continuous fill, and several passages of every frame are simply the paper showing through. Limited five-colour palette, each colour applied as a wet wash (translucent, not opaque): warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone (the paper itself), and warm near-black ink for the line work — plus exactly one seasonal accent of noon gold, also as a wash. Bright Mediterranean afternoon light: warm bone-cream paper holds the bright passages; a single saturated wash holds the shadow. Loose, hand-made, observed sketch energy — opinionated but never tightly rendered or overworked. In the spirit of Liz Steel's travel watercolors, Lapin's Mediterranean sketchbooks, David Hockney's travel sketches, and mid-century European travel-guidebook illustration. This is INK and WATERCOLOR on paper — NOT gouache, NOT digital flat-design, NOT a vector graphic, NOT photographic, NOT 3D rendered, NOT a cartoon, NOT anime, NOT chibi, NOT a CG render.
+
+Frame as a wide landscape composition, about 20:9 ratio (most modern phones in landscape). Keep critical compositional elements within the central 16:9 SAFE ZONE so they survive narrower viewports.
+
+Subject: The childhood bedroom of a Greek thirty-something who has just moved back home with his mother in Kalamáta, Messinia. We see the room from the chair-perspective of someone about to sit at the desk — three-quarter view, slightly above the desk surface, looking forward into the room. The dominant feature is a WIDE WINDOW filling the back wall, opening onto Kalamáta harbour in mid-afternoon summer light — terracotta rooftops, the curve of the bay, and the Taygetos mountain range rising deep blue-green behind. Below the window: an old wooden school desk, bare surface (the day's objects will be added later as overlays — leave the desk surface clear). In front of the desk, a simple wooden chair (we see the back of it from our angle). To the LEFT of frame: a single bed pushed against the wall, with an old patterned blanket folded at its foot. To the RIGHT side wall: a small bedroom door, slightly ajar, with a coat hanging on a hook beside it. On the windowsill: a single terracotta pot with a geranium in flower. Pinned to the wall above the desk: a panigíri poster (faded, from August 2017), and a small framed black-and-white print of Mistras. On the side wall: a small round mirror. The atmosphere is teenage time-capsule meets adult disappointment — dusty trophies on a shelf, a faded football team photo, posters from a decade ago. The watercolor light coming through the window is warm and quiet. Critical: the DESK SURFACE is empty. The PHONE, NOTEBOOK, BACKPACK, CATALOGUE, WALLET will be added as separate overlay assets later — do not paint them in.
+
+Mainland Greece, Messinia, NOT the Cycladic islands. No whitewashed buildings, no blue domes. Do not include any people, any text on the poster beyond an indecipherable "ΠΑΝΗΓΥΡΙ" shape. No emoji, drop shadow, glow, gradient, sparkle. No anime, chibi, cartoon, photoreal, 3D render, vector flat-design, or "watercolor filter" look. Loose hand-made sketch energy throughout — watercolor over ink on paper, never digital.
+```
+
+---
+
+### Object overlays — template
+
+For each overlay below, **attach `bedroom-p1-base.webp` as the reference image
+first**, then send this preface in a single ChatGPT conversation:
+
+> *"Use this attached image as the locked style and lighting reference for an
+> entire series of small object overlays. Match the line weight, wash discipline,
+> bone-cream paper feel, and lighting direction exactly. Each overlay I describe
+> must look like the object was painted ON the same page as the reference scene,
+> but I need it on a fully transparent background so I can composite it onto the
+> base at runtime. Output: transparent PNG, no surface beneath the object, no
+> sky, no paper, no shadow of any surrounding context — just the object as a
+> watercolor cutout. Acknowledge and I'll send the first object."*
+
+Then send each prompt below in sequence.
+
+### `bedroom-p1-phone-dark`
+Save to: `assets/hub/bedroom-p1-phone-dark.webp`
+```
+Subject: An old smartphone lying face-up on a wooden desk, screen off and dark, slight reflection on the dark glass. Worn black case, a small scratch on one corner. Mid-shot from slightly above. Loose ink line for the device outline; the dark screen as a single restrained wash of near-black ink with the faintest watercolor sheen. Fully transparent background — only the phone itself, no desk surface, no shadow except a small soft watercolor under-shadow directly beneath the phone for grounding. Match the reference image's line, wash, and afternoon light exactly.
+```
+
+### `bedroom-p1-phone-lit`
+Save to: `assets/hub/bedroom-p1-phone-lit.webp`
+```
+Subject: Same old smartphone as the reference, same position face-up on the desk, but the SCREEN IS LIT — a notification banner visible on the lock-screen reads "NEW BOOKING" in small text (legible), with a small icon, and beneath it "Sea Kayaking — tomorrow 09:30". The screen glows with a soft noon-gold tint that warms the air just above the phone. Same worn black case, same loose ink outline. Fully transparent background — only the phone and its tiny pool of glow light beneath. Match the reference image's line weight, wash discipline, and lighting exactly. The screen-glow should look like a wet wash of noon-gold pooled on the screen surface, not a digital LED.
+```
+
+### `bedroom-p1-notebook`
+Save to: `assets/hub/bedroom-p1-notebook.webp`
+```
+Subject: A closed spiral-bound notebook with a worn brown cover, sitting on the desk. A pencil resting alongside the notebook, parallel to its long edge. The spiral binding visible along the top edge as small loops of warm sepia-black ink line. The cover shows the faint suggestion of a handwritten label, illegible (just shapes that read as writing). Loose ink line for the cover edges and spiral; warm terracotta-brown wash for the cover with a streak of paper showing through where the wash thinned. Soft watercolor shadow under the notebook for grounding. Fully transparent background. Match the reference image exactly.
+```
+
+### `bedroom-p1-backpack-empty`
+Save to: `assets/hub/bedroom-p1-backpack-empty.webp`
+```
+Subject: A small worn outdoor backpack, dusty olive canvas, leather straps, slightly deflated and slumped against the leg of a wooden desk chair on a wooden floor (left of frame in the composition). Approximately 35-40 litre size, made for day hikes. Open zip on top, the inside dark and empty. A small clip dangles from one strap. Loose ink line; wet wash of sun-bleached olive sage with one warm terracotta accent on a fabric tag. Soft watercolor under-shadow on the floor for grounding. Fully transparent background — only the pack and a small floor-shadow patch beneath it. Match the reference image's style exactly.
+```
+
+### `bedroom-p1-backpack-packed`
+Save to: `assets/hub/bedroom-p1-backpack-packed.webp`
+```
+Subject: Same worn outdoor backpack as the empty version, but now PACKED — the pack stands upright on the wooden floor, fully strapped closed, with a visible swell from contents inside, a water bottle peeking from the side pocket, a small bundle of trail food clipped to the top. The whole thing reads as "ready to leave the house in five minutes." Loose ink line, olive sage wash with terracotta accents. Soft watercolor under-shadow on the floor for grounding. Fully transparent background. Match the reference image's style exactly.
+```
+
+### `bedroom-p1-catalogue`
+Save to: `assets/hub/bedroom-p1-catalogue.webp`
+```
+Subject: A folded outdoor-sports shop catalogue / promotional flyer lying on the corner of the wooden desk, slightly folded open so we glimpse a hint of cover imagery (a mountain silhouette in terra wash, "ΕΞΟΠΛΙΣΜΟΣ" — equipment — in faded Greek block lettering on the cover; the lettering should look like real shapes but not be precisely legible). Paper with a slight crease. Loose ink line; wash of warm terracotta on the cover with bone-cream paper showing through where the wash didn't reach. Soft watercolor shadow under the flyer for grounding. Fully transparent background. Match the reference image's style exactly.
+```
+
+### `bedroom-p1-wallet-thin`
+Save to: `assets/hub/bedroom-p1-wallet-thin.webp`
+```
+Subject: A worn leather wallet, open on the wooden desk, showing just a few coins inside the change pocket (2-3 euro coins as small disks of warm sepia-black ink line + olive wash). The wallet looks thin and disappointing. Brown leather with visible wear on the corners. Loose ink line for the wallet outline, wet wash of warm terracotta-brown for the leather with paper showing through on the worn corners. Soft watercolor under-shadow for grounding. Fully transparent background. Match the reference image's style exactly.
+```
+
+### `bedroom-p1-wallet-thick`
+Save to: `assets/hub/bedroom-p1-wallet-thick.webp`
+```
+Subject: Same worn leather wallet, open on the desk, but now THICKER — coins in the change pocket PLUS a small folded paper banknote visible peeking from the bill pocket. The wallet sits with a sense of weight. Same brown leather, same loose ink line, same wash treatment with paper showing through on the corners. Soft watercolor under-shadow for grounding. Fully transparent background. Match the reference image's style exactly.
+```
+
+### `bedroom-p1-corkboard-empty`
+Save to: `assets/hub/bedroom-p1-corkboard-empty.webp`
+```
+Subject: A small cork pinboard mounted on the side wall of the bedroom, with the Phase 1 starting contents: an old strip of black-and-white photo-booth photos pinned at the top corner, a faded postcard of Voidokiliá Bay below it, a yellowed ticket stub from "ΠΑΝΗΓΥΡΙ 2017" (legible-shape but not crisp), a single drawing pin holding everything in place. Cork texture suggested by stippled ink line on a warm terracotta-tan wash. Loose ink line throughout; soft watercolor for each pinned item. The whole board reads as "things from before, frozen on the wall." Fully transparent background — only the cork board and its pinned items, no surrounding wall. Match the reference image's style exactly.
+```
+
+### `bedroom-p1-window-spring`
+Save to: `assets/hub/bedroom-p1-window-spring.webp`
+```
+Subject: The VIEW through the wide bedroom window only — designed to sit BEHIND the window frame painted in the base scene. Kalamáta harbour in early spring afternoon, with oleander pink in flower on the verge that leads down to the quay; the harbour bay curving to the right; Taygetos mountain range deep blue-green behind. Mid-afternoon light, soft and warm. The view should be slightly atmospheric — distant haze, soft watercolor washes for the mountain layers. Loose ink line for the harbour quay edge, the boats; pure watercolor wash for the sea and sky. Oleander pink as a single concentrated wash in the verge. Bone-cream paper showing through generously in the sky. Fully transparent background — designed to fill ONLY the rectangle that will sit behind the window frame in the base scene. Match the reference image's overall watercolor approach to the window view, with the season-appropriate accent of oleander pink.
+```
+
+### `bedroom-p1-window-summer`
+Save to: `assets/hub/bedroom-p1-window-summer.webp`
+```
+Subject: Same view as the spring variant — Kalamáta harbour from the bedroom window — but in HIGH SUMMER mid-afternoon. The light is brighter, the noon-gold accent washes catch the harbour walls and the rooftiles below. Cicadas implied. Distant mountains slightly hazier in the heat. Same composition, same loose ink line for the quay and boats; noon gold as the seasonal accent — a single concentrated wash on the lit harbour walls, the boat masts, one fishing-net buoy. Bone-cream paper showing through generously in the bright sky. Fully transparent background. This is the DEFAULT window view that ships with the base scene — production version, match the base image style closely.
+```
+
+### `bedroom-p1-window-autumn`
+Save to: `assets/hub/bedroom-p1-window-autumn.webp`
+```
+Subject: Same view — Kalamáta harbour from the bedroom window — but in AUTUMN, late afternoon. Cooler light, cypress green-black as the seasonal accent in the late vines and a row of cypress trees along the inland edge of the harbour road. The sea slightly darker, the sky a softer wash. Same loose ink line, same wash discipline. Cypress green-black as one concentrated wash on the cypresses. Fully transparent background. Match the reference image's window-view treatment.
+```
+
+### `bedroom-p1-window-winter`
+Save to: `assets/hub/bedroom-p1-window-winter.webp`
+```
+Subject: Same view — Kalamáta harbour from the bedroom window — but in WINTER. Rain-grey as the seasonal accent: wet harbour stone, low cloud across the upper part of the view, a sheen of wet on the quay. The mountains barely visible through the haze. Atmosphere: damp, quiet, the off-season. Same loose ink line; the palette shifts cooler and slightly desaturated. Rain grey as the single concentrated wash in the wet harbour walls and the low cloud. Fully transparent background. Match the reference image's window-view treatment.
+```
+
+### `bedroom-p1-window-hilux`
+Save to: `assets/hub/bedroom-p1-window-hilux.webp`
+```
+Subject: A SINGLE small element — a battered dark-olive Toyota Hilux pickup truck parked in the harbour-side parking, seen at moderate distance through the bedroom window. The truck is small in frame (it's a distant element in the wider window view, not a close-up). Side-on, with dust on its lower body, a steel roof rack visible. The truck has the same loose ink line and olive wash as the rest of the imagery; one small accent of noon gold on the chrome trim. Fully transparent background — ONLY the truck and a tiny watercolor under-shadow on the asphalt, nothing else. This overlay composites on top of any seasonal window view so the Hilux appears parked in the visible harbour-side lot once the player has bought it. The truck's footprint on the image should sit in roughly the lower-right third of the window-view rectangle.
+```
+
+---
+
+### Wall test for the hub batch
+
+After producing the base + first 3 overlays (phone-lit, backpack-empty,
+notebook), composite them in any image editor at the same scale. If the overlays
+look like they were painted ON the base scene (same line weight, same wet-wash
+discipline, same lighting), the batch is locked. If any overlay looks
+"pasted on" (cleaner line, denser wash, different paper feel), tweak the prompt
+and re-roll BEFORE producing the rest.
+
+This wall-test is the same discipline as the original pilot trio — get the
+visual relationship right before scaling.
+
+---
+
 ## Cross‑references
 
 - `ART-DIRECTION.md` — the doctrine these prompts encode.

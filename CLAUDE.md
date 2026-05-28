@@ -184,6 +184,16 @@ Balance is a **first pass** — these are the dials to turn for a balance featur
   overlaid character bubbles, narrator italic below, choices below that; see §12) are
   unchanged. Palette (terra · olive · sea · bone · ink + one seasonal accent) is now
   expressed as wet washes. Pair‑read with `LANGUAGE.md`.
+- `DESK-HUB.md` — **the diegetic UI doctrine** (locked 2026-05-28). The home base for each
+  game phase is a ROOM you tap (Phase 1: childhood bedroom in mum's house, school desk by a
+  wide window onto Kalamáta harbour + Taygetos). ~9 clickable objects per hub (phone /
+  notebook / backpack / window / catalogue / wallet / corkboard / bed / door); each tap →
+  detail view. Asset architecture is **one base scene + many transparent object overlays**
+  composited at runtime, so state changes (booking notifications, packed vs empty pack,
+  cash level, etc.) just swap overlays — no new base painting needed. Phase 2/3/4 each
+  get their own evolved room. Replaces `renderMorning`'s button-driven menu for Phase 1
+  (code change deferred until base scene ships). Pair with `ART-DIRECTION.md` (look) and
+  `ASSET-MANIFEST.md` (Tier L: hub base + 13 overlays).
 - `ASSET-MANIFEST.md` — the bridge from doctrine to production. Every asset with a stable id,
   filename, subject, composition hook, and status. Tiered A–G; pilot trio defined to prove
   the style across all three registers before scaling. Source of truth for what to make next,

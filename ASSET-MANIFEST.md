@@ -270,6 +270,63 @@ the renderer composes against.
 
 ---
 
+## 10¾. Tier L — desk hub (new 2026-05-28, see DESK-HUB.md)
+
+The diegetic UI tier. The game's home base becomes a *room you tap*. For Phase 1:
+the childhood bedroom in Kalamata, school desk by a wide window onto the harbour
+with Taygetos behind. ~9 interactive objects on/around the desk; tap any of them
+to enter a detail view (phone screen, backpack interior, logbook, shop, etc.).
+
+**Architecture**: one large base scene + many transparent object overlays. The
+overlays composite onto the base at runtime, so state changes (booking notifications,
+backpack packed/empty, wallet thin/thick, etc.) just swap the relevant overlay —
+no need for a whole new scene painting per state. See `DESK-HUB.md §5`.
+
+### Phase 1 — base scene (1 asset)
+
+| ID | File | Subject |
+|---|---|---|
+| `bedroom-p1-base` | `assets/hub/bedroom-p1-base.webp` | The full Phase 1 bedroom in ink-and-watercolor: school desk by a wide window onto Kalamáta harbour with Taygetos rising behind; single bed in the corner; bedroom door, mirror, geranium on the windowsill, panigíri poster on the wall, a mug of cold coffee, a Mistras print. The WINDOW shows the default summer harbour view. The desk surface is EMPTY — the phone, notebook, catalogue, wallet etc. are overlay assets that composite on top. 20:9 (1920×864), 16:9 safe zone for the desk + window. |
+
+### Phase 1 — object overlays (13 assets, transparent PNG/WebP)
+
+Each overlay is a single object on a transparent background, painted in the same
+ink-and-watercolor register as the base scene, with the same line weight and wash
+discipline so it sits on the base without looking pasted on.
+
+| ID | File | Subject | State |
+|---|---|---|---|
+| `bedroom-p1-phone-dark` | `assets/hub/bedroom-p1-phone-dark.webp` | An old phone, screen off, sitting face-up on the desk near the centre | no bookings |
+| `bedroom-p1-phone-lit` | `assets/hub/bedroom-p1-phone-lit.webp` | Same phone, screen glowing with a `NEW BOOKING` notification visible on the lock-screen, one or two pills of unread | bookings present |
+| `bedroom-p1-notebook` | `assets/hub/bedroom-p1-notebook.webp` | A closed spiral notebook with a worn cover, a pencil resting alongside, on the desk surface | always |
+| `bedroom-p1-backpack-empty` | `assets/hub/bedroom-p1-backpack-empty.webp` | A small worn outdoor backpack leaning deflated against the desk chair on the floor (left of frame) | empty |
+| `bedroom-p1-backpack-packed` | `assets/hub/bedroom-p1-backpack-packed.webp` | Same pack but standing upright on the floor, strapped closed, ready for the day | loaded |
+| `bedroom-p1-catalogue` | `assets/hub/bedroom-p1-catalogue.webp` | A folded outdoor-shop catalogue / flyer with a glimpse of cover illustration, on the desk corner | always |
+| `bedroom-p1-wallet-thin` | `assets/hub/bedroom-p1-wallet-thin.webp` | A worn leather wallet open on the desk, just a few coins visible | broke |
+| `bedroom-p1-wallet-thick` | `assets/hub/bedroom-p1-wallet-thick.webp` | Same wallet, thicker — coins plus a folded note visible | flush |
+| `bedroom-p1-corkboard-empty` | `assets/hub/bedroom-p1-corkboard-empty.webp` | A cork pinboard on the side wall with an old photo strip, a faded postcard, a pinned ticket stub from a 2017 panigíri | Phase 1 start |
+| `bedroom-p1-window-spring` | `assets/hub/bedroom-p1-window-spring.webp` | The window VIEW only (sits behind the window frame in the base) — Kalamáta harbour in spring with oleander pink on the verge | spring |
+| `bedroom-p1-window-summer` | `assets/hub/bedroom-p1-window-summer.webp` | Same view in summer — bright noon gold on stone, harbour lights ready for evening | summer (default) |
+| `bedroom-p1-window-autumn` | `assets/hub/bedroom-p1-window-autumn.webp` | Autumn — cypress green-black on the late vines, the light cooler | autumn |
+| `bedroom-p1-window-winter` | `assets/hub/bedroom-p1-window-winter.webp` | Winter — wet rain-grey harbour, low cloud | winter |
+| `bedroom-p1-window-hilux` | `assets/hub/bedroom-p1-window-hilux.webp` | A transparent overlay adding the Hilux parked in the harbour-side parking, visible through the window. Composites on top of any season variant | post-pickup-purchase |
+
+### Phase 2/3/4 — deferred
+
+The same pattern applies. Each later phase needs its own base scene (~1 asset) and
+~10–15 overlays. Locked in `DESK-HUB.md §3`. Production deferred until Phase 1 hub
+ships.
+
+### Wire-up
+
+A new `assets/hub/` folder holds these. Add to the `ASSETS` map in `index.html`
+as each one ships. A new `renderBedroomHub()` function (deferred) reads the
+overlays and composites them per state. The existing utility screens
+(`renderLog`, `openShop`, `renderForecast`, `openHire`, etc.) become DETAIL views
+entered from the hub.
+
+---
+
 ## 11. Status legend
 
 ```
