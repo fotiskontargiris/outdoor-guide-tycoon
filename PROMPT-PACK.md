@@ -51,7 +51,7 @@ get an image. Pair‑read with `ART-DIRECTION.md` (the doctrine these encode) an
 
 | | Midjourney | ChatGPT |
 |---|---|---|
-| Aspect ratio | `--ar 5:4` flag | "in portrait orientation, about 4:5 ratio" in the prompt body |
+| Aspect ratio | `--ar 16:10` for all scenes (landscape-fullscreen game) | "as a landscape composition, about 16:10 ratio" in the prompt body |
 | Negative prompt | `--no <list>` flag | "Do not include X, Y, Z" sentences in the prompt body |
 | Style reference | `--sref <url>` flag | Upload the reference image into the chat + text instruction |
 | Character reference | `--cref <url>` flag | Upload + "give this person the same face" |
@@ -109,7 +109,7 @@ Save to: `assets/heroes/hero-09-alani.png`
 ```
 Render this as an editorial Mediterranean illustration in a matte gouache style — opaque chalky paint, no gradients, no glow, no drop shadows, no airbrush surface. Use woodcut-style ink linework: confident ~2px lines on foreground figures, hairline ~1px on mid-ground structures, and no outlines at all on landscape masses (hills, sea, sky read as flat colour blocks only). Flat lighting from a single warm sun direction; shadows are single blocks of a darker neighbour hue, never pure black. Use only this limited five-colour palette: warm terracotta clay, sun-bleached olive sage, deep Ionian sea blue, warm limestone bone cream, and warm near-black ink — plus exactly one seasonal accent of noon gold. Hand-made and opinionated, in the spirit of Edward Bawden travel posters, Hugo Pratt's Mediterranean comics, mid-century New Yorker editorial illustration, and Greek folk woodcuts by A. Tassos. This is illustrated, NOT photographic, NOT 3D rendered, NOT a vector flat-design graphic.
 
-Frame this in portrait orientation, slightly taller than wide (about 4:5 ratio).
+Frame this as a landscape composition, about 16:10 ratio, with the figure in the LEFT third of the frame and the rest of the canvas given to his Messinian context — the kafeneío door, the moped, the dusty road. The right portion of the frame should leave breathing room (could be a wash of bone-cream paper, partial wash of terracotta dust, or quiet middle-distance) — this is where the game UI will sit. The whole image must read as a landscape painting from a travel sketchbook, not a portrait crop.
 
 Subject: A Greek man in his early thirties leaning back against the seat of a cheap two-stroke moped parked outside a village kafeneio in Messinia, mainland southern Greece. He wears a faded olive button-down shirt with sleeves rolled to the elbow, jeans, dusty boots, and a worn leather wristband on his right wrist. An unlit cigarette is tucked behind his right ear. He has a half-knowing smirk, and his eyes glance off-frame to the left as if greeting someone just outside the frame. The kafeneio doorway is in deep Ionian shadow behind him, with a hand-painted Greek sign above it (the lettering should be an undecipherable hand-painted shape, not legible text). Late afternoon light, terracotta dust on the road. Compose him as a mid-shot, waist-up, single figure positioned slightly off-axis in the frame. The noon-gold accent should appear in exactly one place: catching the moped tank's chrome and the painted sign's lettering — nothing else.
 
@@ -216,7 +216,7 @@ slightly off‑axis below. Export as SVG to `assets/title/title-wordmark.svg`.
 ## 7. Tier B — heroes (10)
 
 Open one chat, attach `pilot-01-hero-alani`, send the style‑lock preface from §5, then send
-each hero prompt in sequence. Each portrait is **portrait orientation, about 4:5 ratio**.
+each hero prompt in sequence. Each is a **landscape composition, about 16:10 ratio, with the figure in the LEFT third** and the rest of the canvas given to their natural Messinian context. The right portion leaves breathing room for the game UI to overlay.
 
 ### `hero-01-medic` — The almost‑doctor (♂) · rain‑grey accent
 Save to: `assets/heroes/hero-01-medic.png`
@@ -224,7 +224,7 @@ Save to: `assets/heroes/hero-01-medic.png`
 ```
 Same editorial Mediterranean illustration style as the reference image — matte gouache, woodcut linework, flat lighting, five-colour palette of terracotta, olive, sea blue, bone, and ink. The seasonal accent for this image is rain grey.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek man in his early thirties, the almost-doctor. He holds a small green canvas medic kit with a white cross, taped at one corner where the seam is wearing. His right thumb runs along a kit strap, checking and re-checking. He wears a worn faded outdoor button-down and trekking trousers. Short dark hair. Kind, concerned eyes glancing down at the kit. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of cloud and the quiet light of a hospital corridor at the edge. Gentle, cautious posture. The rain-grey accent appears only in the medic kit's webbing straps and in the corridor shadow behind him.
 
@@ -237,7 +237,7 @@ Save to: `assets/heroes/hero-02-chef.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek man in his early thirties, the once-celebrated Mykonos chef. He is passing a foil-wrapped parcel of food forward with both hands to someone just off-frame. A small sea bream fish tattoo on his right forearm. A weathered chef's apron tied loose over a faded t-shirt. A slight half-smile — not quite hungry himself, the kind who feeds others first. Dark hair pushed back from his forehead. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of warm taverna kitchen depth behind him. Generous, welcoming gesture. The noon-gold accent appears only in the foil of the food parcel and in the apron's stitching.
 
@@ -250,7 +250,7 @@ Save to: `assets/heroes/hero-03-soldier.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is rain grey.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek woman in her early thirties, cut on the final day of special-forces selection. She holds a windworn topographic map with curled edges in both hands, but her eyes are off-frame upward, reading the sky like a sentence. Short, pragmatic dark hair. A technical olive softshell jacket. Alert, calm posture with the wind moving in her clothes. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream sky background with bruise-coloured weather forming in the upper right corner. The rain-grey accent appears only in the gathering storm clouds and in the map's well-worn creases.
 
@@ -263,7 +263,7 @@ Save to: `assets/heroes/hero-04-sailor.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek woman in her early thirties, years on cargo ships and caïques now over. She is coiling a thick wet bow line in calloused, capable hands. One hand rests on the bow of a sit-on-top sea kayak beached on flat rocks. A dry bag at her feet. She is eyeing a calm bay off-frame to her right. Salt-bleached t-shirt, rolled cargo shorts, hair tied back, sun-tanned forearms. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with the calm deep Ionian sea visible behind. Working, unhurried posture. The noon-gold accent appears only on the wet rope catching the sun and on the kayak's deck rigging.
 
@@ -276,7 +276,7 @@ Save to: `assets/heroes/hero-05-influencer.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is oleander pink.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek woman in her late twenties. She is half a step ahead of an unseen group, framing a shot with her phone mounted on a small handheld tripod gimbal. A folded ring light is clipped to her small pack. A light breeze in her hair. Golden afternoon light. The trail is visible a step behind her. Focused expression, chasing the shot. Fashionable but practical outdoor clothing. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of golden coast visible behind. The oleander-pink accent appears only in her scarf and on her phone case.
 
@@ -289,7 +289,7 @@ Save to: `assets/heroes/hero-06-engineer.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is noon gold.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek man in his early thirties, the startup engineer whose company ran out of runway at eleven users. He holds a small clipboard with careful pencil notes. A Leatherman multi-tool is clipped to his belt. Simple wire-frame glasses. A focused, counting expression — as if mentally calculating the throughput of something. A casual button-down rolled to the forearms. Dark hair. The corner of a taverna is visible in the background. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background. Methodical, careful posture. The noon-gold accent appears only on the multi-tool's casing and on the clipboard's metal clip.
 
@@ -302,7 +302,7 @@ Save to: `assets/heroes/hero-07-scholar.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek woman in her early thirties, the philologist with four languages and no permanent post. She is mid-sentence, holding a slim leather notebook open in one hand showing handwritten lines in four different scripts (Greek, Latin, Arabic, and a Cyrillic script). Her other hand makes a gentle didactic gesture. A small group of unseen listeners is implied just out of frame, leaning in to hear her. Library-warm afternoon light. Simple linen dress, hair tied with a ribbon, intelligent warm expression. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background with a hint of book spines behind. The cypress-green accent appears only in her hair ribbon and the book spines behind her.
 
@@ -315,7 +315,7 @@ Save to: `assets/heroes/hero-08-fasaia.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is oleander pink.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek woman in her late twenties, returned from Goa speaking of "energy" and "alignment". Her breath is drawn in, eyes half-closed, a small composed half-smile. A hand-woven shawl-scarf over her shoulders in earthy patterns. Beaded jewelry at her wrists. The warm blurred strung-bulb lights of a distant August panigiri village festival glow behind her at far depth. Her hair is loose and full. Calm, centred posture. Mid-shot, waist-up, single figure positioned off-axis on a bone-cream background. The oleander-pink accent appears only in the scarf's pattern and in the festival lights behind her.
 
@@ -330,7 +330,7 @@ Save to: `assets/heroes/hero-10-villager.png`
 ```
 Same editorial Mediterranean illustration style as the reference image. The seasonal accent for this image is cypress green-black.
 
-Frame in portrait orientation (about 4:5 ratio).
+Frame as a landscape composition, about 16:10 ratio, with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context (where they would be found — see subject for the where). The right portion of the frame should leave breathing room — partial wash of context, paper showing through — for the game UI to sit on top. Landscape composition, not a portrait crop.
 
 Subject: A Greek man in his mid forties, the villager who ran the family flock and olive grove until a subsidy cut and a beach bar finished it off. One hand rests flat on a fieldstone wall that used to be his. A worn, curved olive-pruning blade hangs at his belt. A younger cousin is half-visible in the frame behind him, also working at the wall. An old olive grove fades inland under afternoon light. His sun-darkened, weathered face. Square, stoic posture. A simple work shirt and old trousers. Mid-shot, waist-up, single foreground figure positioned off-axis on a bone-cream sky background. The cypress-green accent appears only in the distant olive grove and on the pruning blade's wooden handle.
 
@@ -627,7 +627,7 @@ location: append a small table at the bottom of `ASSET-MANIFEST.md` once product
 | Text appearing where it shouldn't | Say "no readable text — any signs or papers should show indecipherable hand-painted shapes only" |
 | Style drift across batch | Always upload pilot-01 as reference, always send the §5 style-lock preface, always stay in the same conversation for a whole batch |
 | Hero faces inconsistent across batch | After hero-01 generates well, upload IT also as a second reference for the rest of the heroes batch |
-| Aspect ratio not respected | Re-send the prompt with the aspect line at the very TOP, then re-state at the bottom: "Final reminder: portrait orientation, about 4:5 ratio" |
+| Aspect ratio not respected | Re-send the prompt with the aspect line at the very TOP, then re-state at the bottom: "Final reminder: landscape composition, about 16:10 ratio, NOT a portrait crop" |
 | Image too dark / desaturated overall | Drop the words "shadow" and "dust" by one each; emphasise "warm afternoon light" |
 
 ---
@@ -738,14 +738,14 @@ No people in frame. Match the same warm Mediterranean register and physical surf
 
 Heroes are illustrated already (see §7). Clients are noun phrases that have lived in
 prose; now each becomes a small people card. Same conversation, same style ref. Frame
-each in **portrait orientation, about 4:5 ratio** — these slot into card UI.
+each in **landscape composition, about 16:10 ratio, figure-left** — these slot into card UI.
 
 For each client below, use this template (replace the SUBJECT line):
 
 ```
 [§3 style anchor — verbatim]
 
-Frame this in portrait orientation, about 4:5 ratio, as a people card composition.
+Frame this as a landscape composition, about 16:10 ratio, with the client(s) positioned LEFT of frame and the rest given to context or paper-showing space — the same landscape-first treatment as the hero portraits.
 
 Subject: <CLIENT SUBJECT — see table>
 

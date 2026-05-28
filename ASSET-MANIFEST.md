@@ -85,7 +85,7 @@ The frames every player sees on every new game.
 
 The ten locked characters from `HEROES.md` / `ART-DIRECTION.md §6A`. Each portrait is a
 **mid‑shot** (waist‑up) with the signature object in frame and the locked gesture caught.
-**Portrait crop**, 5:4 vertical (e.g. 512 × 640).
+**Landscape composition**, about 16:10 (e.g. 1280 × 800), with the figure in the LEFT third and the rest of the canvas given to their natural Messinian context. The right portion leaves breathing room for the game UI to overlay.
 
 | ID | File | Subject (signature object + gesture) |
 |---|---|---|
@@ -200,7 +200,7 @@ SVG. Total `assets/` is **~22 MB** (down from ~115 MB, a 93 MB save).
 | A — Cover | Title cover | WebP | 1586 × 992 (native) | responsive, max 560px | opaque bone |
 | A — Cover | Wordmark | SVG | — | scales | not used live (HTML text overlay instead) |
 | A — Opening | Kitchen scene | WebP | 1586 × 992 (native) | responsive, max 720px | opaque |
-| B — Heroes | Portrait | WebP | 720 × 1082 | max 280px | bone, opaque, 2:3 portrait |
+| B — Heroes | Landscape composition | WebP | 1280 × 800 (16:10) | full-bleed scene-full | figure-left, context-right; current 720×1082 portrait shipped under old spec |
 | C — Disciplines | Glyph | WebP | 96 × 96 | 36px display | opaque, was wildly oversized at 1254×1254 |
 | D — Weather | Glyph | WebP | 96 × 96 | 22px display | opaque, same story |
 | E — Places | Silhouette | WebP | ~1586 × ~1005 (native) | max 560px | opaque |

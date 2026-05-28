@@ -189,6 +189,16 @@ governs *what we draw*; this section governs *how the pigment sits on paper*.
   watercolor (Stefan Mosca, Bernard Villemot).
 - **Stylised, never cute.** Adult proportions, never chibi / anime / mascot.
 - **Composed asymmetry, mid‑close camera.** Slightly off‑axis, not stagey symmetry.
+- **Landscape fullscreen, always.** The game plays in a fixed landscape viewport
+  (~1100×700 desktop / phone‑rotated). EVERY scene asset is a landscape composition —
+  approximately 16:10 ratio — even people cards (heroes / clients). Portrait‑oriented
+  assets crop awkwardly in a landscape viewport: `object‑fit:cover` cuts the sides off
+  any tall image. Heroes / clients are therefore framed as ENVIRONMENTAL portraits:
+  figure in the LEFT third, the rest of the canvas given to their natural Messinian
+  context (kafeneío door, harbour, kitchen, taverna, olive grove). The right portion of
+  the frame leaves breathing room — partial wash, paper showing through — where the
+  game UI overlays. The only square assets are the small glyph icons (discipline +
+  weather) which sit inside UI chips at 32–96px display size.
 
 The 43 shipped assets (heroes, places, scenes, chrome, glyphs, title cover) are from
 the earlier **gouache + woodcut** register. They remain in‑game and work visually for
@@ -366,6 +376,10 @@ These are settled. Do not reopen without flagging.
   portrait fallback. Touch devices in portrait get a *"Sideways, please. The Peloponnese
   is wider than it is tall."* prompt overlay until they rotate. This frees the layout
   from responsive compromise and the assets from having to work at two aspects.
+- **All assets are landscape compositions.** Heroes / clients framed as environmental
+  portraits (figure-left, context-right). Even portraits live in a 16:10 box. The only
+  square assets are the small glyph icons (discipline + weather) which display at 32–96px.
+  See §4 for the rule and §7 for per-tier guidance.
 - **Fixed-viewport game UX.** The page never scrolls. Top chrome (appbar / HUD / goal /
   forecast) anchors at top; the scene area fills the rest. Two-col scenes: the image is
   fixed in the left column, only the right panel scrolls internally. Utility screens
