@@ -172,25 +172,60 @@
     background-image:radial-gradient(120% 80% at 50% -10%, rgba(210,117,74,0.10), transparent 55%);
     pointer-events:none;
   }
+  /* GSAP-style intro orchestration. Per-word stagger on the title,
+     multi-property animations (translate/scale/blur/opacity), and
+     custom cubic-bezier easings that mimic the GSAP power/expo/back
+     curves. Vanilla CSS, no library — same polish, none of the kb. */
+
+  /* Custom easings, named after their GSAP equivalents */
+  /*  --ease-power3   smooth fast-to-slow             */
+  /*  --ease-expo     extreme fast-to-slow            */
+  /*  --ease-back     slight overshoot on settle       */
+  :root{
+    --ease-power3: cubic-bezier(.215,.61,.355,1);
+    --ease-expo:   cubic-bezier(.19,1,.22,1);
+    --ease-back:   cubic-bezier(.34,1.56,.64,1);
+  }
+
   .intro-main{
     font-family:'Fraunces',serif; font-weight:800;
     font-size:clamp(40px,9vw,80px);
     color:var(--ink);
     letter-spacing:-.02em; line-height:1;
-    opacity:0;
-    animation:introFade 1s ease 0.5s both;
   }
+  /* Per-word reveal — each word slides up + scales + fades, staggered.
+     Markup wraps each word in a <span class="iw"> (intro-word). */
+  .intro-main .iw{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(40px) scale(.92);
+    animation:introWord 1.4s var(--ease-back) both;
+  }
+  .intro-main .iw:nth-child(1){animation-delay:.4s;}
+  .intro-main .iw:nth-child(2){animation-delay:.7s;}
+  .intro-main .iw:nth-child(3){animation-delay:1.0s;}
+
   .intro-italic{
     font-family:'Fraunces',serif; font-style:italic; font-weight:500;
     font-size:clamp(28px,6vw,52px);
     color:var(--gold);
     margin-top:8px;
-    opacity:0;
-    animation:introFade 1s ease 1.8s both;
   }
+  .intro-italic .iw{
+    display:inline-block;
+    opacity:0;
+    transform:translateX(-30px) scale(.9);
+    filter:blur(6px);
+    animation:introItalic 1.6s var(--ease-expo) both;
+  }
+  .intro-italic .iw:nth-child(1){animation-delay:2.0s;}
+  .intro-italic .iw:nth-child(2){animation-delay:2.2s;}
+  .intro-italic .iw:nth-child(3){animation-delay:2.4s;}
+
   /* The kicker — this line carries the WINK of the game ("a career
-     in the outdoors and minor catastrophes"). Make it loud, bright,
-     a little bit too pleased with itself. */
+     in the outdoors and minor catastrophes"). Loud, bright, slightly
+     too pleased with itself. Letter-spacing tightens + glow pulses
+     on arrival. */
   .intro-kicker{
     font-family:'Spline Sans Mono',monospace;
     font-size:clamp(13px,2vw,18px);
@@ -200,7 +235,9 @@
     text-shadow:0 0 18px rgba(232,138,92,0.35), 0 1px 2px rgba(0,0,0,0.4);
     margin-top:40px;
     opacity:0;
-    animation:introSlide 1.1s ease 3.2s both;
+    transform:translateY(20px);
+    animation:introKicker 1.4s var(--ease-power3) 3.6s both,
+              introKickerGlow 1.6s ease-out 4.6s both;
   }
   .intro-verdict{
     font-family:'Fraunces',serif; font-style:italic;
@@ -208,7 +245,9 @@
     font-size:clamp(15px,2vw,19px);
     margin-top:18px;
     opacity:0;
-    animation:introFade 1.1s ease 4.6s both;
+    filter:blur(8px);
+    transform:translateY(12px);
+    animation:introVerdict 1.6s var(--ease-power3) 5.2s both;
   }
   .intro-tap{
     font-family:'Spline Sans Mono',monospace;
@@ -216,8 +255,50 @@
     color:var(--ink-faint);
     margin-top:48px;
     opacity:0;
-    animation:introTapIn 0.5s ease 5.8s forwards, introTapPulse 1.8s ease 6.3s infinite alternate;
+    animation:introTapIn 0.6s var(--ease-power3) 6.6s forwards,
+              introTapPulse 1.8s ease 7.4s infinite alternate;
   }
+
+  /* Per-word entrance — slides up from below, scales from .92 to 1,
+     gentle overshoot via --ease-back. Drops the translate/scale fully. */
+  @keyframes introWord{
+    0%   {opacity:0; transform:translateY(40px) scale(.92);}
+    60%  {opacity:1;}
+    100% {opacity:1; transform:translateY(0) scale(1);}
+  }
+  /* Italic words — slide in from left with scale + blur defocus. */
+  @keyframes introItalic{
+    0%   {opacity:0; transform:translateX(-30px) scale(.9); filter:blur(6px);}
+    60%  {opacity:1; filter:blur(0);}
+    100% {opacity:1; transform:translateX(0) scale(1); filter:blur(0);}
+  }
+  /* Kicker — slides up, letter-spacing tightens as it lands. */
+  @keyframes introKicker{
+    0%   {opacity:0; transform:translateY(20px); letter-spacing:.5em;}
+    60%  {opacity:1;}
+    100% {opacity:1; transform:translateY(0); letter-spacing:.3em;}
+  }
+  /* Kicker glow pulse — fires after the slide-in, single burst that
+     fades to the resting glow level. */
+  @keyframes introKickerGlow{
+    0%   {text-shadow:0 0 18px rgba(232,138,92,0.35), 0 1px 2px rgba(0,0,0,0.4);}
+    40%  {text-shadow:0 0 36px rgba(232,138,92,0.75), 0 0 8px rgba(232,138,92,0.5), 0 1px 2px rgba(0,0,0,0.4);}
+    100% {text-shadow:0 0 18px rgba(232,138,92,0.35), 0 1px 2px rgba(0,0,0,0.4);}
+  }
+  /* Verdict — focus-pulling effect: blur(8px) → blur(0) while sliding up. */
+  @keyframes introVerdict{
+    0%   {opacity:0; filter:blur(8px); transform:translateY(12px);}
+    100% {opacity:1; filter:blur(0); transform:translateY(0);}
+  }
+  @keyframes introTapIn{
+    from{opacity:0; transform:translateY(8px);}
+    to  {opacity:0.7; transform:translateY(0);}
+  }
+  @keyframes introTapPulse{
+    from{opacity:0.35;}
+    to  {opacity:0.85;}
+  }
+  /* Kept for backwards compat — story-screen text still references introFade */
   @keyframes introFade{
     from{opacity:0; transform:translateY(8px);}
     to  {opacity:1; transform:none;}
@@ -225,14 +306,6 @@
   @keyframes introSlide{
     from{opacity:0; transform:translateX(-16px); letter-spacing:.5em;}
     to  {opacity:1; transform:none; letter-spacing:.3em;}
-  }
-  @keyframes introTapIn{
-    from{opacity:0;}
-    to  {opacity:0.7;}
-  }
-  @keyframes introTapPulse{
-    from{opacity:0.35;}
-    to  {opacity:0.85;}
   }
 
   .appbar{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin:2px 0 14px; animation:rise .7s ease both;}
@@ -808,8 +881,8 @@
      page reload, but not on within-session navigation back to title. -->
 <div class="intro-screen" id="intro" onclick="dismissIntro()" role="button" tabindex="0">
   <div class="topo-bg"></div>
-  <div class="intro-main">Outdoor Guide Life</div>
-  <div class="intro-italic">or no Life</div>
+  <div class="intro-main"><span class="iw">Outdoor</span> <span class="iw">Guide</span> <span class="iw">Life</span></div>
+  <div class="intro-italic"><span class="iw">or</span> <span class="iw">no</span> <span class="iw">Life</span></div>
   <div class="intro-kicker">A career in the outdoors, and minor catastrophes</div>
   <div class="intro-verdict">All the necessary mistakes are still ahead of you.</div>
   <div class="intro-tap">Touch to continue</div>
