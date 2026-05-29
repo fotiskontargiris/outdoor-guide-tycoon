@@ -817,7 +817,7 @@
   .hub-stage{ position:relative; aspect-ratio:1870/841;
     width:min(100%, calc(100dvh * 1870 / 841)); max-height:100dvh; }
   .hub-base{ position:absolute; inset:0; width:100%; height:100%;
-    object-fit:fill; z-index:0; }
+    object-fit:fill; z-index:1; }
   /* a tappable object: positioned by its CENTRE (left/top), sized by width% */
   .hub-obj, .hub-region{ position:absolute; transform:translate(-50%,-50%);
     background:none; border:none; padding:0; margin:0; cursor:pointer;
@@ -832,7 +832,7 @@
     filter:drop-shadow(0 0 13px rgba(232,168,81,.85)); outline:none; }
   .hub-obj:active{ transform:translate(-50%,-50%) scale(.96); }
   /* seasonal harbour view dropped into the window opening (non-interactive) */
-  .hub-window{ position:absolute; transform:translate(-50%,-50%); z-index:1; pointer-events:none; }
+  .hub-window{ position:absolute; transform:translate(-50%,-50%); z-index:0; pointer-events:none; }
   .hub-window img{ display:block; width:100%; height:auto; }
   /* invisible regions over painted-in furniture (window/bed/door/board) */
   .hub-region{ border-radius:16px; animation:hubRegion 2.8s ease-in-out infinite;
@@ -2476,14 +2476,14 @@ function renderBedroomHub(){
   const help = `<button class="hub-help" aria-label="What can I tap?" onclick="toggleHubCue()">?</button>`;
   const base = `<img class="hub-base" src="${ASSETS['bedroom-p1-base']}" alt="Your childhood bedroom in Kalamata, the harbour in the window">`;
   const ws = hubWindowSeason();
-  const win = (ws!=='summer' && ASSETS['bedroom-p1-window-'+ws])
-    ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-'+ws]}" alt="" style="left:49%;top:33%;width:40%">` : '';
+  const win = (ASSETS['bedroom-p1-window-'+ws])
+    ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-'+ws]}" alt="" style="left:49%;top:30%;width:50%">` : '';
   // The Hilux, once bought, is parked in the harbour-side view — composites over any season.
   // GATED: bedroom-p1-window-hilux.webp currently ships OPAQUE (white bg, like the old
   // notebook). Flip HILUX_WINDOW_READY = true once a transparent re-export lands.
-  const HILUX_WINDOW_READY = false;
+  const HILUX_WINDOW_READY = true;
   const hilux = (HILUX_WINDOW_READY && typeof hasInfra==='function' && hasInfra('pickup') && ASSETS['bedroom-p1-window-hilux'])
-    ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-hilux']}" alt="" style="left:49%;top:33%;width:40%">` : '';
+    ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-hilux']}" alt="" style="left:49%;top:30%;width:50%">` : '';
   const overlay = document.createElement('div');
   overlay.id='hubOverlay'; overlay.className='hub';
   overlay.innerHTML = `<div class="hub-stage">${base}${win}${hilux}${spots}${tag}${status}${hint}${mum}</div>${help}`;
