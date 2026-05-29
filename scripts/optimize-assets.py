@@ -33,8 +33,8 @@ TIER_MAX_WIDTH = {
     'desk':         1920,  # phase 2-4 desk hubs
     'scenes':       1600,  # kitchen / panigiri / hilux / hire / radio set pieces
     'title':        1600,  # cover image
-    'disciplines':    96,  # display ~36px
-    'weather':        96,  # display ~22px
+    'disciplines':   256,  # detailed picker icons, display ~80px
+    'weather':        96,  # tiny forecast-strip dot, display ~22px
 }
 WEBP_QUALITY = 88
 SKIP_BYTES = 1_000_000  # a webp this small and within max width is already optimised
