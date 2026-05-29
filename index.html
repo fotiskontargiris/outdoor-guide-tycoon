@@ -1309,6 +1309,7 @@ const ASSETS = {
   'bedroom-p1-phone-dark':     'assets/hub/bedroom-p1-phone-dark.webp',
   'bedroom-p1-phone-lit':      'assets/hub/bedroom-p1-phone-lit.webp',
   'bedroom-p1-notebook':       'assets/hub/bedroom-p1-notebook.webp',
+  'bedroom-p1-corkboard-empty':'assets/hub/bedroom-p1-corkboard-empty.webp',
   'bedroom-p1-backpack-empty': 'assets/hub/bedroom-p1-backpack-empty.webp',
   'bedroom-p1-backpack-packed':'assets/hub/bedroom-p1-backpack-packed.webp',
   'bedroom-p1-catalogue':      'assets/hub/bedroom-p1-catalogue.webp',
@@ -2366,20 +2367,18 @@ function renderBedroomHub(){
   const packed = (S.loadout||[]).length>0;
   const rich   = (S.cash||0)>=200;
   const objs = [
-    {asset:`bedroom-p1-phone-${hasBk?'lit':'dark'}`,         label:'Phone',  action:'openPhone()',    x:48, y:69, w:12},
-    {asset:`bedroom-p1-wallet-${rich?'thick':'thin'}`,       label:'Wallet', action:'openWallet()',   x:39, y:71, w:8},
-    {asset:'bedroom-p1-catalogue',                           label:'Shop',   action:'openShop()',     x:30, y:82, w:13},
-    {asset:`bedroom-p1-backpack-${packed?'packed':'empty'}`, label:'Pack',   action:'openBackpack()', x:15, y:82, w:15},
+    {asset:`bedroom-p1-phone-${hasBk?'lit':'dark'}`,         label:'Phone',   action:'openPhone()',    x:47, y:70, w:12},
+    {asset:'bedroom-p1-notebook',                            label:'Logbook', action:'renderLog()',    x:63, y:70, w:14},
+    {asset:`bedroom-p1-wallet-${rich?'thick':'thin'}`,       label:'Wallet',  action:'openWallet()',   x:52, y:75, w:7},
+    {asset:'bedroom-p1-catalogue',                           label:'Shop',    action:'openShop()',     x:32, y:84, w:11},
+    {asset:`bedroom-p1-backpack-${packed?'packed':'empty'}`, label:'Pack',    action:'openBackpack()', x:16, y:84, w:15},
+    {asset:'bedroom-p1-corkboard-empty',                     label:'People',  action:'openCorkboard()',x:11, y:36, w:19},
   ];
-  // NOTE: bedroom-p1-notebook.webp shipped without alpha (renders as an opaque box),
-  // so the Logbook is an invisible region over the books painted on the desk for now —
-  // swap back to an overlay once a transparent notebook export lands.
+  // Window / bed / door are painted into the base — invisible hotspot regions over them.
   const regions = [
-    {region:true, label:'Logbook',  action:'renderLog()',      x:60, y:69, w:11, h:12},
     {region:true, label:'Forecast', action:'renderForecast()', x:49, y:33, w:36, h:44},
-    {region:true, label:'Rest',     action:'openRest()',       x:12, y:72, w:20, h:28},
-    {region:true, label:'People',   action:'openCorkboard()',  x:10, y:24, w:16, h:26},
-    {region:true, label:'Leave',    action:'goMenu()',         x:95, y:52, w:10, h:84},
+    {region:true, label:'Rest',     action:'openRest()',       x:12, y:70, w:19, h:26},
+    {region:true, label:'Leave',    action:'goMenu()',         x:95, y:52, w:9,  h:84},
   ];
   const spots  = objs.concat(regions).map(hubSpot).join('');
   const tag    = `<div class="hub-tag">${dayTag()}${S.weather?' · '+S.weather.name:''}</div>`;
