@@ -896,8 +896,10 @@
   .hub-edit-panel button:hover{ background:#3a4047; }
   .hub-edit-panel textarea{ width:230px; height:32px; resize:none; font:11px/1.3 monospace;
     background:#0d0f12; color:#8fe6c0; border:1px solid #555; border-radius:6px; padding:4px; }
-  /* mum's off-frame voice — left-edge bubble */
-  .hub .bubble.left-edge{ position:absolute; top:30%; left:14px; max-width:42%; z-index:6; }
+  /* mum's off-frame voice — left-edge bubble, tail pointing off-screen left (the hall) */
+  .hub .bubble.left-edge{ position:absolute; top:27%; left:18px; max-width:40%; z-index:6; font-style:italic; pointer-events:none; }
+  .hub .bubble.left-edge:after{ left:-14px; top:44%; border-right-color:#1B1B1F; }
+  .hub .bubble.left-edge:before{ left:-10px; top:45%; border-right-color:rgba(238,229,210,.94); }
   .story-screen-tag{
     position:absolute; top:48px; left:0; right:0;
     text-align:center;
@@ -2067,6 +2069,7 @@ function startDay(){
   S.trip=null; S.queue=null; S.dayReports=[];
   S.you.task=null; S.guides.forEach(g=>g.task=null);
   S.bookings = mkBookings(S.phase===1?3:4);
+  S.mumLine = (S.phase===1 && Math.random()<0.18) ? mumPick() : '';
   renderHUD();
   // M7: demand-based hire trigger. If you've been turning bookings away,
   // your name carries weight, and your savings can carry a wage — the game
@@ -2405,6 +2408,20 @@ function toggleHubCue(){
   const on = document.body.classList.toggle('hub-cue');
   const btn = document.querySelector('.hub-help'); if(btn) btn.classList.toggle('on', on);
 }
+function mumDim(){ return (S.you && S.you.gender==='f') ? 'kóri mou' : 'yie mou'; }
+// Mum's off-frame voice (Phase 1 only — she is downstairs in the kitchen). Short,
+// sideways, never face-on (LANGUAGE.md §3). Rolled once at day-start.
+const MUM_LINES = [
+  () => `paidí mou! you forgot your bottle again — it is on the table.`,
+  () => `have you eaten? there is gemistá in the fridge.`,
+  () => `${mumDim()}, take a jacket. the meltemi is coming, I feel it in my knee.`,
+  () => `Kostas's boy was in the paper today. just saying.`,
+  () => `Kyría Voúla asked after you. I told her you are in tourism now.`,
+  () => `the foreigners again? be careful with them on the rocks, ${mumDim()}.`,
+  () => `coffee is not a breakfast. eat something before you go.`,
+  () => `your father guided too, in his way. he would have liked this.`,
+];
+function mumPick(){ return MUM_LINES[Math.floor(Math.random()*MUM_LINES.length)](); }
 function renderBedroomHub(){
   const realDOM = typeof document!=='undefined' && typeof document.createElement==='function'
                   && document.body && document.body.appendChild;
@@ -2436,11 +2453,13 @@ function renderBedroomHub(){
     + `<span>energy <b>${Math.round(S.energy||0)}</b></span><span>rep <b>${Math.round(S.rep||0)}</b></span></div>`;
   let hint='';
   if(!S.hubSeen){ hint=`<div class="hub-hint">Tap the things around you.</div>`; S.hubSeen=true; saveGame(); }
+  let mum='';
+  if(S.mumLine){ mum=`<div class="bubble left-edge">${S.mumLine}</div>`; S.mumLine=''; }
   const help = `<button class="hub-help" aria-label="What can I tap?" onclick="toggleHubCue()">?</button>`;
   const base = `<img class="hub-base" src="${ASSETS['bedroom-p1-base']}" alt="Your childhood bedroom in Kalamata, the harbour in the window">`;
   const overlay = document.createElement('div');
   overlay.id='hubOverlay'; overlay.className='hub';
-  overlay.innerHTML = `<div class="hub-stage">${base}${spots}${tag}${status}${hint}</div>${help}`;
+  overlay.innerHTML = `<div class="hub-stage">${base}${spots}${tag}${status}${hint}${mum}</div>${help}`;
   document.body.appendChild(overlay);
 }
 /* --- detail views reached from the hub (render into .scene; back = renderCurrent) --- */
