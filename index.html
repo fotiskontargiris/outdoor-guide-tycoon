@@ -831,6 +831,9 @@
   .hub-obj:hover, .hub-obj:focus-visible{
     filter:drop-shadow(0 0 13px rgba(232,168,81,.85)); outline:none; }
   .hub-obj:active{ transform:translate(-50%,-50%) scale(.96); }
+  /* seasonal harbour view dropped into the window opening (non-interactive) */
+  .hub-window{ position:absolute; transform:translate(-50%,-50%); z-index:1; pointer-events:none; }
+  .hub-window img{ display:block; width:100%; height:auto; }
   /* invisible regions over painted-in furniture (window/bed/door/board) */
   .hub-region{ border-radius:16px; animation:hubRegion 2.8s ease-in-out infinite;
     transition:background .25s, box-shadow .25s; }
@@ -2422,6 +2425,12 @@ const MUM_LINES = [
   () => `your father guided too, in his way. he would have liked this.`,
 ];
 function mumPick(){ return MUM_LINES[Math.floor(Math.random()*MUM_LINES.length)](); }
+function hubWindowSeason(){
+  const p = seasonPhase(S.seasonDay||1);         // early / building / peak / late / closing
+  if(p==='early') return 'spring';
+  if(p==='late' || p==='closing') return 'autumn';
+  return 'summer';                                // building / peak -> the base default
+}
 function renderBedroomHub(){
   const realDOM = typeof document!=='undefined' && typeof document.createElement==='function'
                   && document.body && document.body.appendChild;
@@ -2457,9 +2466,12 @@ function renderBedroomHub(){
   if(S.mumLine){ mum=`<div class="bubble left-edge">${S.mumLine}</div>`; S.mumLine=''; }
   const help = `<button class="hub-help" aria-label="What can I tap?" onclick="toggleHubCue()">?</button>`;
   const base = `<img class="hub-base" src="${ASSETS['bedroom-p1-base']}" alt="Your childhood bedroom in Kalamata, the harbour in the window">`;
+  const ws = hubWindowSeason();
+  const win = (ws!=='summer' && ASSETS['bedroom-p1-window-'+ws])
+    ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-'+ws]}" alt="" style="left:49%;top:33%;width:40%">` : '';
   const overlay = document.createElement('div');
   overlay.id='hubOverlay'; overlay.className='hub';
-  overlay.innerHTML = `<div class="hub-stage">${base}${spots}${tag}${status}${hint}${mum}</div>${help}`;
+  overlay.innerHTML = `<div class="hub-stage">${base}${win}${spots}${tag}${status}${hint}${mum}</div>${help}`;
   document.body.appendChild(overlay);
 }
 /* --- detail views reached from the hub (render into .scene; back = renderCurrent) --- */
