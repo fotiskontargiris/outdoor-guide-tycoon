@@ -2109,7 +2109,18 @@ function renderHUD(){
 }
 function stat(l,v,c,bar){return `<div class="stat"><span class="lab">${l}</span><span class="val" style="color:${c||'var(--ink)'}">${v}</span>${bar?`<div class="bar"><i style="width:${clamp(bar[0],0,100)}%;background:${bar[1]}"></i></div>`:''}</div>`;}
 function gearGlyph(){const c=S.gear>=50?'var(--olive)':'var(--danger)';return `<b style="color:${c}">${S.gear}%</b>`;}
-function setScene(html){ removeHubOverlay(); if($('fcast'))$('fcast').innerHTML=''; $('scene').innerHTML=html; const el=$('scene'); el.style.animation='none'; void el.offsetWidth; el.style.animation='rise .45s ease both'; }
+function setScene(html){
+  // Rendering real content into .scene requires tearing down any full-screen
+  // body-level overlay (title / scene-full / story) first — otherwise it sits at
+  // z100 over .scene's z1 and the screen looks frozen (e.g. the kitchen-pitch
+  // overlay covering renderSetup). The overlay builders call setScene('') AFTER
+  // appending their overlay, so only tear those down when rendering real content.
+  if(html){ removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay(); }
+  removeHubOverlay();
+  if($('fcast'))$('fcast').innerHTML='';
+  $('scene').innerHTML=html;
+  const el=$('scene'); if(el){ el.style.animation='none'; void el.offsetWidth; el.style.animation='rise .45s ease both'; }
+}
 // Permanent hamburger (see #menuBtn CSS). Kept as a no-op for compat
 // with existing render functions that still call showMenuBtn(true/false).
 function showMenuBtn(on){ /* no-op: button is always visible */ }
