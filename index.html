@@ -168,10 +168,22 @@
   }
   .intro-screen.fading{opacity:0;}
   .intro-screen .topo-bg{
-    position:absolute; inset:0;
+    position:absolute; inset:0; z-index:1;
     background-image:radial-gradient(120% 80% at 50% -10%, rgba(210,117,74,0.10), transparent 55%);
     pointer-events:none;
   }
+  /* cold-open background video — plays at 1/3 speed, behind the letters */
+  .intro-screen .intro-video{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; z-index:0; pointer-events:none;
+  }
+  .intro-screen .intro-scrim{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(180deg, rgba(15,26,28,.42) 0%, rgba(15,26,28,.74) 100%);
+  }
+  .intro-screen .intro-main, .intro-screen .intro-italic, .intro-screen .intro-kicker,
+  .intro-screen .intro-verdict, .intro-screen .intro-tap{ position:relative; z-index:2; }
+  .intro-screen .intro-main, .intro-screen .intro-italic{ text-shadow:0 2px 20px rgba(0,0,0,.55); }
   /* GSAP-style intro orchestration. Per-word stagger on the title,
      multi-property animations (translate/scale/blur/opacity), and
      custom cubic-bezier easings that mimic the GSAP power/expo/back
@@ -1016,10 +1028,12 @@
      (which triggers fullscreen via the user gesture). Plays on every
      page reload, but not on within-session navigation back to title. -->
 <div class="intro-screen" id="intro" onclick="dismissIntro()" role="button" tabindex="0">
+  <video class="intro-video" autoplay muted playsinline preload="auto" onloadeddata="introPingPong(this)"><source src="assets/scenes/Intro-video.mp4" type="video/mp4"></video>
+  <div class="intro-scrim"></div>
   <div class="topo-bg"></div>
   <div class="intro-main"><span class="iw">A</span> <span class="iw">Guide&rsquo;s</span> <span class="iw">Life</span></div>
   <div class="intro-italic"><span class="iw">or</span> <span class="iw">no</span> <span class="iw">Life</span></div>
-  <div class="intro-kicker">A career in the outdoors, and minor catastrophes</div>
+  <div class="intro-kicker">A career in the outdoors, money and minor catastrophes</div>
   <div class="intro-verdict">All the necessary mistakes are still ahead of you.</div>
   <div class="intro-tap">Touch to continue</div>
 </div>
@@ -1544,7 +1558,31 @@ async function clearSave(){
   }catch(e){}
 }
 
-async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); }
+function introPingPong(v){
+  // 1/2-speed forward, then play backwards to the start, ping-ponging. HTML5 video
+  // has no native reverse, so the back-run hand-steps currentTime each frame.
+  if(!v || v._pp || typeof requestAnimationFrame!=='function') return;
+  v._pp = true; v.loop = false; v.playbackRate = 0.5;
+  let dir = 1, last = 0;
+  const fwd = () => { dir = 1; v.playbackRate = 0.5; const p = v.play && v.play(); if(p && p.catch) p.catch(()=>{}); };
+  const step = () => {
+    if(dir !== -1) return;
+    const now = performance.now(), dt = (now - last) / 1000; last = now;
+    v.currentTime = Math.max(0, v.currentTime - dt * 0.5);          // reverse at 1/2 speed
+    if(v.currentTime <= 0.03){ v.currentTime = 0; fwd(); return; }   // hit the start -> forward again
+    requestAnimationFrame(step);
+  };
+  v.addEventListener('ended', () => { dir = -1; try{ v.pause(); }catch(e){} last = performance.now(); requestAnimationFrame(step); });
+  fwd();
+}
+function preloadEarly(){
+  // Decode the opening scene + the bedroom-hub set in the background while the player
+  // is still on the cold-open / title, so the kitchen and home base do not pop in late.
+  if(typeof Image!=='function') return;
+  const ids = ['scene-kitchen','scene-panigiri'].concat(Object.keys(ASSETS).filter(k => k.indexOf('bedroom-p1')===0));
+  ids.forEach(id=>{ const src=ASSETS[id]; if(src){ const im=new Image(); im.decoding='async'; im.src=src; } });
+}
+async function boot(){ renderTitle(null,true); const save=await loadSave(); cachedSave=save; renderTitle(save,false); preloadEarly(); }
 function removeTitleOverlay(){
   const ex = document.getElementById('titleOverlay');
   if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
@@ -1695,7 +1733,7 @@ function renderKitchen(){
   const safeName = (pendingName||'').replace(/[<>"]/g,'');
   const panel = `<div class="scene-full-panel scene-full-panel--mini">
     <span class="scene-input-label">What does she call you?</span>
-    <input id="gname" type="text" maxlength="18" value="${safeName}" placeholder="e.g. Alexios">
+    <input id="gname" type="text" maxlength="18" value="${safeName}" placeholder="e.g. Takis">
     <button class="scene-btn" onclick="kitchenSit()">Sit down \u25b8</button>
   </div>`;
   if(typeof document !== 'undefined' && typeof document.createElement === 'function' && document.body && document.body.appendChild){
