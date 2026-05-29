@@ -840,8 +840,11 @@
     transition:filter .2s, transform .12s; }
   @keyframes hubPulse{ 0%,100%{ filter:drop-shadow(0 0 0 rgba(232,168,81,0)); }
     50%{ filter:drop-shadow(0 0 7px rgba(232,168,81,.40)); } }
-  .hub-obj:hover, .hub-obj:focus-visible{
-    filter:drop-shadow(0 0 13px rgba(232,168,81,.85)); outline:none; }
+  /* animation:none is REQUIRED — hubPulse animates filter and would otherwise
+     override the hover glow (CSS animations beat even inline styles). */
+  .hub-obj:hover, .hub-obj:focus-visible{ outline:none; animation:none;
+    transform:translate(-50%,-50%) scale(1.05);
+    filter:drop-shadow(0 0 8px rgba(232,168,81,1)) drop-shadow(0 0 20px rgba(232,168,81,.9)); }
   .hub-obj:active{ transform:translate(-50%,-50%) scale(.96); }
   /* seasonal harbour view dropped into the window opening (non-interactive) */
   .hub-window{ position:absolute; transform:translate(-50%,-50%); z-index:0; pointer-events:none; }
@@ -855,7 +858,8 @@
     background:radial-gradient(ellipse at center, rgba(232,168,81,.20) 0%, rgba(232,168,81,0) 70%);
     box-shadow:inset 0 0 30px 4px rgba(232,168,81,.40); }
   /* highlight-all cue mode (the ? toggle): boost glow + show labels */
-  body.hub-cue .hub-obj{ filter:drop-shadow(0 0 13px rgba(232,168,81,.9)); }
+  body.hub-cue .hub-obj{ animation:none;
+    filter:drop-shadow(0 0 8px rgba(232,168,81,1)) drop-shadow(0 0 20px rgba(232,168,81,.9)); }
   body.hub-cue .hub-region{ box-shadow:inset 0 0 30px 4px rgba(232,168,81,.42);
     background:radial-gradient(ellipse at center, rgba(232,168,81,.16) 0%, rgba(232,168,81,0) 72%); }
   .hub-obj[data-label]::after, .hub-region[data-label]::after{ content:attr(data-label);
@@ -865,19 +869,38 @@
     color:#EEE5D2; background:rgba(27,27,31,.82); padding:2px 7px; border-radius:5px;
     opacity:0; transition:opacity .2s; pointer-events:none; }
   body.hub-cue .hub-obj[data-label]::after, body.hub-cue .hub-region[data-label]::after{ opacity:1; }
-  /* top-center date / weather strip */
-  .hub-tag{ position:absolute; top:16px; left:0; right:0; z-index:5;
-    text-align:center; pointer-events:none;
-    font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:700;
-    letter-spacing:.26em; text-transform:uppercase;
-    color:rgba(238,229,210,.97); text-shadow:0 1px 6px rgba(0,0,0,.9); padding:0 64px; }
-  /* discreet diegetic status (cash / energy / rep) bottom-left */
-  .hub-status{ position:absolute; left:14px; bottom:12px; z-index:5;
-    display:flex; gap:13px; align-items:baseline; pointer-events:none;
-    font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:600;
-    color:rgba(238,229,210,.96); text-shadow:0 1px 5px rgba(0,0,0,.9);
-    background:rgba(27,27,31,.30); padding:5px 11px; border-radius:9px; }
-  .hub-status b{ font-weight:700; color:#fff; }
+  /* top-center date / weather plate — frosted ink pill + watercolor weather glyph */
+  .hub-tag{ position:absolute; top:13px; left:50%; transform:translateX(-50%); z-index:5;
+    display:flex; align-items:center; gap:10px; pointer-events:none; white-space:nowrap;
+    padding:5px 15px; border-radius:999px;
+    background:rgba(18,26,28,.52); border:1px solid rgba(227,184,99,.34);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    box-shadow:0 2px 12px rgba(0,0,0,.34); }
+  .hub-wx-glyph{ width:26px; height:26px; display:block; margin:-4px 0;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.45)); }
+  .hub-date{ font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:#EEE5D2;
+    text-shadow:0 1px 4px rgba(0,0,0,.55); }
+  .hub-tag .sep{ width:1px; height:13px; background:rgba(238,229,210,.26); }
+  .hub-wx-name{ font-family:'Spline Sans Mono',monospace; font-size:11px; font-weight:700;
+    letter-spacing:.13em; text-transform:uppercase; text-shadow:0 1px 4px rgba(0,0,0,.55); }
+  /* bottom-left status — three frosted chips with fountain-pen line icons */
+  .hub-status{ position:absolute; left:13px; bottom:12px; z-index:5;
+    display:flex; gap:7px; align-items:center; pointer-events:none; }
+  .hub-stat{ display:inline-flex; align-items:center; gap:5px;
+    padding:5px 11px 5px 9px; border-radius:999px;
+    background:rgba(18,26,28,.52); border:1px solid rgba(238,229,210,.20);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    box-shadow:0 2px 9px rgba(0,0,0,.30); }
+  .hub-stat svg{ width:16px; height:16px; flex:none; display:block; }
+  .hub-stat .hub-stat-l{ font-family:'Spline Sans Mono',monospace; font-size:8.5px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase; color:rgba(238,229,210,.6);
+    text-shadow:0 1px 3px rgba(0,0,0,.5); }
+  .hub-stat b{ font-family:'Spline Sans Mono',monospace; font-size:12px; font-weight:700;
+    color:#F3EAD9; text-shadow:0 1px 3px rgba(0,0,0,.5); letter-spacing:.01em; }
+  /* weather-screen day icon — watercolor glyph (doubled from the old dot size) */
+  .wx-day-glyph{ width:92px; height:92px; display:block; flex:none; margin-top:1px;
+    filter:drop-shadow(0 1px 3px rgba(0,0,0,.28)); }
   /* the ? help / highlight toggle, top-left (mirror of the menu btn top-right) */
   .hub-help{ position:fixed; top:10px; left:10px; z-index:120;
     width:38px; height:38px; border-radius:50%;
@@ -1165,15 +1188,21 @@ function paintForecast(){
 function renderForecast(){
   ensureForecast();
   const back = S.phase===1?'renderCurrent()':'renderAssign()';
-  const cards=S.forecast.slice(0,FORECAST_DAYS).map((w,i)=>`
+  const cards=S.forecast.slice(0,FORECAST_DAYS).map((w,i)=>{
+    const gUnstable = w.stability!=null && w.stability<50;
+    const gid = gUnstable ? 'glyph-weather-unstable' : WEATHER_GLYPH[w.short];
+    const g = imgFor(gid, {cls:'wx-day-glyph', alt:w.short});
+    const dot = `<div style="width:92px;height:92px;border-radius:50%;background:${w.col};box-shadow:0 0 12px ${w.col};flex:none;margin-top:1px"></div>`;
+    return `
     <div class="mate" style="align-items:flex-start">
-      <div style="width:34px;height:34px;border-radius:50%;background:${w.col};box-shadow:0 0 12px ${w.col};flex:none;margin-top:2px"></div>
+      ${g || dot}
       <div class="who" style="margin-left:12px">
         <div class="nm">${i===0?'Today':(S.seasonDay+i<=SUMMER_DAYS?summerDate(S.seasonDay+i):'After the season closes')} — <span style="color:${w.col}">${w.name}</span></div>
         <div class="spec" style="margin:2px 0 4px">${w.note}</div>
         <div class="task">${weatherAdvice(w)}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   reportStage('bedroom-p1-window-summer', `<p class="trip-title">The week ahead</p>
     <p class="report-note">How the days read from the window. Save the high, exposed lines for clear weather.</p>
     <div class="team">${cards}</div>
@@ -1365,7 +1394,6 @@ const DISCIPLINES=[
 const ASSETS = {
   // Tier A — cover & opening
   'title-cover':              'assets/title/title-cover.webp',
-  'title-wordmark':           'assets/title/title-wordmark.svg',
   'scene-kitchen':            'assets/scenes/scene-kitchen.webp',
   // Tier L — bedroom desk-hub (Phase 1 home base): base + object/season overlays
   'bedroom-p1-base':           'assets/hub/bedroom-p1-base.webp',
@@ -1397,9 +1425,6 @@ const ASSETS = {
   'client-cousin-mitsos':      'assets/clients/client-cousin-mitsos.webp',
   // Tier K — day-report surfaces
   'report-blank':              'assets/reports/report-blank.webp',
-  'report-review-good':        'assets/reports/report-review-good.webp',
-  'report-review-bad':         'assets/reports/report-review-bad.webp',
-  'report-gear-damage':        'assets/reports/report-gear-damage.webp',
   // Tier B — heroes (HEROES.md order)
   'hero-01-medic':            'assets/heroes/hero-01-medic.webp',
   'hero-02-chef':             'assets/heroes/hero-02-chef.webp',
@@ -2504,9 +2529,21 @@ function renderBedroomHub(){
     {region:true, label:'Leave',    action:'openDoor()',       x:95, y:52, w:9,  h:84},
   ];
   const spots  = objs.concat(regions).map(hubSpot).join('');
-  const tag    = `<div class="hub-tag">${dayTag()}${S.weather?' · '+S.weather.name:''}</div>`;
-  const status = `<div class="hub-status"><span>&euro;<b>${Math.round(S.cash||0)}</b></span>`
-    + `<span>energy <b>${Math.round(S.energy||0)}</b></span><span>rep <b>${Math.round(S.rep||0)}</b></span></div>`;
+  const _w = S.weather;
+  const _gid = _w ? ((_w.stability!=null && _w.stability<50) ? 'glyph-weather-unstable' : WEATHER_GLYPH[_w.short]) : null;
+  const _wxg = _gid ? imgFor(_gid, {cls:'hub-wx-glyph', alt:_w.short}) : '';
+  const tag = `<div class="hub-tag">${_wxg}<span class="hub-date">${dayTag()}</span>`
+    + (_w ? `<span class="sep"></span><span class="hub-wx-name" style="color:${_w.col}">${_w.short}</span>` : '')
+    + `</div>`;
+  // fountain-pen line icons (coin / bolt / star), themed from the palette
+  const icCoin = `<svg viewBox="0 0 20 20" aria-hidden="true" style="color:var(--gold)"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12.6 7.1a3.3 3.3 0 1 0 0 5.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6.5 9.2h5M6.3 11.1h4.7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+  const icBolt = `<svg viewBox="0 0 20 20" aria-hidden="true" style="color:var(--terra-bright)"><path d="M11 2 L4.6 11 H9 l-1.4 7 L15.4 8.6 H11 z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+  const icStar = `<svg viewBox="0 0 20 20" aria-hidden="true" style="color:var(--gold)"><path d="M10 2.4 l2.13 4.55 5 .55 -3.7 3.36 1 4.94 -4.43-2.48 -4.43 2.48 1-4.94 -3.7-3.36 5-.55 z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>`;
+  const status = `<div class="hub-status">`
+    + `<span class="hub-stat" role="img" aria-label="Money, ${Math.round(S.cash||0)} euro">${icCoin}<span class="hub-stat-l">Money</span><b>${Math.round(S.cash||0)}</b></span>`
+    + `<span class="hub-stat" role="img" aria-label="Energy, ${Math.round(S.energy||0)}">${icBolt}<span class="hub-stat-l">Energy</span><b>${Math.round(S.energy||0)}</b></span>`
+    + `<span class="hub-stat" role="img" aria-label="Reputation, ${Math.round(S.rep||0)}">${icStar}<span class="hub-stat-l">Rep</span><b>${Math.round(S.rep||0)}</b></span>`
+    + `</div>`;
   let hint='';
   if(!S.hubSeen){ hint=`<div class="hub-hint">Tap the things around you.</div>`; S.hubSeen=true; saveGame(); }
   let mum='';
