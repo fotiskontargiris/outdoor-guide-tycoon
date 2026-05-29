@@ -2469,9 +2469,15 @@ function renderBedroomHub(){
   const ws = hubWindowSeason();
   const win = (ws!=='summer' && ASSETS['bedroom-p1-window-'+ws])
     ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-'+ws]}" alt="" style="left:49%;top:33%;width:40%">` : '';
+  // The Hilux, once bought, is parked in the harbour-side view — composites over any season.
+  // GATED: bedroom-p1-window-hilux.webp currently ships OPAQUE (white bg, like the old
+  // notebook). Flip HILUX_WINDOW_READY = true once a transparent re-export lands.
+  const HILUX_WINDOW_READY = false;
+  const hilux = (HILUX_WINDOW_READY && typeof hasInfra==='function' && hasInfra('pickup') && ASSETS['bedroom-p1-window-hilux'])
+    ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-hilux']}" alt="" style="left:49%;top:33%;width:40%">` : '';
   const overlay = document.createElement('div');
   overlay.id='hubOverlay'; overlay.className='hub';
-  overlay.innerHTML = `<div class="hub-stage">${base}${win}${spots}${tag}${status}${hint}${mum}</div>${help}`;
+  overlay.innerHTML = `<div class="hub-stage">${base}${win}${hilux}${spots}${tag}${status}${hint}${mum}</div>${help}`;
   document.body.appendChild(overlay);
 }
 /* --- detail views reached from the hub (render into .scene; back = renderCurrent) --- */
