@@ -790,6 +790,15 @@
     margin:0 0 10px; color:#1B1B1F; }
   .scene-full-panel--trip .res{ border-left-color:rgba(27,27,31,.22); margin:0 0 10px; }
   .scene-full-panel--trip .res .line{ color:#1B1B1F; }
+  /* day report: existing dark-theme markup on a bone panel via local var overrides */
+  .scene-full-panel--report{ left:50%; right:auto; transform:translateX(-50%); bottom:16px;
+    width:calc(100% - 40px); max-width:600px; max-height:calc(100% - 84px); color:#1B1B1F;
+    --panel2:rgba(255,255,255,.5); --edge:rgba(27,27,31,.18); --ink-faint:rgba(27,27,31,.5); --ink-dim:rgba(27,27,31,.72); }
+  .scene-full-panel--report .trip-title{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#1B1B1F; margin:0 0 8px; }
+  .scene-full-panel--report .res{ border-left-color:rgba(27,27,31,.2); margin:0 0 10px; }
+  .scene-full-panel--report .res .line{ color:#1B1B1F; }
+  .scene-full-panel--report .report-note{ font-style:italic; color:rgba(27,27,31,.72); font-size:12.5px; margin:6px 0; }
+  .scene-full-panel--report .ledger .row{ border-bottom-color:rgba(27,27,31,.12); }
   .scene-full .bubble.left-top  { top:80px; left:24px;  max-width:55%; }
   .scene-full .bubble.right-top { top:80px; right:80px; max-width:50%; }
   .scene-full .bubble.left-mid  { top:38%;  left:24px;  max-width:55%; }
@@ -3154,6 +3163,19 @@ function removeTripStage(){
   if(typeof document==='undefined' || typeof document.getElementById!=='function') return;
   const ex=document.getElementById('tripStage'); if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
 }
+function reportStage(assetId, panelHTML, tag){
+  const realDOM = typeof document!=='undefined' && typeof document.createElement==='function' && document.body && document.body.appendChild;
+  if(!realDOM || !ASSETS[assetId]){
+    setScene((tag?`<div class="day-tag">${tag}</div>`:'')+`<div class="trip-fallback">${panelHTML}</div>`);
+    return;
+  }
+  removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay(); removeHubOverlay(); removeTripStage();
+  const ov=document.createElement('div'); ov.id='sceneOverlay'; ov.className='scene-full';
+  ov.innerHTML = `<img class="scene-full-bg" src="${ASSETS[assetId]}" alt="The day's report">`
+    + `<div class="scene-full-tag">${tag||''}</div>`
+    + `<div class="scene-full-panel scene-full-panel--choices scene-full-panel--report">${panelHTML}</div>`;
+  document.body.appendChild(ov); setScene('');
+}
 function startTrailhead(){
   const b=S.trip.b,w=S.weather;
   const act=b.activity||'hike';
@@ -3413,15 +3435,20 @@ function finishPlayerTrip(){
   const reviews=makeReviews(t.repDelta||0, tip, reviewCount);
   renderHUD();
   if(checkEnd()) return;
-  setScene(`<div class="day-tag">${dayTag()} · Trip complete</div><h2>Back at the trailhead</h2>
+  const reportAsset = broken.length ? 'report-gear-damage'
+    : (t.repDelta||0) > 0 ? 'report-review-good'
+    : (t.repDelta||0) < 0 ? 'report-review-bad'
+    : 'report-blank';
+  reportStage(reportAsset, `<p class="trip-title">Back at the trailhead</p>
     <div class="res">${t.logs.map(l=>`<p class="line">${l}</p>`).join('')}</div>
-    ${prepLine?`<p style="font-style:italic;color:var(--ink-dim)">${prepLine}</p>`:''}
+    ${prepLine?`<p class="report-note">${prepLine}</p>`:''}
     ${reviewsHTML(reviews)}
     <div class="ledger">
       <div class="row"><span class="l">Guiding fee</span><span class="v pos">+€${fee}</span></div>
       ${tip?`<div class="row"><span class="l">Tips</span><span class="v" style="color:var(--gold)">+€${tip}</span></div>`:'<div class="row"><span class="l">Tips</span><span class="v">€0</span></div>'}
     </div>
-    <div class="actionbar"><button class="go" onclick="afterPlayerTrip()">${S.phase===2?'Carry on':'End the day'}</button></div>`);
+    <button class="scene-go" onclick="afterPlayerTrip()">${S.phase===2?'Carry on':'End the day'}</button>`,
+    `${dayTag()} · Trip complete`);
 }
 function afterPlayerTrip(){ if(S.phase===2) processNext(); else nextDay(); }
 function nextDay(){ advanceDay(); }
