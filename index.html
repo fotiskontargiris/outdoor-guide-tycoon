@@ -2400,17 +2400,17 @@ function renderBedroomHub(){
   const packed = (S.loadout||[]).length>0;
   const rich   = (S.cash||0)>=200;
   const objs = [
-    {asset:`bedroom-p1-phone-${hasBk?'lit':'dark'}`,         label:'Phone',   action:'openPhone()',    x:47, y:70, w:12},
-    {asset:'bedroom-p1-notebook',                            label:'Logbook', action:'renderLog()',    x:63, y:70, w:14},
-    {asset:`bedroom-p1-wallet-${rich?'thick':'thin'}`,       label:'Wallet',  action:'openWallet()',   x:52, y:75, w:7},
-    {asset:'bedroom-p1-catalogue',                           label:'Shop',    action:'openShop()',     x:32, y:84, w:11},
-    {asset:`bedroom-p1-backpack-${packed?'packed':'empty'}`, label:'Pack',    action:'openBackpack()', x:16, y:84, w:15},
-    {asset:'bedroom-p1-corkboard-empty',                     label:'People',  action:'openCorkboard()',x:11, y:36, w:19},
+    {asset:`bedroom-p1-phone-${hasBk?'lit':'dark'}`,         label:'Phone',   action:'openPhone()',    x:61.6, y:70.8, w:9},
+    {asset:'bedroom-p1-notebook',                            label:'Logbook', action:'renderLog()',    x:67.4, y:70,   w:7.5},
+    {asset:`bedroom-p1-wallet-${rich?'thick':'thin'}`,       label:'Wallet',  action:'openWallet()',   x:73.3, y:72.6, w:7},
+    {asset:'bedroom-p1-catalogue',                           label:'Shop',    action:'openShop()',     x:42.9, y:69.9, w:11},
+    {asset:`bedroom-p1-backpack-${packed?'packed':'empty'}`, label:'Pack',    action:'openBackpack()', x:10.5, y:66.7, w:26},
+    {asset:'bedroom-p1-corkboard-empty',                     label:'People',  action:'openCorkboard()',x:24.3, y:9.4,  w:17.5},
   ];
   // Window / bed / door are painted into the base — invisible hotspot regions over them.
   const regions = [
     {region:true, label:'Forecast', action:'renderForecast()', x:49, y:33, w:36, h:44},
-    {region:true, label:'Rest',     action:'openRest()',       x:12, y:70, w:19, h:26},
+    {region:true, label:'Rest',     action:'openRest()',       x:21.9, y:69.9, w:16.5, h:26},
     {region:true, label:'Leave',    action:'goMenu()',         x:95, y:52, w:9,  h:84},
   ];
   const spots  = objs.concat(regions).map(hubSpot).join('');
