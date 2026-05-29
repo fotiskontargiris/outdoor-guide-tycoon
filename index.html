@@ -781,6 +781,15 @@
     max-height:calc(100% - 80px);
   }
   .setup-lede{ font-family:'Fraunces',serif; font-size:13px; line-height:1.45; color:#1B1B1F; margin:0 0 8px; }
+  /* on-trail beats: readable panel over the full-bleed place backdrop */
+  .scene-full-panel--trip{ left:50%; right:auto; transform:translateX(-50%); bottom:18px;
+    width:calc(100% - 40px); max-width:560px; max-height:calc(100% - 92px); color:#1B1B1F; }
+  .scene-full-panel--trip .trip-title{ font-family:'Fraunces',serif; font-weight:600; font-size:17px;
+    line-height:1.18; margin:0 0 6px; color:#1B1B1F; }
+  .scene-full-panel--trip .trip-text{ font-family:'Fraunces',serif; font-size:13.5px; line-height:1.45;
+    margin:0 0 10px; color:#1B1B1F; }
+  .scene-full-panel--trip .res{ border-left-color:rgba(27,27,31,.22); margin:0 0 10px; }
+  .scene-full-panel--trip .res .line{ color:#1B1B1F; }
   .scene-full .bubble.left-top  { top:80px; left:24px;  max-width:55%; }
   .scene-full .bubble.right-top { top:80px; right:80px; max-width:50%; }
   .scene-full .bubble.left-mid  { top:38%;  left:24px;  max-width:55%; }
@@ -2164,7 +2173,7 @@ function setScene(html){
   // z100 over .scene's z1 and the screen looks frozen (e.g. the kitchen-pitch
   // overlay covering renderSetup). The overlay builders call setScene('') AFTER
   // appending their overlay, so only tear those down when rendering real content.
-  if(html){ removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay(); }
+  if(html){ removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay(); removeTripStage(); }
   removeHubOverlay();
   if($('fcast'))$('fcast').innerHTML='';
   $('scene').innerHTML=html;
@@ -2392,7 +2401,7 @@ function renderBedroomHub(){
   const realDOM = typeof document!=='undefined' && typeof document.createElement==='function'
                   && document.body && document.body.appendChild;
   if(!realDOM || !ASSETS['bedroom-p1-base']){ renderMorning(); return; }
-  removeHubOverlay(); removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay();
+  removeHubOverlay(); removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay(); removeTripStage();
   if($('hud'))$('hud').innerHTML=''; if($('goal'))$('goal').innerHTML=''; setSub('');
   setScene('');  // clear .scene (also tears down any stale hub overlay)
 
@@ -3114,6 +3123,37 @@ function toggleItem(id){
   renderPacking();
 }
 function setOff(){ startTrailhead(); }
+/* ---------------- Trip field-view stage ----------------
+   One persistent full-bleed place-silhouette backdrop for a whole trip; each
+   beat swaps only the overlaid panel (one stage, many beats). Falls back to a
+   plain .scene render under the harness / when the place art is missing. */
+function tripStage(panelHTML, opts){
+  opts = opts || {};
+  const b = S.trip && S.trip.b;
+  const assetId = b ? placeAssetFor(b.route) : null;
+  const realDOM = typeof document!=='undefined' && typeof document.createElement==='function' && document.body && document.body.appendChild;
+  if(!realDOM || !assetId || !ASSETS[assetId]){
+    setScene((opts.tag?`<div class="day-tag">${opts.tag}</div>`:'')+`<div class="trip-fallback">${panelHTML}</div>`);
+    return;
+  }
+  let ov = document.getElementById('tripStage');
+  if(!ov || ov.getAttribute('data-asset')!==assetId){
+    if(ov && ov.parentNode) ov.parentNode.removeChild(ov);
+    removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay(); removeHubOverlay();
+    ov = document.createElement('div'); ov.id='tripStage'; ov.className='scene-full'; ov.setAttribute('data-asset', assetId);
+    ov.innerHTML = `<img class="scene-full-bg" src="${ASSETS[assetId]}" alt="${(b.route||'').replace(/"/g,'&quot;')}">`
+      + `<div class="scene-full-tag" id="tripTag"></div>`
+      + `<div class="scene-full-panel scene-full-panel--choices scene-full-panel--trip" id="tripPanel"></div>`;
+    document.body.appendChild(ov);
+    setScene('');
+  }
+  const tg=document.getElementById('tripTag'); if(tg) tg.innerHTML = opts.tag || '';
+  const pn=document.getElementById('tripPanel'); if(pn){ pn.innerHTML = panelHTML; pn.scrollTop=0; }
+}
+function removeTripStage(){
+  if(typeof document==='undefined' || typeof document.getElementById!=='function') return;
+  const ex=document.getElementById('tripStage'); if(ex && ex.parentNode) ex.parentNode.removeChild(ex);
+}
 function startTrailhead(){
   const b=S.trip.b,w=S.weather;
   const act=b.activity||'hike';
@@ -3122,18 +3162,10 @@ function startTrailhead(){
   const ev=wpick(pool); S.trip.meet=ev;
   const choices=ev.choices.filter(c=>!c.need || S.loadout.includes(c.need));
   S.trip.meetChoices=choices;
-  // Theatrical 2-col: place silhouette left, trailhead event + choices right.
-  const placeArt = imgFor(placeAssetFor(b.route), {cls:'art art-place', alt:b.route});
-  const left = placeArt || '';
-  const right = `<h2 style="margin-top:0">${ev.title}</h2><p>${ev.text(b,S)}</p>
-    <div class="choices">${choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveMeet(${i})">
-      <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`;
-  if(left){
-    setScene(`<div class="day-tag">${dayTag()} · ${b.route} · the trailhead</div>
-      <div class="two-col"><div class="col-stage">${left}</div><div class="col-panel">${right}</div></div>`);
-  } else {
-    setScene(`<div class="day-tag">${dayTag()} · ${b.route} · the trailhead</div>${right}`);
-  }
+  const panel = `<p class="trip-title">${ev.title}</p><p class="trip-text">${ev.text(b,S)}</p>
+    ${choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveMeet(${i})">
+      <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}`;
+  tripStage(panel, {tag:`${dayTag()} · ${b.route} · the trailhead`});
 }
 function resolveMeet(ci){
   const c=S.trip.meetChoices[ci], r=charm(c.run(S.trip.b,S));
@@ -3143,9 +3175,9 @@ function resolveMeet(ci){
   if(r.payMul!=null) S.trip.payMul*=r.payMul;
   if(r.risk) S.trip.prepRisk+=r.risk;
   S.trip.logs.push(r.line);
-  setScene(`<div class="day-tag">${dayTag()} · ${S.trip.b.route}</div><h2>On the trail at last</h2>
+  tripStage(`<p class="trip-title">On the trail at last</p>
     <div class="res"><p class="line">${r.line}</p><div>${deltaHTML(r)}</div></div>
-    <div class="choices"><button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Walk on</span></button></div>`);
+    <button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Walk on</span></button>`, {tag:`${dayTag()} · ${S.trip.b.route}`});
 }
 function eligible(){ const b=S.trip.b,w=S.weather; const act=b.activity||'hike'; return EVENTS.filter(e=>activityMatch(e,act) && e.when(b,w)); }
 function wpick(list){ let t=list.reduce((s,e)=>s+e.w,0),r=Math.random()*t; for(const e of list){ if((r-=e.w)<=0) return e; } return list[0]; }
@@ -3169,18 +3201,14 @@ function renderWeatherTurn(){
   });
   S.trip.justTurned = true;
   const b = S.trip.b;
-  setScene(`<div class="day-tag">${dayTag()} · ${b.route}</div>
-    <h2>The sky turns</h2>
-    <p>You set off in <b style="color:${oldW.col}">${oldW.short.toLowerCase()}</b>. The day has had other ideas.</p>
-    <p><i>${S.trip.pendingTurn.note}</i></p>
-    <div class="choices">
-      <button class="opt primary" onclick="applyWeatherTurn('push')">
-        <span class="mark">→</span><span class="b-main">Push on under the changed sky<span class="b-sub">Trust the day. The risk goes up.</span></span></button>
-      <button class="opt" onclick="applyWeatherTurn('shelter')">
-        <span class="mark">▣</span><span class="b-main">Shelter for an hour, let it pass<span class="b-sub">Energy −5; the day finds its feet again</span></span></button>
-      <button class="opt" onclick="applyWeatherTurn('short')">
-        <span class="mark">✂</span><span class="b-main">Cut the route short, take everyone home<span class="b-sub">Fee × 0.85; nobody is caught out</span></span></button>
-    </div>`);
+  tripStage(`<p class="trip-title">The sky turns</p>
+    <p class="trip-text">You set off in <b style="color:${oldW.col}">${oldW.short.toLowerCase()}</b>. The day has had other ideas. <i>${S.trip.pendingTurn.note}</i></p>
+    <button class="opt primary" onclick="applyWeatherTurn('push')">
+      <span class="mark">→</span><span class="b-main">Push on under the changed sky<span class="b-sub">Trust the day. The risk goes up.</span></span></button>
+    <button class="opt" onclick="applyWeatherTurn('shelter')">
+      <span class="mark">▣</span><span class="b-main">Shelter for an hour, let it pass<span class="b-sub">Energy −5; the day finds its feet again</span></span></button>
+    <button class="opt" onclick="applyWeatherTurn('short')">
+      <span class="mark">✂</span><span class="b-main">Cut the route short, take everyone home<span class="b-sub">Fee × 0.85; nobody is caught out</span></span></button>`, {tag:`${dayTag()} · ${b.route}`});
 }
 function applyWeatherTurn(choice){
   const newW = S.trip.pendingTurn; if(!newW){ runEvent(); return; }
@@ -3201,10 +3229,9 @@ function runEvent(){
   // Mid-trip weather turn — once per trip, only when the day's stability is low.
   if(maybeWeatherTurn()){ renderWeatherTurn(); return; }
   const ev=wpick(eligible()); S.trip.cur=ev; const b=S.trip.b;
-  setScene(`<div class="day-tag">${dayTag()} · ${b.route}</div>
-    <h2>${ev.title}</h2><p>${ev.text(b,S)}</p>
-    <div class="choices">${ev.choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveP(${i})">
-      <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}</div>`);
+  tripStage(`<p class="trip-title">${ev.title}</p><p class="trip-text">${ev.text(b,S)}</p>
+    ${ev.choices.map((c,i)=>`<button class="opt ${i===0?'primary':''}" onclick="resolveP(${i})">
+      <span class="mark">${i+1}</span><span class="b-main">${c.label}<span class="b-sub">${c.hint||''}</span></span></button>`).join('')}`, {tag:`${dayTag()} · ${b.route}`});
 }
 function perkIs(...types){ return S.you && types.includes(S.you.perk); }
 function charm(r){
@@ -3224,9 +3251,9 @@ function resolveP(ci){
   S.trip.logs.push(...r.lines); S.trip.done++;
   if(S.trip.done<S.trip.total){
     renderHUD();
-    setScene(`<div class="day-tag">${dayTag()} · ${S.trip.b.route}</div><h2>The trail goes on…</h2>
+    tripStage(`<p class="trip-title">The trail goes on…</p>
       <div class="res">${S.trip.logs.map(l=>`<p class="line">${l}</p>`).join('')}<div>${deltaHTML(r)}</div></div>
-      <div class="choices"><button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Press on</span></button></div>`);
+      <button class="opt primary" onclick="runEvent()"><span class="mark">→</span><span class="b-main">Press on</span></button>`, {tag:`${dayTag()} · ${S.trip.b.route}`});
   } else finishPlayerTrip();
 }
 function deltaHTML(r){
