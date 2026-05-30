@@ -152,6 +152,23 @@
     .rotate-prompt{display:flex;}
     .wrap{display:none;}
   }
+  /* Escape hatch — if the device has rotation locked to portrait, the player
+     can dismiss the prompt and play in portrait anyway (layout suboptimal
+     but functional). Toggled by .rp-skip button → adds .rp-dismissed to body. */
+  body.rp-dismissed .rotate-prompt{ display:none !important; }
+  body.rp-dismissed .wrap{ display:flex !important; }
+  .rotate-prompt .rp-skip{
+    margin-top:22px;
+    background:transparent;
+    color:var(--ink-dim);
+    border:1px solid rgba(238,229,210,.3);
+    border-radius:8px;
+    padding:8px 14px;
+    font-family:'Fraunces',serif; font-style:italic; font-size:13px;
+    cursor:pointer;
+    transition:color .15s, border-color .15s;
+  }
+  .rotate-prompt .rp-skip:hover{ color:var(--ink); border-color:var(--ink-dim); }
 
   /* PRE-TITLE COLD OPEN — moodful typographic reveal that doubles as
      the user-gesture for fullscreen. Static HTML overlay, removed on
@@ -799,18 +816,27 @@
      that clear the menu button (top-right 14/14, size 44) and leave a
      comfortable inset from screen edges. Inside .scene-stage (smaller
      box) the existing percentage positions still apply. */
-  /* Panigiri setup — wider, centred, taller panel (it carries a lot of picks)
-     over the full-bleed festival image. Must follow --choices to override it. */
+  /* Panigíri setup — narrow centred panel over the full-bleed festival image
+     so the scene reads behind it. Internal scroll handles long pick lists.
+     Must follow --choices to override it. */
   .scene-full-panel--setup{
     left:50%; right:auto; transform:translateX(-50%);
     bottom:16px;
-    width:calc(100% - 36px); max-width:600px;
+    width:clamp(300px, 50%, 480px);
     max-height:calc(100% - 80px);
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(27,27,31,.4) transparent;
   }
+  .scene-full-panel--setup::-webkit-scrollbar{ width:5px; }
+  .scene-full-panel--setup::-webkit-scrollbar-thumb{ background:rgba(27,27,31,.35); border-radius:3px; }
   .setup-lede{ font-family:'Fraunces',serif; font-size:13px; line-height:1.45; color:#1B1B1F; margin:0 0 8px; }
   /* on-trail beats: readable panel over the full-bleed place backdrop */
   .scene-full-panel--trip{ left:50%; right:auto; transform:translateX(-50%); bottom:18px;
-    width:calc(100% - 40px); max-width:560px; max-height:calc(100% - 92px); color:#1B1B1F; }
+    width:clamp(300px, 50%, 480px); max-height:calc(100% - 92px); color:#1B1B1F;
+    overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(27,27,31,.4) transparent; }
+  .scene-full-panel--trip::-webkit-scrollbar{ width:5px; }
+  .scene-full-panel--trip::-webkit-scrollbar-thumb{ background:rgba(27,27,31,.35); border-radius:3px; }
   .scene-full-panel--trip .trip-title{ font-family:'Fraunces',serif; font-weight:600; font-size:17px;
     line-height:1.18; margin:0 0 6px; color:#1B1B1F; }
   .scene-full-panel--trip .trip-text{ font-family:'Fraunces',serif; font-size:13.5px; line-height:1.45;
@@ -819,8 +845,11 @@
   .scene-full-panel--trip .res .line{ color:#1B1B1F; }
   /* day report: existing dark-theme markup on a bone panel via local var overrides */
   .scene-full-panel--report{ left:50%; right:auto; transform:translateX(-50%); bottom:16px;
-    width:calc(100% - 40px); max-width:600px; max-height:calc(100% - 84px); color:#1B1B1F;
+    width:clamp(300px, 50%, 500px); max-height:calc(100% - 84px); color:#1B1B1F;
+    overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(27,27,31,.4) transparent;
     --panel2:rgba(255,255,255,.5); --edge:rgba(27,27,31,.18); --ink-faint:rgba(27,27,31,.5); --ink-dim:rgba(27,27,31,.72); }
+  .scene-full-panel--report::-webkit-scrollbar{ width:5px; }
+  .scene-full-panel--report::-webkit-scrollbar-thumb{ background:rgba(27,27,31,.35); border-radius:3px; }
   .scene-full-panel--report .trip-title{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#1B1B1F; margin:0 0 8px; }
   .scene-full-panel--report .res{ border-left-color:rgba(27,27,31,.2); margin:0 0 10px; }
   .scene-full-panel--report .res .line{ color:#1B1B1F; }
@@ -832,6 +861,13 @@
   .scene-full .bubble.right-mid { top:38%;  right:80px; max-width:50%; }
   .scene-full .bubble.left-bot  { top:62%;  left:24px;  max-width:55%; }
   .scene-full .bubble.right-bot { top:62%;  right:80px; max-width:50%; }
+  /* When mum speaks several bubbles in a row (the pitch beat), stack them
+     one under the other instead of scattering them across the viewport. */
+  .scene-full .bubble-stack{ position:absolute; top:80px; left:24px; max-width:55%;
+    display:flex; flex-direction:column; gap:12px; z-index:3; }
+  .scene-full .bubble-stack .bubble{ position:relative !important;
+    top:auto !important; left:auto !important; right:auto !important; bottom:auto !important;
+    max-width:100% !important; }
 
   /* ============ DESK-HUB (diegetic home base) — see DESK-HUB.md ============
      A body-level full-bleed room. One 20:9 base painting fills a centred
@@ -939,22 +975,11 @@
     background:rgba(27,27,31,.42); padding:6px 15px; border-radius:20px;
     pointer-events:none; animation:hubHintFade 6s ease forwards; }
   @keyframes hubHintFade{ 0%{opacity:0;} 12%{opacity:1;} 80%{opacity:1;} 100%{opacity:0;} }
-  /* mum's guided-tour overlay (sequenced onboarding — one nudge at a time) */
-  .hub-nudge{ position:absolute; left:50%; bottom:104px; z-index:7;
-    max-width:78%; text-align:center; pointer-events:none;
-    font-family:'Fraunces',serif; font-style:italic; font-size:15px; line-height:1.5;
-    color:#F2E8D3; text-shadow:0 1px 6px rgba(0,0,0,.95);
-    background:rgba(20,26,32,.78); padding:9px 16px 11px; border-radius:14px;
-    border-left:2px solid #6FB0AD;
-    animation:nudgeIn .55s cubic-bezier(.2,.7,.2,1) both;
-    transform-origin:bottom center; }
-  .hub-nudge::before{ content:'From the kitchen door'; display:block;
-    font-family:'Spline Sans Mono',monospace; font-style:normal; font-size:9.5px;
-    letter-spacing:.22em; text-transform:uppercase; color:#6FB0AD; margin-bottom:5px; }
-  @keyframes nudgeIn{
-    from{ opacity:0; transform:translate(-50%, 10px); }
-    to  { opacity:1; transform:translate(-50%, 0); }
-  }
+  /* Mum's guided-tour bubble — sits mid-top-right of the hub with the tail
+     pointing right, since "the door" is off the right edge of the room. */
+  .hub .bubble.right-edge{ position:absolute; top:20%; right:18px; max-width:42%; z-index:7; font-style:italic; pointer-events:none; }
+  .hub .bubble.right-edge:after{ right:-14px; top:44%; border-left-color:#1B1B1F; }
+  .hub .bubble.right-edge:before{ right:-10px; top:45%; border-left-color:rgba(238,229,210,.94); }
   /* the spot mum is pointing at — gentle amber pulse */
   .hub-obj.tut-cued, .hub-region.tut-cued{
     animation:tutPulse 2.2s ease-in-out infinite;
@@ -1107,8 +1132,9 @@
   <div class="rp-inner">
     <div class="rp-icon">◷</div>
     <div class="rp-kicker">A Guide's Life or no Life</div>
-    <h2>Sideways, please.</h2>
-    <p>The Peloponnese is wider than it is tall.</p>
+    <h2>Please turn your phone.</h2>
+    <p>Hold it like a TV.</p>
+    <button class="rp-skip" type="button" onclick="document.body.classList.add('rp-dismissed')">Play anyway</button>
   </div>
 </div>
 
@@ -1344,7 +1370,7 @@ const BACKGROUNDS=[
    perk:'Feed the group and the tips and reviews follow — but mind the provisions.',
    cat:`“The restaurant was in a magazine,” she informs the wooden spoon. “A magazine.” You leave out the rent, the head waiter, the stolen password. You came home with a tattoo of a sea bream and the one gift that survived it: you can make strangers feel fed and looked after.`,
    model:`Provisions turn into tips and glowing reviews; left unmanaged, they quietly eat your margin.`,
-   pani:`You taste the spit-roast from across the square and silently, helplessly, rebalance the salt.`},
+   pani:`You taste the Easter lamb from across the square and silently, helplessly, rebalance the salt.`},
   {id:'soldier', name:'The army washout', gender:'f', tag:'navigator',
    perk:'You run the storms and the high routes — but you frighten the gentle ones.',
    cat:`She still keeps the selection photo on the dresser — the one where you are all mud and certainty. You don’t mention the final day, the single cut that came. You tell her instead that you can read a sky like a sentence.`,
@@ -1374,7 +1400,7 @@ const BACKGROUNDS=[
    perk:'You stay calm when the day doesn’t — but you’re slow to push the sale.',
    cat:`She has braced herself for the words “energy” and “alignment,” and she is bearing them like weather. Goa rearranged you. The bank account did not approve.`,
    model:`Crises de-escalate around you and the group keeps its cool; but your serenity is slow to push for the upsell or the hard route.`,
-   pani:`Your uncle presses the first tsípouro into your hand. Breathe, you think. It is nine o’clock. By two in the morning your inner peace will be in open war with a brass section.`},
+   pani:`Your uncle presses the first tsípouro into your hand with a hearty Christós Anésti. Breathe, you think. It is nine o’clock. By two in the morning your inner peace will be in open war with a brass section.`},
   {id:'alani', name:'The Alani', gender:'m', tag:'alani',
    perk:'You know a guy — cheap gear, easy deals — and merchandise of uncertain provenance.',
    cat:`She tells the neighbours you have “many friends.” This is true. Some of them you owe. You know every back door in the prefecture and the price of everything behind them.`,
@@ -1441,7 +1467,8 @@ const ASSETS = {
   'title-cover':              'assets/title/title-cover.webp',
   'scene-kitchen':            'assets/scenes/scene-kitchen.webp',
   // Tier L — bedroom desk-hub (Phase 1 home base): base + object/season overlays
-  'bedroom-p1-base':           'assets/hub/bedroom-p1-base.webp',
+  'bedroom-p1-base-male':      'assets/hub/bedroom-p1-base-male.webp',
+  'bedroom-p1-base-female':    'assets/hub/bedroom-p1-base-female.webp',
   'bedroom-p1-phone-dark':     'assets/hub/bedroom-p1-phone-dark.webp',
   'bedroom-p1-phone-lit':      'assets/hub/bedroom-p1-phone-lit.webp',
   'bedroom-p1-notebook':       'assets/hub/bedroom-p1-notebook.webp',
@@ -1949,9 +1976,11 @@ function renderKitchenPitchScene(){
   // 3 stacked left-side bubbles, staggered down. The existing bubblein
   // animation (with :nth-of-type delays) lands them in sequence.
   const bubbles = `
-    <div class="bubble left-top">You know what you should do.</div>
-    <div class="bubble left-mid">Tourism. The foreigners come with their money and their little walking sticks \u2014 and they pay, ${dim}. Take them up the mountain. Show them Polyl\u00edmnio. Show them the sea.</div>
-    <div class="bubble left-bot">Kostas\u2019s boy does it, up in Sto\u00fapa. He bought a car. Tomorrow you begin. I\u2019ve told Kyr\u00eda Vo\u00fala you\u2019re in tourism now.</div>
+    <div class="bubble-stack">
+      <div class="bubble left-top">You know what you should do.</div>
+      <div class="bubble left-top">Tourism. The foreigners come with their money and their little walking sticks \u2014 and they pay, ${dim}. Take them up the mountain. Show them Polyl\u00edmnio. Show them the sea.</div>
+      <div class="bubble left-top">Kostas\u2019s boy does it, up in Sto\u00fapa. He bought a car. Tomorrow you begin. I\u2019ve told Kyr\u00eda Vo\u00fala you\u2019re in tourism now.</div>
+    </div>
   `;
   const panel = `<div class="scene-full-panel scene-full-panel--choices">
     <button class="scene-go" onclick="renderSetupIntro()">Step outside \u25b8</button>
@@ -1975,14 +2004,13 @@ function renderSetupIntro(){
   const b=BACKGROUNDS.find(x=>x.id===pickedBg)||BACKGROUNDS[0];
   renderStoryScreen({
     tag: 'The first night of the season',
-    text: 'Outside, the village is tuning up. It is August; down the lane a clarinet finds its note, and the smell of grilling meat is quietly winning its war with the night jasmine. The panigíri. '+b.pani,
+    text: 'Outside, the village is full — everyone home for Pascha. Behind every gate a lamb is on the spit, and you can smell the bread your aunt has been baking since dawn. As the evening comes in a clarinet finds its note down the lane; people who haven’t seen each other since last Easter are kissing each other on both cheeks and saying Christós Anésti. By Tuesday the foreigners will begin to arrive. Tomorrow, the season opens. '+b.pani,
     onContinue: renderSetup,
     autoMs: 13000,
   });
 }
 function renderSetup(){
   showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('The first night of the season');
-  const b=BACKGROUNDS.find(x=>x.id===pickedBg)||BACKGROUNDS[0];
   const discChips=DISCIPLINES.map(d=>{
     const on = pickedDiscipline===d.id, locked = d.status!=='available';
     const cls = on ? 'primary' : (locked ? 'disabled' : '');
@@ -1991,11 +2019,6 @@ function renderSetup(){
     const glyph = imgFor('glyph-discipline-'+d.id, {cls:'art-glyph', alt:d.name});
     return `<button class="opt ${cls}" onclick="${click}" ${locked?'style="opacity:.5"':''}>
       <span class="mark">${on?'✓':(locked?'·':'+')}</span>${glyph}<span class="b-main">${d.name}${tail}<span class="b-sub">${d.blurb}</span></span></button>`;
-  }).join('');
-  const kitChips=ITEM_ORDER.filter(id => itemForActivity(id, pickedDiscipline)).map(id=>{
-    const on=pickedKit.includes(id), full=pickedKit.length>=3 && !on;
-    return `<button class="opt ${on?'primary':''} ${full?'disabled':''}" onclick="${full?'':`toggleKit('${id}')`}">
-      <span class="mark">${on?'✓':'+'}</span><span class="b-main">${ITEMS[id]}</span></button>`;
   }).join('');
   const isFleetDisc = pickedDiscipline!=='hike';
   const disciplineNote = isFleetDisc
@@ -2010,25 +2033,25 @@ function renderSetup(){
     <label style="display:block;margin-top:8px;font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Where the loan comes from</label>
     ${imgFor('chrome-loan-papers', {cls:'art art-chrome', alt:'Three financing sources made physical: bank, friend, dark loan'})}
     <div class="choices" style="margin-top:8px">${loanChips}</div>` : '';
-  // Full-bleed panigíri: the festival image fills the screen and the picks
-  // float in a readable panel over it (same pattern as the hero picker). On a
-  // pick we swap only the panel's innerHTML so the image doesn't re-fade.
-  const canGo = pickedKit.length>0;
   const picks = `
-    <p class="setup-lede"><b>But first — what will you guide, and what goes in the bag?</b></p>
+    <p class="setup-lede"><b>But first — what will you guide?</b></p>
     <span class="scene-input-label">Your discipline</span>
     <div class="choices">${discChips}</div>
     ${disciplineNote}
     ${loanSection}
-    <span class="scene-input-label" style="margin-top:8px">Starting kit — pick up to 3 (${pickedKit.length}/3)</span>
-    <div class="choices">${kitChips}</div>
-    <button class="scene-go ${canGo?'':'disabled'}" onclick="${canGo?'beginNewGame()':''}" ${canGo?'':'style="opacity:.45;pointer-events:none"'}>Into it, then \u25b8</button>`;
+    <button class="scene-go" onclick="renderSetupKit()">Continue \u25b8</button>`;
+  setupShell(picks);
+}
+function toggleKit(id){ const i=pickedKit.indexOf(id); if(i>=0)pickedKit.splice(i,1); else if(pickedKit.length<3)pickedKit.push(id); renderSetupKit(); }
+function setupShell(picksHTML){
+  // If the panigíri overlay is up, just swap the panel innerHTML — the image
+  // keeps its place, the phase change feels like turning a page.
   const existingPanel = (typeof document!=='undefined' && typeof document.getElementById==='function') ? document.getElementById('setupPanel') : null;
-  if(existingPanel){ existingPanel.innerHTML = picks; return; }   // re-render after a pick — no image re-fade
+  if(existingPanel){ existingPanel.innerHTML = picksHTML; return; }
   const realDOM = typeof document!=='undefined' && typeof document.createElement==='function' && document.body && document.body.appendChild;
   const cover = ASSETS['scene-panigiri'] ? `<img class="scene-full-bg" src="${ASSETS['scene-panigiri']}" alt="The village panigíri at full swing">` : '';
   const tag = `<div class="scene-full-tag">The first night of the season</div>`;
-  const panel = `<div class="scene-full-panel scene-full-panel--choices scene-full-panel--setup" id="setupPanel">${picks}</div>`;
+  const panel = `<div class="scene-full-panel scene-full-panel--choices scene-full-panel--setup" id="setupPanel">${picksHTML}</div>`;
   if(realDOM && cover){
     removeTitleOverlay(); removeSceneOverlay(); removeStoryOverlay();
     const overlay=document.createElement('div'); overlay.id='sceneOverlay'; overlay.className='scene-full';
@@ -2039,7 +2062,24 @@ function renderSetup(){
     setScene(`<div class="day-tag">The first night</div><div class="scene-full">${cover}${tag}${panel}</div>`);
   }
 }
-function toggleKit(id){ const i=pickedKit.indexOf(id); if(i>=0)pickedKit.splice(i,1); else if(pickedKit.length<3)pickedKit.push(id); renderSetup(); }
+function renderSetupKit(){
+  showMenuBtn(false); $('hud').innerHTML=''; $('goal').innerHTML=''; setSub('The first night of the season');
+  const kitChips=ITEM_ORDER.filter(id => itemForActivity(id, pickedDiscipline)).map(id=>{
+    const on=pickedKit.includes(id), full=pickedKit.length>=3 && !on;
+    return `<button class="opt ${on?'primary':''} ${full?'disabled':''}" onclick="${full?'':`toggleKit('${id}')`}">
+      <span class="mark">${on?'✓':'+'}</span><span class="b-main">${ITEMS[id]}</span></button>`;
+  }).join('');
+  const canGo = pickedKit.length>0;
+  const picks = `
+    <p class="setup-lede"><b>And what goes in the bag?</b></p>
+    <span class="scene-input-label">Starting kit — pick up to 3 (${pickedKit.length}/3)</span>
+    <div class="choices">${kitChips}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center">
+      <button class="scene-go scene-go--ghost" onclick="renderSetup()">◂ Back</button>
+      <button class="scene-go ${canGo?'':'disabled'}" onclick="${canGo?'beginNewGame()':''}" ${canGo?'':'style="opacity:.45;pointer-events:none"'}>Into it, then ▸</button>
+    </div>`;
+  setupShell(picks);
+}
 function pickDiscipline(id){
   const d=DISCIPLINES.find(x=>x.id===id); if(!d||d.status!=='available') return;
   pickedDiscipline=id;
@@ -2391,7 +2431,7 @@ function openCredits(from){
   $('sheet').innerHTML=`<div class="grip"></div><div class="sh">Credits</div>
     <div class="credits">
       <h3>A Guide&rsquo;s Life <em>&mdash; or no Life</em></h3>
-      <p class="credits-lede">A career in the outdoors, money and minor catastrophes &mdash; one season at a time, from a childhood bedroom in Kalam&aacute;ta.</p>
+      <p class="credits-lede">A small game about a big stubbornness &mdash; making a living outdoors in a place that gives you everything except a steady wage &mdash; to the Summers that got lost.</p>
       <div class="credits-roll">
         <div><span>Design, writing &amp; code</span><b>Fotis Kontargiris</b></div>
         <div><span>Setting</span><b>Messin&iacute;a, Greece</b></div>
@@ -2675,7 +2715,16 @@ function refreshHud(ov){  // swap the HUD bars in-place for fresh stats (reuse p
 function renderBedroomHub(){
   const realDOM = typeof document!=='undefined' && typeof document.createElement==='function'
                   && document.body && document.body.appendChild;
-  if(!realDOM || !ASSETS['bedroom-p1-base']){ renderMorning(); return; }
+  // Pick the base by hero gender — symmetric -male / -female assets; if the
+  // exact one is missing, fall back to whichever is available, else fall
+  // back to the button morning (test harness, no art shipped).
+  const wantFemale = !!(S && S.you && S.you.gender==='f');
+  const hubBaseId = (wantFemale && ASSETS['bedroom-p1-base-female']) ? 'bedroom-p1-base-female'
+                  : (!wantFemale && ASSETS['bedroom-p1-base-male']) ? 'bedroom-p1-base-male'
+                  : ASSETS['bedroom-p1-base-male'] ? 'bedroom-p1-base-male'
+                  : ASSETS['bedroom-p1-base-female'] ? 'bedroom-p1-base-female'
+                  : null;
+  if(!realDOM || !hubBaseId){ renderMorning(); return; }
   const _outDetail=document.getElementById('sceneOverlay'), _outTrip=document.getElementById('tripStage');
   removeHubOverlay(); removeTitleOverlay(); removeStoryOverlay();
   if($('hud'))$('hud').innerHTML=''; if($('goal'))$('goal').innerHTML=''; setSub('');
@@ -2712,7 +2761,7 @@ function renderBedroomHub(){
   let mum='';
   if(S.mumLine){ mum=`<div class="bubble left-edge">${S.mumLine}</div>`; S.mumLine=''; }
   const help = `<button class="hub-help" aria-label="What can I tap?" onclick="toggleHubCue()">?</button>`;
-  const base = `<img class="hub-base" src="${ASSETS['bedroom-p1-base']}" alt="Your childhood bedroom in Kalamata, the harbour in the window">`;
+  const base = `<img class="hub-base" src="${ASSETS[hubBaseId]}" alt="Your childhood bedroom in Kalamata, the harbour in the window">`;
   const ws = hubWindowSeason();
   const win = (ASSETS['bedroom-p1-window-'+ws])
     ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-'+ws]}" alt="" style="left:49%;top:30%;width:50%">` : '';
@@ -2724,7 +2773,7 @@ function renderBedroomHub(){
     ? `<img class="hub-window" src="${ASSETS['bedroom-p1-window-hilux']}" alt="" style="left:49%;top:30%;width:50%">` : '';
   const overlay = document.createElement('div');
   overlay.id='hubOverlay'; overlay.className='hub';
-  const nudge = _tut ? `<div class="hub-nudge">${_tut.nudge()}</div>` : '';
+  const nudge = _tut ? `<div class="bubble right-edge">${_tut.nudge()}</div>` : '';
   overlay.innerHTML = `<div class="hub-stage">${base}${win}${hilux}${spots}${tag}${status}${hint}${mum}${nudge}</div>${help}`;
   document.body.appendChild(overlay);
   fadeOutAndRemove(_outDetail, 1100); fadeOutAndRemove(_outTrip, 1100);  // cross-dissolve back from a detail
@@ -3192,8 +3241,8 @@ function mumDoor(key, line){
   if(!S.tut) S.tut={};
   if(S.tut[key]) return '';
   S.tut[key] = true;
-  return `<div style="border-left:2px solid var(--sea);background:rgba(63,126,126,0.08);padding:10px 14px;margin:0 0 12px;border-radius:0 8px 8px 0;font-style:italic;color:var(--sea);font-size:13.5px;line-height:1.55">
-    <span style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--sea);font-style:normal;display:block;margin-bottom:4px">From the kitchen door</span>${line}</div>`;
+  return `<div style="border-left:3px solid #A4502F;background:rgba(238,229,210,0.95);color:#1B1B1F;padding:10px 14px;margin:0 0 12px;border-radius:0 10px 10px 0;font-style:italic;font-size:14px;line-height:1.55">
+    <span style="font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#A4502F;font-style:normal;display:block;margin-bottom:4px">From the kitchen door</span>${line}</div>`;
 }
 function logStrip(){
   if(!S.history.length) return '';
@@ -5267,14 +5316,4 @@ const RADIO=[
    title:(g)=>`${g.name} on the radio`,
    text:(g,b)=>`"A piece of kit just failed mid-route. I can try a field repair or turn the group back."`,
    choices:[
-     {label:'Talk them through a repair', hint:'Better with good company gear',
-      run:(g,b,S)=>gSkillCheck(g,0.5+S.gear/300)?{line:`You talk ${g.name} through a tidy field fix. The trip carries on without a hitch.`, rep:4, morale:3}:{line:`The repair won't hold. ${g.name} loses time and a little face before limping the route home.`, rep:-5, gear:-8, payMul:0.85}},
-     {label:'Have them turn the group back', hint:'Safe, reduced fee',
-      run:(g,b)=>({line:`${g.name} turns the group back rather than risk it. Cautious and correct.`, payMul:0.7, rep:-2, morale:2})},
-   ]},
-];
-
-boot();
-</script>
-</body>
-</html>
+     {label

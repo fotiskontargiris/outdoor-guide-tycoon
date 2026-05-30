@@ -104,28 +104,30 @@ The diminutive flexes off the chosen hero's gender: **♂ → *yie mou*, ♀ →
 
 ---
 
-## Beat 4 — Step out into the panigíri + setup  (`renderSetup`)
+## Beat 4 — Step out into the Pascha feast + setup  (`renderSetupIntro` → `renderSetup` → `renderSetupKit`)
 
-> **The first night**
-> ## Out into the season
+> **The first night of the season**
 >
-> Outside, the village is tuning up. It is August; down the lane a clarinet finds its note, and
-> the smell of grilling meat is quietly winning its war with the night jasmine. The panigíri.
-> **[hero send-off, below.]**
+> Outside, the village is full — everyone home for Pascha. Behind every gate a lamb is on the
+> spit, and you can smell the bread your aunt has been baking since dawn. As the evening comes
+> in a clarinet finds its note down the lane; people who haven't seen each other since last
+> Easter are kissing each other on both cheeks and saying *Christós Anésti*. By Tuesday the
+> foreigners will begin to arrive. Tomorrow, the season opens. **[hero send-off, below.]**
 >
-> But first — what will you guide, and what goes in the bag? → discipline · (loan, if a fleet
-> discipline) · starting kit → **Into it, then**
+> Then two phases over the panigíri-night image: **Phase 1** — *"But first — what will you
+> guide?"* (discipline · loan if fleet) → **Continue**. **Phase 2** — *"And what goes in the
+> bag?"* (kit, up to 3) → **Into it, then**.
 
-The per-hero send-off line that follows "The panigíri.":
+The per-hero send-off line that follows "Tomorrow, the season opens.":
 
 1. **almost-doctor** — Kyría Voúla finds you within ninety seconds, her blood-pressure diary already open.
-2. **chef** — You taste the spit-roast from across the square and silently, helplessly, rebalance the salt.
+2. **chef** — You taste the Easter lamb from across the square and silently, helplessly, rebalance the salt.
 3. **army washout** — You clock three exits and the one unattended gas bottle. Old habits.
 4. **deckhand** — Someone mentions the sea and you are nine sentences into a storm off Yemen before you notice.
 5. **influencer** — You film the clarinet player. He has more presence than your last three sponsors combined.
 6. **startup engineer** — You find yourself estimating the throughput of the souvláki line. It could be doubled.
 7. **philologist** — You correct a tourist's Greek, gently, and they hug you.
-8. **Fasaia** — Your uncle presses the first tsípouro into your hand. Breathe, you think. It is nine o'clock. By two in the morning your inner peace will be in open war with a brass section.
+8. **Fasaia** — Your uncle presses the first tsípouro into your hand with a hearty *Christós Anésti*. Breathe, you think. It is nine o'clock. By two in the morning your inner peace will be in open war with a brass section.
 9. **Alani** — Three people wave at you across the square. Two of them you owe. You wave back at all three.
 10. **Greek Villager** — You know the clarinet player. And his father. And the debt his father owed yours.
 
